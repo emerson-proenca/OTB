@@ -79,6 +79,8 @@ def cached(ttl: int = 300):
             # Se não estiver em cache, executa função e armazena resultado
             result = func(*args, **kwargs)
             cache.set(cache_key, result)
+            if result:
+                cache.set(cache_key, result)
             
             return result
         return wrapper

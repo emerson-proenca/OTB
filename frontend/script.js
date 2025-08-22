@@ -1,9 +1,7 @@
 // Configuração da API
 const isLocalhost = window.location.hostname === 'localhost';
 
-const API_BASE_URL = isLocalhost
-  ? 'http://localhost:8000'  // ou porta que seu FastAPI usa localmente
-  : 'https://over-the-board.onrender.com';
+const API_BASE_URL = window.API_BASE_URL || 'http://localhost:8000';
 
 
 // Estado da aplicação
@@ -209,11 +207,30 @@ async function getCacheStats() {
     try {
         const stats = await makeApiCall('/cache/stats');
         const cacheSize = stats.cache_size || 0;
-        document.getElementById('cacheSize').textContent = cacheSize;
-        document.getElementById('adminCacheSize').textContent = cacheSize;
+
+        // Verificação de segurança para o elemento 'cacheSize'
+        const cacheSizeElement = document.getElementById('cacheSize');
+        if (cacheSizeElement) {
+            cacheSizeElement.textContent = cacheSize;
+        }
+
+        // Verificação de segurança para o elemento 'adminCacheSize'
+        const adminCacheSizeElement = document.getElementById('adminCacheSize');
+        if (adminCacheSizeElement) {
+            adminCacheSizeElement.textContent = cacheSize;
+        }
     } catch (error) {
-        document.getElementById('cacheSize').textContent = 'Error';
-        document.getElementById('adminCacheSize').textContent = 'Error';
+        // Tratar o erro de forma segura, evitando que o erro se propague para o console do navegador
+        const cacheSizeElement = document.getElementById('cacheSize');
+        if (cacheSizeElement) {
+            cacheSizeElement.textContent = 'Error';
+        }
+
+        const adminCacheSizeElement = document.getElementById('adminCacheSize');
+        if (adminCacheSizeElement) {
+            adminCacheSizeElement.textContent = 'Error';
+        }
+        console.error('Erro ao obter estatísticas de cache:', error);
     }
 }
 
@@ -360,7 +377,7 @@ function displayTournaments(tournaments) {
     const cardsHTML = tournaments.map(tournament => `
         <div class="card tournament-card" data-i18n="">
             <div class="card-header" data-i18n="">
-                <div class="card-title" data-i18n="js.tournament.error.name">${tournament.name || 'Nome não disponível'}</div>
+                <div class="card-title">${tournament.name || 'Nome não disponível'}</div>
                 <div class="tournament-meta" data-i18n="">
                     ${tournament.id ? `<span class="tournament-badge" data-i18n="">ID: ${tournament.id}</span>` : ''}
                     ${tournament.status ? `<span class="tournament-badge status" data-i18n="">${tournament.status}</span>` : ''}

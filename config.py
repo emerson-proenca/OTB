@@ -14,7 +14,7 @@ class Settings:
     # BASE URL
     RENDER_URL = "https://over-the-board.onrender.com"
     LOCAL_URL = "http://localhost"
-    BASE_URL = RENDER_URL if IS_RENDER else LOCAL_URL
+    BASE_URL = os.getenv("BASE_URL","http://localhost:8000")
     
     # API
     APP_NAME = "Over the Board"
