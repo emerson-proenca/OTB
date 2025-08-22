@@ -19,25 +19,27 @@
 <body>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+    // Checks for localhost or render
+    document.addEventListener("DOMContentLoaded", () => {
     const apiLinks = document.querySelectorAll(".api-link");
 
     const isLocalhost =
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
 
-    // Se for localhost, força localhost:8000
     const baseUrl = isLocalhost
       ? "http://localhost:8000"
-      : (window.API_BASE_URL || "https://over-the-board.onrender.com");
+      : "https://over-the-board.onrender.com";
+      
+    window.API_BASE_URL = "{{ API_BASE_URL }}";
 
     apiLinks.forEach(link => {
-      const path = link.getAttribute("data-path");
+        const path = link.getAttribute("data-path");
 
-      // Só define o href se houver data-path e for relativo
-      if (path && !path.startsWith("http")) {
-        link.href = baseUrl + path;
-      }
+        // Só define o href se houver data-path e for relativo
+        if (path && !path.startsWith("http")) {
+            link.href = baseUrl + path;
+        }
     });
   });
 </script>

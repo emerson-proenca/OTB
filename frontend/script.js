@@ -1,8 +1,7 @@
 // Configuração da API
 const isLocalhost = window.location.hostname === 'localhost';
 
-const API_BASE_URL = window.API_BASE_URL || 'http://localhost:8000';
-
+const API_BASE_URL = isLocalhost ? 'http://localhost:8000' : 'https://over-the-board.onrender.com';
 
 // Estado da aplicação
 let currentSection = 'home';
@@ -502,8 +501,9 @@ async function checkHealth() {
     await checkApiHealth();
 }
 
+// The next line of code were causing a headache, so I'll comment them out for now.
 // Refresh cache stats periodically
-setInterval(getCacheStats, 30000); // A cada 30 segundos
+// setInterval(getCacheStats, 30000); // A cada 30 segundos
 
 // Auto-refresh API status
-setInterval(checkApiHealth, 60000); // A cada 1 minuto
+// setInterval(checkApiHealth, 60000); // A cada 1 minuto
