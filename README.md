@@ -1,171 +1,211 @@
-# Over the Board 🏆
+# Over The Board 🏆
 
-Bem-vindo à **Over the Board**! Uma API moderna e robusta para consulta de informações sobre xadrez da Confederação Brasileira de Xadrez (CBX).
+Welcome to **Over The Board (OTB)**!
+A modern and robust **open-source API** to fetch chess tournament and player information from federations worldwide.
 
-> **Nota**: Este é um projeto pessoal e não possui ligação oficial com a CBX.
+> **Note**: This is a community-driven project and has no official connection with any chess federation.
 
-## 🚀 Funcionalidades
+---
 
-### ✅ Disponíveis
-- **Torneios CBX** - Lista torneios por ano e mês
-- **Jogadores CBX** - Consulta jogadores por estado
-- **Notícias CBX** - Últimas notícias do site oficial
-- **Comunicados CBX** - Comunicados oficiais da federação
-- **Cache inteligente** - Sistema de cache para melhor performance
-- **Rate limiting** - Proteção contra spam e sobrecarga
-- **Logging avançado** - Logs detalhados para debugging
-- **CORS habilitado** - Acesso de qualquer origem
-- **Documentação automática** - Swagger UI e ReDoc
+## 🚀 Features
 
-### 🔄 Em desenvolvimento
-- **FIDE Tournaments** - Torneios internacionais
-- **USCF Integration** - Federação americana
-- **Chess-results.com** - Maior base de torneios mundial
+### ✅ Available
+
+* **CBX Tournaments** – List tournaments by year and month
+* **CBX Players** – Query players by Brazilian state
+* **CBX News** – Latest news from the official site
+* **CBX Announcements** – Official federation announcements
+* **Smart caching** – Faster performance with in-memory cache
+* **Rate limiting** – Protection against abuse and overload
+* **Advanced logging** – Structured logs for debugging
+* **CORS enabled** – Access API from any origin
+* **Auto-generated documentation** – Swagger UI and ReDoc
+
+### 🔄 In Development
+
+* **FIDE Tournaments** – International tournaments
+* **USCF Integration** – United States Chess Federation
+* **Chess-results.com** – Largest tournament database worldwide
+
+---
 
 ## 📋 Endpoints
 
-| Endpoint | Método | Descrição |
-|----------|--------|-----------|
-| `/` | GET | Informações da API |
-| `/health` | GET | Status da aplicação |
-| `/tournaments` | GET | Lista torneios CBX |
-| `/jogadores` | GET | Lista jogadores por UF |
-| `/noticias` | GET | Últimas notícias |
-| `/comunicados` | GET | Comunicados oficiais |
-| `/cache/stats` | GET | Estatísticas do cache |
-| `/cache/clear` | DELETE | Limpa o cache |
-| `/docs` | GET | Documentação Swagger |
-| `/redoc` | GET | Documentação ReDoc |
+| Endpoint         | Method | Description                      |
+| ---------------- | ------ | -------------------------------- |
+| `/`              | GET    | API information                  |
+| `/health`        | GET    | Application health status        |
+| `/tournaments`   | GET    | List tournaments (currently CBX) |
+| `/players`       | GET    | List players by state (CBX)      |
+| `/news`          | GET    | Latest federation news           |
+| `/announcements` | GET    | Official announcements           |
+| `/cache/stats`   | GET    | Cache statistics                 |
+| `/cache/clear`   | DELETE | Clear cache                      |
+| `/docs`          | GET    | Swagger documentation            |
+| `/redoc`         | GET    | ReDoc documentation              |
 
-## 🛠️ Tecnologias
+---
 
-- **FastAPI** - Framework web moderno e rápido
-- **Python 3.8+** - Linguagem principal
-- **BeautifulSoup4** - Web scraping
-- **Uvicorn** - Servidor ASGI
-- **Requests** - Cliente HTTP
-- **Jinja2** - Cliente Python
+## 🛠️ Tech Stack
 
-## 🏃‍♂️ Como executar
+* **FastAPI** – Modern Python web framework
+* **Python 3.8+** – Main programming language
+* **BeautifulSoup4** – Web scraping utilities
+* **Uvicorn** – ASGI server
+* **Requests** – HTTP client
+* **Jinja2** – Template engine
 
-### Pré-requisitos
-- Python 3.8 ou superior
-- pip (gerenciador de pacotes)
+---
 
-### Instalação
+## 🏃‍♂️ How to Run
 
-1. **Clone o repositório**
+### Requirements
+
+* Python 3.8+
+* pip (package manager)
+
+### Installation
+
+1. **Clone the repository**
+
    ```bash
-   git clone <url-do-repositorio>
-   cd Chess-Tournaments-API-main
+   git clone <repository-url>
+   cd otb-api
    ```
 
-2. **Instale as dependências**
+2. **Install dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Execute a API**
+3. **Run the API**
+
    ```bash
    python main.py
    ```
-   
-   Ou usando uvicorn diretamente:
+
+   Or run directly with Uvicorn:
+
    ```bash
    python -m uvicorn main:app --reload
    ```
 
-### 🌐 Acesso
+### 🌐 Access
 
-Após iniciar, a API estará disponível em:
+Once running, the API will be available at:
 
-- **API**: https://over-the-board.onrender.com
-- **Documentação**: https://over-the-board.onrender.com/docs
-- **ReDoc**: https://over-the-board.onrender.com/redoc
+* **API**: [https://over-the-board.onrender.com](https://over-the-board.onrender.com)
+* **Swagger Docs**: [https://over-the-board.onrender.com/docs](https://over-the-board.onrender.com/docs)
+* **ReDoc**: [https://over-the-board.onrender.com/redoc](https://over-the-board.onrender.com/redoc)
 
-## 📖 Exemplos de uso
+---
 
-### Buscar torneios de 2025
+## 📖 Usage Examples
+
+### Fetch tournaments from 2025
+
 ```bash
 curl "https://over-the-board.onrender.com/tournaments?federation=cbx&year=2025&month=1&limit=5"
 ```
 
-### Buscar jogadores de São Paulo
+### Fetch players from São Paulo
+
 ```bash
-curl "https://over-the-board.onrender.com/jogadores?state=SP&paginas=1"
+curl "https://over-the-board.onrender.com/players?state=SP&pages=1"
 ```
 
-### Últimas notícias
+### Latest news
+
 ```bash
-curl "https://over-the-board.onrender.com/noticias?paginas=1"
+curl "https://over-the-board.onrender.com/news?pages=1"
 ```
-
-## ⚙️ Configurações
-
-A API suporta configuração via variáveis de ambiente:
-
-- `DEBUG` - Modo debug (true/false)
-- `RATE_LIMIT_REQUESTS` - Limite de requisições por minuto
-- `CACHE_TTL_DEFAULT` - TTL padrão do cache em segundos
-- `HTTP_TIMEOUT` - Timeout para requisições HTTP
-- `LOG_LEVEL` - Nível de log (DEBUG, INFO, WARNING, ERROR)
-
-## 📊 Recursos avançados
-
-### Cache
-- Sistema de cache em memória
-- TTL configurável por endpoint
-- Endpoint para monitoramento: `/cache/stats`
-
-### Rate Limiting
-- 100 requisições por minuto por IP (configurável)
-- Headers informativos: `X-RateLimit-*`
-- Resposta 429 quando limite excedido
-
-### Logging
-- Logs estruturados
-- Arquivo de log: `chess_api.log`
-- Diferentes níveis de verbosidade
-
-## 🏗️ Arquitetura futura
-
-```
-Over the Board
-├── international/
-│   ├── fide/           # Torneios FIDE
-│   └── chess-results/  # Chess-results.com
-├── local/
-│   ├── brazil/
-│   │   └── cbx/        # ✅ Implementado
-│   └── united_states/
-│       └── uscf/       # 🔄 Planejado
-└── features/
-    ├── analytics/      # 📊 Análises
-    ├── notifications/  # 🔔 Alertas
-    └── export/         # 📤 Exportação
-```
-
-## 🤝 Contribuição
-
-Contribuições são bem-vindas! Este projeto visa se tornar a maior API de torneios de xadrez do mundo.
-
-### Como contribuir:
-1. Fork o projeto
-2. Crie uma branch para sua feature
-3. Commit suas mudanças
-4. Push para a branch
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença Apache 2.0. Veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 🚧 Status do projeto
-
-**Versão atual**: 1.0.3  
-**Progresso**: ~35% concluído  
-**Próxima milestone**: Integração FIDE
 
 ---
 
-Feito com ☕ e muito ❤️ para a comunidade brasileira de xadrez!
+## ⚙️ Configuration
+
+The API supports configuration via environment variables:
+
+* `DEBUG` – Debug mode (true/false)
+* `RATE_LIMIT_REQUESTS` – Requests per minute limit
+* `CACHE_TTL_DEFAULT` – Default cache TTL in seconds
+* `HTTP_TIMEOUT` – HTTP request timeout
+* `LOG_LEVEL` – Logging level (DEBUG, INFO, WARNING, ERROR)
+
+---
+
+## 📊 Advanced Features
+
+### Cache
+
+* In-memory cache
+* Configurable TTL per endpoint
+* Monitoring endpoint: `/cache/stats`
+
+### Rate Limiting
+
+* Default: 100 requests/minute per IP (configurable)
+* Informative headers: `X-RateLimit-*`
+* Returns `429` when exceeded
+
+### Logging
+
+* Structured logs
+* Log file: `otb_api.log`
+* Verbosity levels configurable
+
+---
+
+## 🏗️ Future Architecture
+
+```
+Over The Board
+├── international/
+│   ├── fide/           # FIDE tournaments
+│   └── chess-results/  # Chess-results.com
+├── local/
+│   ├── brazil/
+│   │   └── cbx/        # ✅ Implemented
+│   └── united_states/
+│       └── uscf/       # 🔄 Planned
+└── features/
+    ├── analytics/      # 📊 Tournament analytics
+    ├── notifications/  # 🔔 Alerts
+    └── export/         # 📤 Data export
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+The goal is to make **OTB the world’s most comprehensive chess tournament API**.
+
+### Steps:
+
+1. Fork the project
+2. Create a feature branch
+3. Commit your changes
+4. Push to your branch
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **Apache 2.0 License**. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🚧 Project Status
+
+**Current version**: 1.0.3
+**Progress**: \~15% complete
+**Next milestone**: FIDE integration
+
+---
+
+Made with ☕ and ❤️ for the global chess community!
+
+👉 Do you want me to also create a **`README.pt-BR.md`** version so you can keep both side by side in the repo (English as canonical, Portuguese for onboarding Brazilian contributors)?
