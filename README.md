@@ -194,7 +194,7 @@ The goal is to make **OTB the world’s most comprehensive chess tournament API*
 
 ## 📄 License
 
-This project is licensed under the **Apache 2.0 License**. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the **AGPL-3.0 license**. See the [LICENSE](LICENSE) file for details.
 
 ---
 
