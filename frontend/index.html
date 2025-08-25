@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en-US">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="home.title">Over the Board - Dashboard</title>
+    <title data-i18n="home.title">Over The Board - Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('frontend', path='/styles.css') }}">
@@ -50,7 +50,7 @@
             <nav class="navbar navbar-expand-lg">
                 <div class="navbar-brand d-flex align-items-center">
                     <i class="fas fa-chess-king me-2"></i>
-                    <h1 class="mb-0 d-none d-sm-block" data-i18n="home.header.name" >Over the Board</h1>
+                    <h1 class="mb-0 d-none d-sm-block" data-i18n="home.header.name">Over The Board</h1>
                     <h1 class="mb-0 d-sm-none fs-6" data-i18n="home.name">Chess API</h1>
                 </div>
                 
@@ -61,19 +61,19 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <div class="navbar-nav ms-auto">
                         <button class="nav-btn active" data-section="home">
-                            <i class="fas fa-home"></i> <span data-i18n="header.home">Início</span>
+                            <i class="fas fa-home"></i> <span data-i18n="header.home">Home</span>
                         </button>
                         <button class="nav-btn" data-section="tournaments">
-                            <i class="fas fa-trophy"></i> <span data-i18n="header.tournaments">Torneios</span>
+                            <i class="fas fa-trophy"></i> <span data-i18n="header.tournaments">Tournaments</span>
                         </button>
                         <button class="nav-btn" data-section="players">
-                            <i class="fas fa-users"></i> <span data-i18n="header.players">Jogadores</span>
+                            <i class="fas fa-users"></i> <span data-i18n="header.players">Players</span>
                         </button>
                         <button class="nav-btn" data-section="news">
-                            <i class="fas fa-newspaper"></i> <span data-i18n="header.news">Notícias</span>
+                            <i class="fas fa-newspaper"></i> <span data-i18n="header.news">News</span>
                         </button>
                         <button class="nav-btn" data-section="announcements">
-                            <i class="fas fa-bullhorn"></i> <span data-i18n="header.announcements">Comunicados</span>
+                            <i class="fas fa-bullhorn"></i> <span data-i18n="header.announcements">Announcements</span>
                         </button>
                         <button class="nav-btn" data-section="admin">
                             <i class="fas fa-cog"></i> <span data-i18n="header.admin">Admin</span>
@@ -90,58 +90,58 @@
             <!-- Loading Overlay -->
             <div class="loading-overlay" id="loadingOverlay">
                 <div class="spinner"></div>
-                <p data-i18n="generic.loading">Carregando dados...</p>
+                <p data-i18n="generic.loading">Loading data...</p>
             </div>
 
             <!-- Home Section -->
             <section id="home" class="section active">
                 <div class="hero text-center">
-                    <h2 class="mb-3" data-i18n="home.welcome">Bem-vindo à Over the Board</h2>
-                    <p class="mb-4" data-i18n="home.subTitle">API moderna e robusta para consulta de informações sobre xadrez da CBX</p>
+                    <h2 class="mb-3" data-i18n="home.welcome">Welcome to Over The Board</h2>
+                    <p class="mb-4" data-i18n="home.subTitle">Your platform for finding and registring for live chess tournaments</p>
                     <div class="row g-3 mb-4">
                         <div class="col-6 col-md-3">
                             <div class="stat-card text-center p-3">
                                 <i class="fas fa-server mb-2"></i>
-                                <h3 id="apiStatus" class="fs-6 mb-1" data-i18n="home.verifying">Verificando...</h3>
-                                <p class="small mb-0" data-i18n="home.apiStatus">Status da API</p>
+                                <h3 id="apiStatus" class="fs-6 mb-1" data-i18n="home.verifying">Checking...</h3>
+                                <p class="small mb-0" data-i18n="home.apiStatus">API Status</p>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
                             <div class="stat-card text-center p-3">
                                 <i class="fas fa-database mb-2"></i>
                                 <h3 id="cacheSize" class="fs-6 mb-1">0</h3>
-                                <p class="small mb-0"><span data-i18n="home.cacheTitle"> Itens em Cache</span></p>
+                                <p class="small mb-0"><span data-i18n="home.cacheTitle"> Cache Items</span></p>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
                             <div class="stat-card text-center p-3">
                                 <i class="fas fa-chart-line mb-2"></i>
                                 <h3 class="fs-6 mb-1">1.0.3</h3>
-                                <p class="small mb-0" data-i18n="home.versionTitle">Versão Atual</p>
+                                <p class="small mb-0" data-i18n="home.versionTitle">Current Version</p>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
                             <div class="stat-card text-center p-3">
                                 <i class="fas fa-clock mb-2"></i>
                                 <h3 id="currentTime" class="fs-6 mb-1">--:--</h3>
-                                <p class="small mb-0" data-i18n="home.currentTime">Horário</p>
+                                <p class="small mb-0" data-i18n="home.currentTime">Time</p>
                             </div>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap gap-2 justify-content-center">
                         <button class="btn btn-primary" onclick="showSection('tournaments')">
-                            <i class="fas fa-trophy"></i> <span data-i18n="home.showTournaments">Ver Torneios</span>
+                            <i class="fas fa-trophy"></i> <span data-i18n="home.showTournaments">View Tournaments</span>
                         </button>
                         <button class="btn btn-secondary" onclick="showSection('players')">
-                            <i class="fas fa-users"></i> <span data-i18n="home.showPlayers">Buscar Jogadores</span>
+                            <i class="fas fa-users"></i> <span data-i18n="home.showPlayers">Search Players</span>
                         </button>
                         <a class="api-link btn btn-outline-primary" data-path="/docs" href="#">
-                            <i class="fas fa-book"></i> <span data-i18n="home.documentation">Documentação</span>
+                            <i class="fas fa-book"></i> <span data-i18n="home.documentation">Documentation</span>
                         </a>
                         <div class="language-selector-wrapper">
                             <select onchange="loadLocale(this.value)" id="languageSelector" class="form-select auto-width">
-                                <option value="pt" data-i18n="">Português</option>
                                 <option value="en" data-i18n="">English</option>
+                                <option value="pt" data-i18n="">Português</option>
                             </select>
                         </div>
                     </div>
@@ -152,13 +152,13 @@
             <section id="tournaments" class="section">
                 <div class="section-header text-center mb-4">
                     <h2><i class="fas fa-trophy"></i>
-                        <span data-i18n="tournaments.title"> Torneios CBX</span></h2>
-                    <p data-i18n="tournaments.subTitle">Consulte torneios por ano e mês</p>
+                        <span data-i18n="tournaments.title"> Chess Tournaments</span></h2>
+                    <p data-i18n="tournaments.subTitle">Query tournaments by year and month</p>
                 </div>
                 
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-sm-6 col-md-3">
-                        <label for="tournamentYear" class="form-label" data-i18n="tournaments.year">Ano:</label>
+                        <label for="tournamentYear" class="form-label" data-i18n="tournaments.year">Year:</label>
                         <select id="tournamentYear" class="form-select">
                             <option value="2025" data-i18n="tournaments.year.2025">2025</option>
                             <option value="2024" data-i18n="tournaments.year.2024">2024</option>
@@ -166,25 +166,25 @@
                         </select>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <label for="tournamentMonth" class="form-label" data-i18n="tournaments.month">Mês:</label>
+                        <label for="tournamentMonth" class="form-label" data-i18n="tournaments.month">Month:</label>
                         <select id="tournamentMonth" class="form-select">
-                            <option value="" data-i18n="tournaments.month.all">Todos</option>
-                            <option value="1" data-i18n="tournaments.month.january">Janeiro</option>
-                            <option value="2" data-i18n="tournaments.month.february">Fevereiro</option>
-                            <option value="3" data-i18n="tournaments.month.march">Março</option>
-                            <option value="4" data-i18n="tournaments.month.april">Abril</option>
-                            <option value="5" data-i18n="tournaments.month.may">Maio</option>
-                            <option value="6" data-i18n="tournaments.month.june">Junho</option>
-                            <option value="7" data-i18n="">Julho</option>
-                            <option value="8" data-i18n="tournaments.month.august">Agosto</option>
-                            <option value="9" data-i18n="tournaments.month.september">Setembro</option>
-                            <option value="10" data-i18n="tournaments.month.october">Outubro</option>
-                            <option value="11" data-i18n="tournaments.month.november">Novembro</option>
-                            <option value="12" data-i18n="tournaments.month.december">Dezembro</option>
+                            <option value="" data-i18n="tournaments.month.all">All</option>
+                            <option value="1" data-i18n="tournaments.month.january">January</option>
+                            <option value="2" data-i18n="tournaments.month.february">February</option>
+                            <option value="3" data-i18n="tournaments.month.march">March</option>
+                            <option value="4" data-i18n="tournaments.month.april">April</option>
+                            <option value="5" data-i18n="tournaments.month.may">May</option>
+                            <option value="6" data-i18n="tournaments.month.june">June</option>
+                            <option value="7" data-i18n="tournaments.month.july">July</option>
+                            <option value="8" data-i18n="tournaments.month.august">August</option>
+                            <option value="9" data-i18n="tournaments.month.september">September</option>
+                            <option value="10" data-i18n="tournaments.month.october">October</option>
+                            <option value="11" data-i18n="tournaments.month.november">November</option>
+                            <option value="12" data-i18n="tournaments.month.december">December</option>
                         </select>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <label for="tournamentLimit" class="form-label" data-i18n="tournaments.limitTitle">Limite:</label>
+                        <label for="tournamentLimit" class="form-label" data-i18n="tournaments.limitTitle">Limit:</label>
                         <select id="tournamentLimit" class="form-select">
                             <option value="10" data-i18n="tournaments.limit.10">10</option>
                             <option value="20" data-i18n="tournaments.limit.20">20</option>
@@ -194,7 +194,7 @@
                     </div>
                     <div class="col-12 col-sm-6 col-md-3 d-flex align-items-end">
                         <button class="btn btn-primary w-100" onclick="searchTournaments()">
-                            <i class="fas fa-search"></i> <span data-i18n="tournaments.search">Buscar</span>
+                            <i class="fas fa-search"></i> <span data-i18n="tournaments.search">Search</span>
                         </button>
                     </div>
                 </div>
@@ -202,7 +202,7 @@
                 <div id="tournamentsResults" class="results-container">
                     <div class="empty-state text-center">
                         <i class="fas fa-trophy"></i>
-                        <p data-i18n="tournaments.searchDescription">Use os filtros acima para buscar torneios</p>
+                        <p data-i18n="tournaments.searchDescription">Use the filters above to search for tournaments</p>
                     </div>
                 </div>
             </section>
@@ -211,13 +211,13 @@
             <section id="players" class="section">
                 <div class="section-header text-center mb-4">
                     <h2><i class="fas fa-users"></i>
-                        <span data-i18n="players.title"> Jogadores Xadrez</span></h2>
-                    <p data-i18n="players.subTitle">Consulte jogadores por estado</p>
+                        <span data-i18n="players.title"> Chess Players</span></h2>
+                    <p data-i18n="players.subTitle">Query players by state</p>
                 </div>
                 
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-md-6">
-                        <label for="playerUF" class="form-label" data-i18n="players.stateTitle">Estado (UF):</label>
+                        <label for="playerUF" class="form-label" data-i18n="players.stateTitle">State (UF):</label>
                         <select id="playerUF" class="form-select">
                             <option value="SP">São Paulo (SP)</option>
                             <option value="RJ">Rio de Janeiro (RJ)</option>
@@ -249,7 +249,7 @@
                         </select>
                     </div>
                     <div class="col-12 col-md-3">
-                        <label for="playerPages" class="form-label" data-i18n="players.pagesTitle">Páginas:</label>
+                        <label for="playerPages" class="form-label" data-i18n="players.pagesTitle">Pages:</label>
                         <select id="playerPages" class="form-select">
                             <option value="1" data-i18n="players.pages.1">1</option>
                             <option value="2" data-i18n="players.pages.2">2</option>
@@ -260,7 +260,7 @@
                     </div>
                     <div class="col-12 col-md-3 d-flex align-items-end">
                         <button class="btn btn-primary w-100" onclick="searchPlayers()">
-                            <i class="fas fa-search"></i> <span data-i18n="players.search">Buscar</span>
+                            <i class="fas fa-search"></i> <span data-i18n="players.search">Search</span>
                         </button>
                     </div>
                 </div>
@@ -268,7 +268,7 @@
                 <div id="playersResults" class="results-container">
                     <div class="empty-state text-center">
                         <i class="fas fa-users"></i>
-                        <p data-i18n="players.searchDescription">Use os filtros acima para buscar jogadores</p>
+                        <p data-i18n="players.searchDescription">Use the filters above to search for players</p>
                     </div>
                 </div>
             </section>
@@ -277,13 +277,13 @@
             <section id="news" class="section">
                 <div class="section-header text-center mb-4">
                     <h2><i class="fas fa-newspaper"></i>
-                        <span data-i18n="news.title"> Notícias CBX</span></h2>
-                    <p data-i18n="news.subTitle">Últimas notícias da Confederação Brasileira de Xadrez</p>
+                        <span data-i18n="news.title"> Chess News</span></h2>
+                    <p data-i18n="news.subTitle">Latest news from Chess federations</p>
                 </div>
                 
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-md-6">
-                        <label for="newsPages" class="form-label" data-i18n="news.pagesTitle">Páginas:</label>
+                        <label for="newsPages" class="form-label" data-i18n="news.pagesTitle">Pages:</label>
                         <select id="newsPages" class="form-select">
                             <option value="1" data-i18n="news.pages.1">1</option>
                             <option value="2" data-i18n="news.pages.2">2</option>
@@ -293,7 +293,7 @@
                     </div>
                     <div class="col-12 col-md-6 d-flex align-items-end">
                         <button class="btn btn-primary w-100" onclick="searchNews()">
-                            <i class="fas fa-search"></i> <span data-i18n="news.search">Buscar Notícias</span>
+                            <i class="fas fa-search"></i> <span data-i18n="news.search">Search News</span>
                         </button>
                     </div>
                 </div>
@@ -301,7 +301,7 @@
                 <div id="newsResults" class="results-container">
                     <div class="empty-state text-center">
                         <i class="fas fa-newspaper"></i>
-                        <p data-i18n="news.searchDescription">Clique em "Buscar Notícias" para carregar as últimas notícias</p>
+                        <p data-i18n="news.searchDescription">Click 'Search News' to load the latest news</p>
                     </div>
                 </div>
             </section>
@@ -310,13 +310,13 @@
             <section id="announcements" class="section">
                 <div class="section-header text-center mb-4">
                     <h2><i class="fas fa-bullhorn"></i>
-                        <span data-i18n="announcements.title"> Comunicados Xadrez</span></h2>
-                    <p data-i18n="announcements.subTitle">Comunicados oficiais da Confederação Brasileira de Xadrez</p>
+                        <span data-i18n="announcements.title"> Chess Announcements</span></h2>
+                    <p data-i18n="announcements.subTitle">Official announcements from Chess federations</p>
                 </div>
                 
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-md-6">
-                        <label for="announcementPages" class="form-label" data-i18n="">Páginas:</label>
+                        <label for="announcementPages" class="form-label" data-i18n="">Pages:</label>
                         <select id="announcementPages" class="form-select">
                             <option value="1" data-i18n="announcements.pages.1">1</option>
                             <option value="2" data-i18n="announcements.pages.2">2</option>
@@ -326,7 +326,7 @@
                     </div>
                     <div class="col-12 col-md-6 d-flex align-items-end">
                         <button class="btn btn-primary w-100" onclick="searchAnnouncements()">
-                            <i class="fas fa-search"></i> <span data-i18n="announcements.search">Buscar Comunicados</span>
+                            <i class="fas fa-search"></i> <span data-i18n="announcements.search">Search Announcements</span>
                         </button>
                     </div>
                 </div>
@@ -334,7 +334,7 @@
                 <div id="announcementsResults" class="results-container">
                     <div class="empty-state text-center">
                         <i class="fas fa-bullhorn"></i>
-                        <p data-i18n="announcements.searchDescription">Clique em "Buscar Comunicados" para carregar os comunicados</p>
+                        <p data-i18n="announcements.searchDescription">Click 'Search Announcements' to load the announcements</p>
                     </div>
                 </div>
             </section>
@@ -343,22 +343,22 @@
             <section id="admin" class="section">
                 <div class="section-header text-center mb-4">
                     <h2><i class="fas fa-cog"></i>
-                        <span data-i18n="admin.title"> Administração</span></h2>
-                    <p data-i18n="admin.subTitle">Gerenciamento da API e cache</p>
+                        <span data-i18n="admin.title"> Administration</span></h2>
+                    <p data-i18n="admin.subTitle">API and cache management</p>
                 </div>
                 
                 <div class="row g-4 mb-4">
                     <div class="col-12 col-md-6 col-lg-4">
                         <div class="admin-card h-100 p-3">
                             <h3 class="h5"><i class="fas fa-heartbeat"></i>
-                                <Span data-i18n="admin.statusTitle"> Status da API</Span>
+                                <Span data-i18n="admin.statusTitle"> API Status</Span>
                             </h3>
                             <div id="healthStatus" class="status-indicator mb-3">
                                 <span class="status-dot"></span>
-                                <span class="status-text" data-i18n="admin.statusVerifying">Verificando...</span>
+                                <span class="status-text" data-i18n="admin.statusVerifying">Checking...</span>
                             </div>
                             <button class="btn btn-outline-primary btn-sm w-100" onclick="checkHealth()">
-                                <i class="fas fa-sync"></i> <span data-i18n="admin.statusCheck">Verificar Status</span>
+                                <i class="fas fa-sync"></i> <span data-i18n="admin.statusCheck">Check Status</span>
                             </button>
                         </div>
                     </div>
@@ -367,13 +367,13 @@
                         <div class="admin-card h-100 p-3">
                             <h3 class="h5"><i class="fas fa-database"></i>
                                 <span data-i18n="admin.cacheTitle"> Cache</span></h3>
-                            <p class="mb-3" data-i18n="admin.cacheSubTitle">Itens em cache: <span id="adminCacheSize" data-i18n="home.cacheCount">0</span></p>
+                            <p class="mb-3" data-i18n="admin.cacheSubTitle">Items in cache: <span id="adminCacheSize" data-i18n="home.cacheCount">0</span></p>
                             <div class="d-grid gap-2">
                                 <button class="btn btn-outline-primary btn-sm" onclick="getCacheStats()">
-                                    <i class="fas fa-chart-bar"></i> <span data-i18n="admin.cacheStats">Ver Stats</span>
+                                    <i class="fas fa-chart-bar"></i> <span data-i18n="admin.cacheStats">View Stats</span>
                                 </button>
                                 <button class="btn btn-outline-danger btn-sm" onclick="clearCache()">
-                                    <i class="fas fa-trash"></i> <span data-i18n="admin.cacheClear">Limpar Cache</span>
+                                    <i class="fas fa-trash"></i> <span data-i18n="admin.cacheClear">Clear Cache</span>
                                 </button>
                             </div>
                         </div>
@@ -382,7 +382,7 @@
                     <div class="col-12 col-lg-4">
                         <div class="admin-card h-100 p-3">
                             <h3 class="h5"><i class="fas fa-link" aria-hidden="true"></i>
-                                <span data-i18n="admin.linksTitle">Links Úteis</span></h3>
+                                <span data-i18n="admin.linksTitle">Useful Links</span></h3>
                             <div class="d-grid gap-2">
                                 <a class="api-link btn btn-outline-primary" data-path="/docs" href="#">
                                     <i class="fas fa-book"></i> <span data-i18n="admin.link.swagger">Swagger Docs</span>
@@ -390,7 +390,7 @@
                                 <a class="api-link btn btn-outline-primary" data-path="/redocs" href="#">
                                     <i class="fas fa-file-alt"></i> <span data-i18n="admin.link.redoc">ReDoc</span>
                                 </a>
-                                <a class="api-link btn btn-outline-primary" href="https://github.com/Emersh0w/Chess-Tournaments-API" target="_blank" rel="noopener noreferrer">
+                                <a class="api-link btn btn-outline-primary" href="https://github.com/Emersh0w/Over-The-Board" target="_blank" rel="noopener noreferrer">
                                     <i class="fa-brands fa-github"></i> <span data-i18n="admin.link.github">GitHub</span>
                                 </a>
                                 </a>
@@ -401,7 +401,7 @@
 
                 <div class="admin-card p-3">
                     <h3 class="h5" data-i18n="admin.apiResponse"><i class="fas fa-terminal"></i> API Response</h3>
-                    <pre id="apiResponse" class="code-block" data-i18n="admin.apiResponse.none">Nenhuma resposta ainda...</pre>
+                    <pre id="apiResponse" class="code-block" data-i18n="admin.apiResponse.none">No response yet...</pre>
                 </div>
             </section>
         </div>
@@ -410,8 +410,8 @@
     <!-- Footer -->
     <footer class="footer mt-5">
         <div class="container-fluid px-3 text-center">
-            <p class="mb-1" data-i18n="footer.title">&copy; 2025 Over the Board - Feito com ❤️ para a comunidade brasileira de xadrez</p>
-            <p class="mb-0 small" data-i18n="footer.subTitle">API não oficial da CBX</p>
+            <p class="mb-1" data-i18n="footer.title">&copy; 2025 Over The Board - Made with ❤️ for the Chess Community</p>
+            <p class="mb-0 small" data-i18n="footer.subTitle">OTB has no legal bond with any chess federations</p>
         </div>
     </footer>
 

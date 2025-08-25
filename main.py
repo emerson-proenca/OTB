@@ -18,7 +18,7 @@ from fastapi import Request
 app = FastAPI(
     title="Over the Board",
     version="1.0.3",
-    description="API para consulta de torneios, jogadores, notícias e comunicados de xadrez da CBX",
+    description="API for tournaments, players, news and announcements for all chess federations (In the future)",
     docs_url="/docs",
     redoc_url="/redoc"
 )

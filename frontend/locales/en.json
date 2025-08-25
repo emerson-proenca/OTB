@@ -9,11 +9,11 @@
   "header.announcements": "Announcements",
   "header.admin": "Admin",
 
-  "home.title": "Over the Board - Dashboard",
-  "home.header.name": "Over the Board",
+  "home.title": "Over The Board - Dashboard",
+  "home.header.name": "Over The Board",
   "home.name": "Chess API",
-  "home.welcome": "Welcome to the Over the Board",
-  "home.subTitle": "A modern and robust API for accessing chess information.",
+  "home.welcome": "Welcome to the Over The Board",
+  "home.subTitle": "Your platform for finding and registring for live chess tournaments",
   "home.verifying": "Verifying...",
   "home.apiStatus": "API Status",
   "home.cacheCount": "0",
@@ -41,6 +41,7 @@
   "tournaments.month.april": "April",
   "tournaments.month.may": "May",
   "tournaments.month.june": "June",
+  "tournaments.month.july": "July",
   "tournaments.month.august": "August",
   "tournaments.month.september": "September",
   "tournaments.month.october": "October",
@@ -67,7 +68,7 @@
   "players.searchDescription": "Use the filters above to search players",
 
   "news.title": " Chess News",
-  "news.subTitle": "Latest news from the Brazilian Chess Confederation",
+  "news.subTitle": "Latest news from Chess federations",
   "news.pagesTitle": "Pages:",
   "news.pages.1": "1",
   "news.pages.2": "2",
@@ -102,8 +103,8 @@
   "admin.apiResponse": "API Response",
   "admin.apiResponse.none": "No response yet...",
 
-  "footer.title": "© 2025 Over the Board - Made with ❤️ for the Brazilian chess community",
-  "footer.subTitle": "Unofficial API of Chess Federations",
+  "footer.title": "&copy; 2025 Over The Board - Made with ❤️ for the Chess Community",
+  "footer.subTitle": "OTB has no legal bond with any chess federations",
 
   "generic.loading": "Loading data...",
 

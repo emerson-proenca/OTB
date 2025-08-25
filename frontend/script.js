@@ -167,7 +167,7 @@ async function makeApiCall(endpoint, params = {}) {
 }
 
 // Health Check
-let currentLanguage = 'pt'; // Defina o idioma atual globalmente
+let currentLanguage = 'en'; // Defina o idioma atual globalmente
 
 async function checkApiHealth() {
   try {
