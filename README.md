@@ -160,19 +160,52 @@ The API supports configuration via environment variables:
 ## 🏗️ Future Architecture
 
 ```
-Over The Board
-├── international/
-│   ├── fide/           # FIDE tournaments
-│   └── chess-results/  # Chess-results.com
-├── local/
-│   ├── brazil/
-│   │   └── cbx/        # ✅ Implemented
-│   └── united_states/
-│       └── uscf/       # 🔄 Planned
-└── features/
-    ├── analytics/      # 📊 Tournament analytics
-    ├── notifications/  # 🔔 Alerts
-    └── export/         # 📤 Data export
+over-the-board/
+├── apis/
+│   ├── players_api.py
+│   ├── tournaments_api.py
+│   ├── news_api.py
+│   └── announcements_api.py
+├── core/
+│   ├── cache.py
+│   ├── schemas.py
+│   └── utils.py
+├── database/
+│   ├── models.py
+│   ├── session.py
+│   └── migration.py
+├── jobs/
+│   ├── sync_playerss.py
+│   ├── sync_tournaments.py
+│   ├── sync_news.py
+│   └── sync_announcements.py
+├── scrapers/
+│   ├── cbx/
+│   │   ├── cbx_players.py
+│   │   ├── cbx_tournaments.py
+│   │   ├── cbx_news.py
+│   │   └── cbx_announcements.py
+│   ├── chess_results/
+│   │   └── cr_tournaments.py
+│   ├── fide/
+│   │   └── fide_players.py
+│   └── uscf/
+│       └── uscf_tournaments.py
+├── static/
+│   ├── css/
+│   │   └── styles.css
+│   ├── js/
+│   │   └── scripts.js
+│   ├── locales/
+│   │   ├── en-us.json
+│   │   ├── pt-br.json
+│   │   └── translation-guide.md
+│   └── index.html
+├── .gitignore
+├── LICENSE
+├── README.md
+├── requirements.txt
+└── main.py
 ```
 
 ---
@@ -206,6 +239,4 @@ This project is licensed under the **AGPL-3.0 license**. See the [LICENSE](LICEN
 
 ---
 
-Made with ☕ and ❤️ for the global chess community!
-
-👉 Do you want me to also create a **`README.pt-BR.md`** version so you can keep both side by side in the repo (English as canonical, Portuguese for onboarding Brazilian contributors)?
+Made ❤️ for the chess community!
