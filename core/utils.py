@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import re
 from typing import Optional, Dict, Any
-from logger_config import logger
+from core.logger_config import logger
 
 def get_hidden_fields(soup):
     """Retorna os campos ASP.NET necessários para postback."""

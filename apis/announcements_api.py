@@ -1,13 +1,13 @@
 import importlib
 from fastapi import APIRouter, Query, HTTPException
 from typing import Optional
-from schemas import CBXTournamentResponse
+from core.schemas import CBXTournamentResponse
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 
 # Mapeamento federações -> módulo e função
 FEDERATIONS = {
-    "cbx": ("local.cbx.cbx_tournaments", "get_tournaments"),
+    "cbx": ("scrapers.cbx.cbx_tournaments", "get_tournaments"),
     # add outras federações aqui...
 }
 

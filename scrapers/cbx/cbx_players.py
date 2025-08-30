@@ -3,8 +3,8 @@ import requests
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 from bs4 import BeautifulSoup
-from utils import get_hidden_fields
-from schemas import CBXPlayerResponse
+from core.utils import get_hidden_fields
+from core.schemas import CBXPlayerResponse
 
 router = APIRouter(prefix="/jogadores", tags=["jogadores"])
 

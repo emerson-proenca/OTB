@@ -9,7 +9,7 @@ class Settings:
     
     # Diretórios e Rede
     PORT = int(os.getenv("PORT", 3000))
-    FRONTEND_DIR = "frontend"
+    STATIC_DIR = "static"
     
     # BASE URL
     RENDER_URL = "https://over-the-board.onrender.com"

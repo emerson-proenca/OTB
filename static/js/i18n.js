@@ -1,6 +1,6 @@
 async function loadLocale(lang = 'en') {
   try {
-    const res = await fetch(`frontend/locales/${lang}.json`);
+    const res = await fetch(`static/locales/${lang}.json`);
     const translations = await res.json();
 
     document.querySelectorAll('[data-i18n]').forEach(el => {

@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 from fastapi import APIRouter, Query, HTTPException
 from datetime import datetime
 from typing import Optional
-from utils import get_hidden_fields, safe_find, safe_link, safe_line, after_colon
-from schemas import CBXTournamentResponse
+from core.utils import get_hidden_fields, safe_find, safe_link, safe_line, after_colon
+from core.schemas import CBXTournamentResponse
 
 router = APIRouter(prefix="/tournaments", tags=["tournaments"])
 

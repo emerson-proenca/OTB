@@ -2,14 +2,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from tournaments_api import router as tournaments_router
-from local.cbx.cbx_players import router as players_router
-from local.cbx.cbx_news import router as news_router
-from local.cbx.cbx_announcements import router as announcements_router
-from rate_limiter import rate_limit_middleware
-from logger_config import logger
-from cache import cache
-from config import settings
+from apis.tournaments_api import router as tournaments_router
+from scrapers.cbx.cbx_players import router as players_router
+from scrapers.cbx.cbx_news import router as news_router
+from scrapers.cbx.cbx_announcements import router as announcements_router
+from core.rate_limiter import rate_limit_middleware
+from core.logger_config import logger
+from core.cache import cache
+from core.config import settings
 
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
@@ -60,9 +60,9 @@ app.include_router(announcements_router)
 #         "status": "online"
 #     }
 
-app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-templates = Jinja2Templates(directory="frontend")
+templates = Jinja2Templates(directory="static")
 
 @app.get("/")
 async def home_page(request: Request):

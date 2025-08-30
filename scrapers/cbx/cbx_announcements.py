@@ -3,7 +3,7 @@ import requests
 from fastapi import APIRouter, HTTPException
 from bs4 import BeautifulSoup
 from typing import List, Optional
-from utils import get_hidden_fields
+from core.utils import get_hidden_fields
 
 router = APIRouter(prefix="/comunicados", tags=["comunicados"])
 

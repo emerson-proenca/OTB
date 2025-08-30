@@ -193,7 +193,7 @@ over-the-board/
 │       └── uscf_tournaments.py
 ├── static/
 │   ├── css/
-│   │   └── styles.css
+│   │   └── css/styles.css
 │   ├── js/
 │   │   └── scripts.js
 │   ├── locales/
