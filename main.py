@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from apis.tournaments_api import router as tournaments_router
+from apis.status_api import router as status_router
 from scrapers.cbx.cbx_players import router as players_router
 from scrapers.cbx.cbx_news import router as news_router
 from scrapers.cbx.cbx_announcements import router as announcements_router
@@ -40,6 +41,7 @@ app.include_router(tournaments_router)
 app.include_router(players_router)
 app.include_router(news_router)
 app.include_router(announcements_router)
+app.include_router(status_router)
 
 # @app.get("/", tags=["Root"])
 # async def root():
