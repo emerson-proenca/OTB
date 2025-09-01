@@ -507,3 +507,4 @@ async function checkHealth() {
 
 // Auto-refresh API status
 // setInterval(checkApiHealth, 60000); // A cada 1 minuto
+// Something feels odd about this code...
