@@ -78,21 +78,23 @@ def sync_cbxtournaments(year=None, month=None, limit=None):
     except requests.exceptions.RequestException as e:
         # atualizar job como failed e salvar erro
         dbj = SessionLocal()
-        j = dbj.query(SyncJob).get(job_id)
-        j.finished_at = datetime.now(timezone.utc)
-        j.status = "failed"
-        j.error = f"NetworkError: {str(e)}"
-        dbj.commit()
+        j = dbj.get(SyncJob, job_id)
+        if j:
+            j.finished_at = datetime.now(timezone.utc)
+            j.status = "failed"
+            j.error = f"UnexpectedError: {str(e)}"
+            dbj.commit()
         dbj.close()
         logger.exception("Erro de rede ao buscar dados da CBX. Sync abortado.")
         return
     except Exception as e:
         dbj = SessionLocal()
-        j = dbj.query(SyncJob).get(job_id)
-        j.finished_at = datetime.now(timezone.utc)
-        j.status = "failed"
-        j.error = f"UnexpectedError: {str(e)}"
-        dbj.commit()
+        j = dbj.get(SyncJob, job_id)
+        if j:
+            j.finished_at = datetime.now(timezone.utc)
+            j.status = "failed"
+            j.error = f"UnexpectedError: {str(e)}"
+            dbj.commit()
         dbj.close()
         logger.exception("Erro inesperado ao buscar dados da CBX. Sync abortado.")
         return
@@ -127,14 +129,15 @@ def sync_cbxtournaments(year=None, month=None, limit=None):
         db.close()
 
     # 3) atualizar registro de job como sucesso
-    db_job = SessionLocal()
-    j = db_job.query(SyncJob).get(job_id)
-    j.finished_at = datetime.now(timezone.utc)
-    j.status = "success"
-    j.created = created
-    j.updated = updated
-    db_job.commit()
-    db_job.close()
+    db_job2 = SessionLocal()
+    j = db_job2.get(SyncJob, job_id)
+    if j:
+        j.finished_at = datetime.now(timezone.utc)
+        j.status = "success"
+        j.created = created
+        j.updated = updated
+        db_job2.commit()
+    db_job2.close()
 
 
 if __name__ == "__main__":

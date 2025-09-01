@@ -47,21 +47,23 @@ def sync_cbxannouncements(max_pages: Optional[int] = None, limit: Optional[int] 
         announcements = fetch_announcements_raw(max_pages=max_pages)
     except requests.exceptions.RequestException as e:
         dbj = SessionLocal()
-        j = dbj.query(SyncJob).get(job_id)
-        j.finished_at = datetime.now(timezone.utc)
-        j.status = "failed"
-        j.error = f"NetworkError: {str(e)}"
-        dbj.commit()
+        j = dbj.get(SyncJob, job_id)
+        if j:
+            j.finished_at = datetime.now(timezone.utc)
+            j.status = "failed"
+            j.error = f"NetworkError: {str(e)}"
+            dbj.commit()
         dbj.close()
         logger.exception("Network error fetching CBX announcements. Sync aborted.")
         return
     except Exception as e:
         dbj = SessionLocal()
-        j = dbj.query(SyncJob).get(job_id)
-        j.finished_at = datetime.now(timezone.utc)
-        j.status = "failed"
-        j.error = f"UnexpectedError: {str(e)}"
-        dbj.commit()
+        j = dbj.get(SyncJob, job_id)
+        if j:
+            j.finished_at = datetime.now(timezone.utc)
+            j.status = "failed"
+            j.error = f"NetworkError: {str(e)}"
+            dbj.commit()
         dbj.close()
         logger.exception("Unexpected error fetching CBX announcements. Sync aborted.")
         return
@@ -92,12 +94,13 @@ def sync_cbxannouncements(max_pages: Optional[int] = None, limit: Optional[int] 
 
     # finalize job record
     db_job2 = SessionLocal()
-    j = db_job2.query(SyncJob).get(job_id)
-    j.finished_at = datetime.now(timezone.utc)
-    j.status = "success"
-    j.created = created
-    j.updated = updated
-    db_job2.commit()
+    j = db_job2.get(SyncJob, job_id)
+    if j:
+        j.finished_at = datetime.now(timezone.utc)
+        j.status = "success"
+        j.created = created
+        j.updated = updated
+        db_job2.commit()
     db_job2.close()
 
 if __name__ == "__main__":
