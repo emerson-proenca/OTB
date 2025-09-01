@@ -289,7 +289,7 @@ async function searchPlayers() {
     
     try {
         showLoading();
-        const response_players = await makeApiCall('/jogadores', {
+        const response_players = await makeApiCall('/players', {
             state: state,
             pages: pages
         });
@@ -316,7 +316,7 @@ async function searchNews() {
     
     try {
         showLoading();
-        const news = await makeApiCall('/noticias', {
+        const news = await makeApiCall('/news', {
             paginas: pages
         });
         
@@ -340,7 +340,7 @@ async function searchAnnouncements() {
     
     try {
         showLoading();
-        const announcements = await makeApiCall('/comunicados', {
+        const announcements = await makeApiCall('/announcements', {
             paginas: pages
         });
         
@@ -456,8 +456,8 @@ function displayNews(news) {
     const cardsHTML = news.map(item => `
         <div class="card news-card" data-i18n="">
             <div class="card-header" data-i18n="">
-                <div class="card-title" data-i18n="js.news.error.name">${item.titulo || 'Título não disponível'}</div>
-                ${item.data ? `<div class="news-date" data-i18n="">${item.data}</div>` : ''}
+                <div class="card-title" data-i18n="js.news.error.name">${item.title || 'Título não disponível'}</div>
+                ${item.date_text ? `<div class="news-date" data-i18n="">${item.date_text}</div>` : ''}
             </div>
             <div class="card-body" data-i18n="">
                 ${item.link ? `<a href="${item.link}" target="_blank" class="news-link" data-i18n="js.news.link">Ler notícia completa</a>` : ''}
@@ -484,8 +484,8 @@ function displayAnnouncements(announcements) {
     const cardsHTML = announcements.map(item => `
         <div class="card announcement-card" data-i18n="">
             <div class="card-header" data-i18n="">
-                <div class="card-title" data-i18n="js.announcements.error.name">${item.titulo || 'Título não disponível'}</div>
-                ${item.data ? `<div class="announcement-date" data-i18n="">${item.data}</div>` : ''}
+                <div class="card-title" data-i18n="js.announcements.error.name">${item.title || 'Título não disponível'}</div>
+                ${item.date_text ? `<div class="announcement-date" data-i18n="">${item.date_text}</div>` : ''}
             </div>
             <div class="card-body" data-i18n="">
                 ${item.link ? `<a href="${item.link}" target="_blank" class="announcement-link" data-i18n="js.announcements.link">Ler comunicado completo</a>` : ''}

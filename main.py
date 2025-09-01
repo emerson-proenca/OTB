@@ -1,19 +1,20 @@
-# Importa cada roteador da API 
+# Importa Fastapi
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
+# Importa cada roteador da API
 from apis.tournaments_api import router as tournaments_router
 from apis.status_api import router as status_router
-from scrapers.cbx.cbx_players import router as players_router
-from scrapers.cbx.cbx_news import router as news_router
-from scrapers.cbx.cbx_announcements import router as announcements_router
+from apis.players_api import router as players_router
+from apis.announcements_api import router as announcements_router
+from apis.news_api import router as news_router
+# Importa funções auxiliares
 from core.rate_limiter import rate_limit_middleware
 from core.logger_config import logger
 from core.cache import cache
 from core.config import settings
-
-from fastapi.templating import Jinja2Templates
-from fastapi import Request
 
 # Informações básicas
 app = FastAPI(
@@ -52,9 +53,9 @@ app.include_router(status_router)
 #         "description": "API para consulta de dados de xadrez da CBX",
 #         "endpoints": {
 #             "tournaments": "/tournaments - Lista torneios da CBX",
-#             "players": "/jogadores - Lista jogadores por UF",
-#             "news": "/noticias - Últimas notícias da CBX",
-#             "announcements": "/comunicados - Comunicados oficiais",
+#             "players": "/players - Lista jogadores por UF",
+#             "news": "/news - Últimas notícias",
+#             "announcements": "/announcements - Comunicados oficiais",
 #             "docs": "/docs - Documentação interativa",
 #             "redoc": "/redoc - Documentação alternativa"
 #         },
