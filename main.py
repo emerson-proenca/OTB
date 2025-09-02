@@ -1,9 +1,8 @@
-# Importar FastAPI
+# Importar FastAPI e Gzip
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
-from whitenoise import WhiteNoise
 
 # Importar routers
 from apis.tournaments_api import router as tournaments_router
@@ -77,7 +76,6 @@ app.add_middleware(
     GZipMiddleware,
     minimum_size=500
 )
-app = WhiteNoise(app, root="static", prefix="static/")
 
 # Entry point
 if __name__ == "__main__":
