@@ -1,7 +1,6 @@
 # Importações do FastAPI
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -36,7 +35,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.middleware("http")(rate_limit_middleware)
-app.add_middleware(GZipMiddleware,minimum_size = 1000)
 
 # Montagem de arquivos estáticos e templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -90,7 +88,6 @@ if __name__ == "__main__":
     else:
         base_url = f"{settings.LOCAL_URL}:8000"
     
-    print(f"🏠 Home disponível em: {base_url}")
     print(f"📊 Documentação disponível em: {base_url}/docs")
     print(f"📋 Redoc disponível em: {base_url}/redoc")
     print(f"🏥 Health check em: {base_url}/health")
