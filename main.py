@@ -52,7 +52,8 @@ app.include_router(status_router)
 async def home_page(request: Request):
     """Página inicial da aplicação"""
     return templates.TemplateResponse(
-        request=request, name="index.html"
+        "index.html", 
+        {"request": request}
     )
 
 @app.get("/health", tags=["Health"])
@@ -83,14 +84,12 @@ if __name__ == "__main__":
     logger.info("🚀 Iniciando Over the Board...")
     print("🚀 Iniciando Over the Board...")
     
-    if settings.IS_RENDER:
-        base_url = settings.RENDER_URL
-    else:
-        base_url = f"{settings.LOCAL_URL}:8000"
+    base_url = settings.BASE_URL
     
-    print(f"📊 Documentação disponível em: {base_url}/docs")
-    print(f"📋 Redoc disponível em: {base_url}/redoc")
-    print(f"🏥 Health check em: {base_url}/health")
-    print(f"📊 Stats do cache em: {base_url}/cache/stats")
+    print(f"🏠 Home: {base_url}/")
+    print(f"📊 Docs: {base_url}/docs")
+    print(f"📋 Redoc: {base_url}/redoc")
+    print(f"🏥 Health: {base_url}/health")
+    print(f"📊 Cache Status: {base_url}/cache/stats")
     
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

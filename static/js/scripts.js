@@ -1,7 +1,5 @@
 // Configuração da API
-const isLocalhost = window.location.hostname === 'localhost';
-
-const API_BASE_URL = isLocalhost ? 'http://localhost:8000' : 'https://over-the-board.onrender.com';
+const API_BASE_URL = window.location.origin;
 
 // Estado da aplicação
 let currentSection = 'home';
