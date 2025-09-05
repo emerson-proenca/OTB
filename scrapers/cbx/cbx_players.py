@@ -10,13 +10,24 @@ from urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 from core.utils import get_hidden_fields
 
+# exceptions to handle explicitly
+from requests.exceptions import ChunkedEncodingError, RequestException
+from urllib3.exceptions import ProtocolError, ReadTimeoutError
+import http.client
+
 logger = logging.getLogger("scraper_cbx_players")
 logger.setLevel(logging.INFO)
 
 BASE_URL = "https://www.cbx.org.br"
 URL = f"{BASE_URL}/rating"
 
+
 def _build_session(retries: int = 3, backoff: float = 1.0, connect_timeout: int = 5, read_timeout: int = 60) -> requests.Session:
+    """
+    Build a requests Session with urllib3 Retry adapter and sensible headers.
+    We still implement our own higher-level retry in _safe_request to catch
+    streaming/chunked errors that urllib3's Retry sometimes doesn't handle.
+    """
     session = requests.Session()
     retry_strategy = Retry(
         total=retries,
@@ -39,20 +50,53 @@ def _build_session(retries: int = 3, backoff: float = 1.0, connect_timeout: int 
         "Referer": BASE_URL + "/",
     })
 
+    # store timeouts on the session for _safe_request to use
     session._connect_timeout = connect_timeout
     session._read_timeout = read_timeout
     return session
 
-def _safe_request(session: requests.Session, method: str, url: str, **kwargs) -> requests.Response:
+
+def _safe_request(session: requests.Session, method: str, url: str, retries: int = 3, backoff: float = 1.0, **kwargs) -> requests.Response:
+    """
+    Robust request wrapper:
+    - retries on network errors including chunked/incomplete reads
+    - exponential backoff between attempts
+    - raises the last exception if all retries fail
+    """
     connect_to = getattr(session, "_connect_timeout", 5)
     read_to = getattr(session, "_read_timeout", 60)
     timeout_tuple = kwargs.pop("timeout", (connect_to, read_to))
-    start = time.monotonic()
-    resp = session.request(method, url, timeout=timeout_tuple, **kwargs)
-    duration = time.monotonic() - start
-    logger.debug(f"HTTP {method} {url} -> {getattr(resp, 'status_code', 'ERR')} in {duration:.2f}s")
-    resp.raise_for_status()
-    return resp
+
+    last_exc = None
+    for attempt in range(1, retries + 1):
+        try:
+            start = time.monotonic()
+            resp = session.request(method, url, timeout=timeout_tuple, **kwargs)
+            duration = time.monotonic() - start
+            logger.debug(f"HTTP {method} {url} -> {getattr(resp, 'status_code', 'ERR')} in {duration:.2f}s")
+            # Use raise_for_status to raise HTTPError on 4xx/5xx if needed
+            resp.raise_for_status()
+            return resp
+        except (ChunkedEncodingError, ProtocolError, http.client.IncompleteRead, ReadTimeoutError) as e:
+            last_exc = e
+            logger.warning(f"Network/stream error on attempt {attempt}/{retries} for {url}: {type(e).__name__}: {e}")
+        except RequestException as e:
+            # catch other requests exceptions (timeouts, connection errors, etc)
+            last_exc = e
+            logger.warning(f"RequestException on attempt {attempt}/{retries} for {url}: {type(e).__name__}: {e}")
+        # backoff before next attempt (do not sleep after final attempt)
+        if attempt < retries:
+            sleep_seconds = backoff * (2 ** (attempt - 1))
+            logger.debug(f"Sleeping {sleep_seconds:.1f}s before retrying ({attempt}/{retries})")
+            time.sleep(sleep_seconds)
+    # if we get here, all attempts failed
+    logger.error(f"All {retries} attempts failed for {method} {url}")
+    # re-raise the last exception for caller to handle
+    if last_exc:
+        raise last_exc
+    else:
+        raise RequestException("Unknown network error")
+
 
 def _extract_pages(soup: BeautifulSoup) -> List[int]:
     pages = set()
@@ -62,10 +106,12 @@ def _extract_pages(soup: BeautifulSoup) -> List[int]:
             pages.add(int(m.group(1)))
     return sorted(pages)
 
+
 def fetch_players_raw(state: str = "SP", max_pages: Optional[int] = None) -> List[Dict]:
     """
     Faz scraping dos jogadores da CBX para um estado e retorna lista de dicts.
     NÃO lança fastapi.HTTPException — levanta requests.exceptions.RequestException em erros de rede.
+    Implementa retries e é tolerante a páginas individuais falharem (continua para as próximas).
     """
     session = _build_session(retries=3, backoff=1.0, connect_timeout=5, read_timeout=60)
 
@@ -100,6 +146,7 @@ def fetch_players_raw(state: str = "SP", max_pages: Optional[int] = None) -> Lis
             continue
         visited.add(page)
 
+        # fetch page (for page>1 we need to post the Page$X event)
         if page > 1:
             post = {
                 **hidden,
@@ -108,12 +155,15 @@ def fetch_players_raw(state: str = "SP", max_pages: Optional[int] = None) -> Lis
             }
             try:
                 resp = _safe_request(session, "POST", URL, data=post)
-            except Exception:
-                logger.exception(f"Falha ao recuperar pagina {page}; interrompendo paginação.")
-                break
-            soup = BeautifulSoup(resp.text, "html.parser")
-            hidden = get_hidden_fields(soup)
+                soup = BeautifulSoup(resp.text, "html.parser")
+                hidden = get_hidden_fields(soup)
+            except Exception as e:
+                # Log and continue with next page instead of aborting entire fetch
+                logger.exception(f"Falha ao recuperar pagina {page} para estado {state}: {e}. Pulando para proxima pagina.")
+                # try to discover more pages from the previous soup (if any) - skip discovery if this page failed
+                continue
 
+        # Parse table if exists
         table = soup.find("table", class_="grid")
         if not table:
             continue
@@ -147,15 +197,19 @@ def fetch_players_raw(state: str = "SP", max_pages: Optional[int] = None) -> Lis
                 "blitz": rec.get("Blitz", ""),
                 "fide_id": rec.get("ID FIDE", ""),
                 "local_profile": link,
-                "scraped_at": datetime.utcnow().isoformat()  # raw value; job can overwrite with timezone-aware
+                "scraped_at": datetime.utcnow().isoformat()
             }
             players.append(player)
 
-        # discover new pages if not limited
+        # discover new pages if not limited and if we successfully parsed the page
         if not max_pages:
-            novas = _extract_pages(soup)
-            for p in sorted(novas):
-                if p not in visited and p not in pages_to_visit:
-                    pages_to_visit.append(p)
+            try:
+                novas = _extract_pages(soup)
+                for p in sorted(novas):
+                    if p not in visited and p not in pages_to_visit:
+                        pages_to_visit.append(p)
+            except Exception:
+                # if parsing for pagination fails, we just continue
+                logger.debug("Failed to discover additional pages from current soup; continuing.")
 
     return players

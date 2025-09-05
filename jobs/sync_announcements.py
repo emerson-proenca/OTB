@@ -1,7 +1,7 @@
 # jobs/sync_announcements.py
 import logging
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, List, Tuple
 from database.session import SessionLocal
 from database.models import CBXAnnouncement, SyncJob
 from scrapers.cbx.cbx_announcements import fetch_announcements_raw
@@ -9,6 +9,7 @@ import requests
 
 logger = logging.getLogger("sync_announcements")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+
 
 def upsert_announcement(db, item: dict):
     link = item.get("link") or ""
@@ -18,6 +19,7 @@ def upsert_announcement(db, item: dict):
     if q:
         q.title = item.get("title") or q.title
         q.date_text = item.get("date_text")
+        q.content = item.get("content")
         q.scraped_at = datetime.now(timezone.utc)
         return q
     else:
@@ -25,12 +27,14 @@ def upsert_announcement(db, item: dict):
             title=item.get("title") or "untitled",
             date_text=item.get("date_text"),
             link=link,
-            content=item.get("content")
+            content=item.get("content"),
+            scraped_at=datetime.now(timezone.utc)
         )
         db.add(a)
         return a
 
-def sync_cbxannouncements(max_pages: Optional[int] = None, limit: Optional[int] = None):
+
+def sync_cbxannouncements(max_pages: Optional[int] = None, limit: Optional[int] = None, full: bool = False):
     # create SyncJob entry
     db_job = SessionLocal()
     job = SyncJob(federation="cbx_announcements", status="started")
@@ -42,9 +46,24 @@ def sync_cbxannouncements(max_pages: Optional[int] = None, limit: Optional[int] 
 
     created = 0
     updated = 0
+    failed_pages: List[str] = []
+
+    # FULL mode: clean table first
+    if full:
+        logger.info("FULL mode enabled for CBX announcements: cleaning CBXAnnouncement table before full import.")
+        db_clean = SessionLocal()
+        try:
+            deleted = db_clean.query(CBXAnnouncement).delete(synchronize_session=False)
+            db_clean.commit()
+            logger.info(f"Deleted {deleted} existing CBX announcements (cleanup before full import).")
+        except Exception:
+            db_clean.rollback()
+            logger.exception("Failed cleaning CBX announcements before full import.")
+        finally:
+            db_clean.close()
 
     try:
-        announcements = fetch_announcements_raw(max_pages=max_pages)
+        announcements, failed_pages = fetch_announcements_raw(max_pages=max_pages)
     except requests.exceptions.RequestException as e:
         dbj = SessionLocal()
         j = dbj.get(SyncJob, job_id)
@@ -62,7 +81,7 @@ def sync_cbxannouncements(max_pages: Optional[int] = None, limit: Optional[int] 
         if j:
             j.finished_at = datetime.now(timezone.utc)
             j.status = "failed"
-            j.error = f"NetworkError: {str(e)}"
+            j.error = f"UnexpectedError: {str(e)}"
             dbj.commit()
         dbj.close()
         logger.exception("Unexpected error fetching CBX announcements. Sync aborted.")
@@ -92,7 +111,7 @@ def sync_cbxannouncements(max_pages: Optional[int] = None, limit: Optional[int] 
     finally:
         db.close()
 
-    # finalize job record
+    # finalize job record and log failed pages if any
     db_job2 = SessionLocal()
     j = db_job2.get(SyncJob, job_id)
     if j:
@@ -100,13 +119,24 @@ def sync_cbxannouncements(max_pages: Optional[int] = None, limit: Optional[int] 
         j.status = "success"
         j.created = created
         j.updated = updated
+        if failed_pages:
+            j.error = f"Failed pages: {len(failed_pages)}"
         db_job2.commit()
     db_job2.close()
+
+    if failed_pages:
+        logger.warning("Some pages failed during announcements scraping. Failed pages / identifiers:")
+        for fp in failed_pages:
+            logger.warning(f" - {fp}")
+    else:
+        logger.info("No failed pages during announcements scraping.")
+
 
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--max-pages", type=int, default=None)
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--full", action="store_true", help="Run full import (cleans CBXAnnouncement then imports all pages).")
     args = parser.parse_args()
-    sync_cbxannouncements(max_pages=args.max_pages, limit=args.limit)
+    sync_cbxannouncements(max_pages=args.max_pages, limit=args.limit, full=args.full)

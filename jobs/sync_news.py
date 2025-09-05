@@ -1,7 +1,7 @@
 # jobs/sync_news.py
 import logging
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, Tuple, List
 from database.session import SessionLocal
 from database.models import CBXNews, SyncJob
 from scrapers.cbx.cbx_news import fetch_news_raw
@@ -9,6 +9,7 @@ import requests
 
 logger = logging.getLogger("sync_news")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+
 
 def upsert_news(db, item: dict):
     link = item.get("link") or ""
@@ -27,11 +28,13 @@ def upsert_news(db, item: dict):
             date_text=item.get("date_text"),
             link=link,
             summary=item.get("summary"),
+            scraped_at=datetime.now(timezone.utc)
         )
         db.add(n)
         return n
 
-def sync_cbxnews(max_pages: Optional[int] = None, limit: Optional[int] = None):
+
+def sync_cbxnews(max_pages: Optional[int] = None, limit: Optional[int] = None, full: bool = False):
     db_job = SessionLocal()
     job = SyncJob(federation="cbx_news", status="started")
     db_job.add(job)
@@ -42,9 +45,25 @@ def sync_cbxnews(max_pages: Optional[int] = None, limit: Optional[int] = None):
 
     created = 0
     updated = 0
+    failed_pages: List[str] = []
+
+    # FULL mode: clean table first
+    if full:
+        logger.info("FULL mode enabled for CBX news: cleaning CBXNews table before full import.")
+        db_clean = SessionLocal()
+        try:
+            deleted = db_clean.query(CBXNews).delete(synchronize_session=False)
+            db_clean.commit()
+            logger.info(f"Deleted {deleted} existing CBX news (cleanup before full import).")
+        except Exception:
+            db_clean.rollback()
+            logger.exception("Failed cleaning CBX news before full import.")
+        finally:
+            db_clean.close()
 
     try:
-        news_items = fetch_news_raw(max_pages=max_pages)
+        # fetch_news_raw now returns (items, failed_pages)
+        news_items, failed_pages = fetch_news_raw(max_pages=max_pages)
     except requests.exceptions.RequestException as e:
         dbj = SessionLocal()
         j = dbj.get(SyncJob, job_id)
@@ -62,7 +81,7 @@ def sync_cbxnews(max_pages: Optional[int] = None, limit: Optional[int] = None):
         if j:
             j.finished_at = datetime.now(timezone.utc)
             j.status = "failed"
-            j.error = f"NetworkError: {str(e)}"
+            j.error = f"UnexpectedError: {str(e)}"
             dbj.commit()
         dbj.close()
         logger.exception("Unexpected error fetching CBX news. Sync aborted.")
@@ -92,6 +111,7 @@ def sync_cbxnews(max_pages: Optional[int] = None, limit: Optional[int] = None):
     finally:
         db.close()
 
+    # finalize job record and log failed pages if any
     db_job2 = SessionLocal()
     j = db_job2.get(SyncJob, job_id)
     if j:
@@ -99,13 +119,25 @@ def sync_cbxnews(max_pages: Optional[int] = None, limit: Optional[int] = None):
         j.status = "success"
         j.created = created
         j.updated = updated
+        if failed_pages:
+            # save a short summary in the job error field for later inspection
+            j.error = f"Failed pages: {len(failed_pages)}"
         db_job2.commit()
     db_job2.close()
+
+    if failed_pages:
+        logger.warning("Some pages failed during news scraping. Failed pages / identifiers:")
+        for fp in failed_pages:
+            logger.warning(f" - {fp}")
+    else:
+        logger.info("No failed pages during news scraping.")
+
 
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--max-pages", type=int, default=None)
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--full", action="store_true", help="Run full import (cleans CBXNews then imports all pages).")
     args = parser.parse_args()
-    sync_cbxnews(max_pages=args.max_pages, limit=args.limit)
+    sync_cbxnews(max_pages=args.max_pages, limit=args.limit, full=args.full)
