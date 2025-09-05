@@ -1,90 +1,58 @@
 # jobs/sync_all.py
+"""
+Lightweight orchestrator for sync jobs.
+
+Features:
+- Run any subset of: tournaments, players, news, announcements
+- --daily: run incremental for current month/year (tournaments gets --year/--month; players default state ALL)
+- --full: pass --full to child jobs and perform table cleanup before each job
+- --clean: optional, perform table cleanup before each job (even if not --full)
+- --limit: single global limit passed to children
+- --pages: pages passed to players job
+- --start-year / --end-year: passed to tournaments (useful with --full)
+- Streams child logs in real time
+- Uses repo root as cwd for subprocesses and inherits environment
+"""
+from __future__ import annotations
+
+import argparse
 import logging
-import sys
+import os
 import subprocess
-from datetime import datetime, timezone
-from typing import Optional, Any, List
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
+from typing import List, Optional
 
-# Use sys.executable to ensure we call the same Python interpreter (important for venv)
+from database.session import SessionLocal
+from database import models
+
+# Which jobs are supported
+JOB_KEYS = ["tournaments", "players", "news", "announcements"]
+
 PYTHON_BIN = sys.executable
-
-# Mapping job_key -> list of args (base)
-JOB_BASE_ARGS = {
-    "news": [PYTHON_BIN, "-m", "jobs.sync_news"],
-    "announcements": [PYTHON_BIN, "-m", "jobs.sync_announcements"],
-    "tournaments": [PYTHON_BIN, "-m", "jobs.sync_tournaments"],
-    "players": [PYTHON_BIN, "-m", "jobs.sync_players"],
-}
-
-# default timeout per job in seconds (e.g., 30 minutes)
-DEFAULT_TIMEOUT_SECONDS = 30 * 60
+DEFAULT_TIMEOUT = 1800  # 30 minutes
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("sync_all")
 
 
+def build_child_args(job: str,
+                     *,
+                     state: str,
+                     limit: Optional[int],
+                     pages: Optional[int],
+                     full: bool,
+                     start_year: Optional[int],
+                     end_year: Optional[int],
+                     year: Optional[int],
+                     month: Optional[int]) -> List[str]:
+    base = [PYTHON_BIN, "-m", f"jobs.sync_{job}"]
 
-def run_subprocess(args: List[str], timeout: int) -> dict[str, Any]:
-    """
-    Executa o subprocess com cwd ajustado para o root do projeto e com
-    variáveis de ambiente herdadas (garante que caminhos relativos
-    e o ambiente virtual sejam os mesmos).
-    """
-    # calcula root do repositório (dois níveis acima de jobs/sync_all.py)
-    repo_root = Path(__file__).resolve().parent.parent
-    cwd = str(repo_root)
-
-    logger.info(f"Executing: {' '.join(args)} (timeout={timeout}s) cwd={cwd}")
-    try:
-        completed = subprocess.run(
-            args,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            cwd=cwd,
-            env=os.environ.copy()  # herdamos o ambiente atual (venv, DB env vars, etc.)
-        )
-        logger.info(f"Exit {completed.returncode} - stdout len={len(completed.stdout)} stderr len={len(completed.stderr)}")
-        if completed.stdout:
-            logger.debug("stdout:\n" + completed.stdout)
-        if completed.stderr:
-            logger.debug("stderr:\n" + completed.stderr)
-        return {
-            "status": "success" if completed.returncode == 0 else "failed",
-            "returncode": completed.returncode,
-            "stdout": completed.stdout,
-            "stderr": completed.stderr
-        }
-    except subprocess.TimeoutExpired as e:
-        logger.exception("Job timed out")
-        return {"status": "timeout", "error": str(e)}
-    except Exception as e:
-        logger.exception("Subprocess failed")
-        return {"status": "error", "error": str(e)}
-
-
-
-def build_args(job_key: str,
-               *,
-               state: str = "SP",
-               max_pages: Optional[int] = None,
-               limit: Optional[int] = None,
-               full: Optional[bool] = None,
-               start_year: Optional[int] = None,
-               end_year: Optional[int] = None,
-               year: Optional[int] = None,
-               month: Optional[int] = None) -> List[str]:
-    """
-    Build argument list to call a job subprocess.
-    Accepts optional year/month used by tournaments in daily mode.
-    """
-    base = JOB_BASE_ARGS[job_key].copy()
-
-    # tournaments CLI params
-    if job_key == "tournaments":
+    if job == "tournaments":
         if limit is not None:
             base += ["--limit", str(limit)]
-        # year/month for daily
         if year is not None:
             base += ["--year", str(year)]
         if month is not None:
@@ -96,133 +64,142 @@ def build_args(job_key: str,
             if end_year is not None:
                 base += ["--end-year", str(end_year)]
 
-    # players CLI params
-    elif job_key == "players":
+    elif job == "players":
         base += ["--state", str(state)]
-        if max_pages is not None:
-            base += ["--pages", str(max_pages)]
+        if pages is not None:
+            base += ["--pages", str(pages)]
         if limit is not None:
             base += ["--limit", str(limit)]
         if full:
             base += ["--full"]
 
-    # news CLI params
-    elif job_key == "news":
-        if max_pages is not None:
-            base += ["--max-pages", str(max_pages)]
+    elif job in ("news", "announcements"):
         if limit is not None:
             base += ["--limit", str(limit)]
-        if full:
-            base += ["--full"]
-
-    # announcements CLI params
-    elif job_key == "announcements":
-        if max_pages is not None:
-            base += ["--max-pages", str(max_pages)]
-        if limit is not None:
-            base += ["--limit", str(limit)]
+        # these jobs support --full as well
         if full:
             base += ["--full"]
 
     return base
 
 
-def run_job(job_key: str,
-            *,
-            state: str = "SP",
-            max_pages: Optional[int] = None,
-            limit: Optional[int] = None,
-            full: Optional[bool] = None,
-            start_year: Optional[int] = None,
-            end_year: Optional[int] = None,
-            year: Optional[int] = None,
-            month: Optional[int] = None,
-            timeout: int = DEFAULT_TIMEOUT_SECONDS) -> dict[str, Any]:
-    if job_key not in JOB_BASE_ARGS:
-        return {"job": job_key, "status": "unknown-job"}
-
-    args = build_args(job_key,
-                      state=state,
-                      max_pages=max_pages,
-                      limit=limit,
-                      full=full,
-                      start_year=start_year,
-                      end_year=end_year,
-                      year=year,
-                      month=month)
-    started = datetime.now(timezone.utc).isoformat()
-    result = run_subprocess(args, timeout=timeout)
-    finished = datetime.now(timezone.utc).isoformat()
-    return {
-        "job": job_key,
-        "started": started,
-        "finished": finished,
-        **result
+def wipe_table_for_job(job: str) -> None:
+    """
+    Delete all rows in the table related to the job.
+    Logs an INFO line in the pattern you requested.
+    """
+    mapping = {
+        "tournaments": models.Tournament,
+        "players": models.CBXPlayer,
+        "news": models.CBXNews,
+        "announcements": models.CBXAnnouncement,
     }
+    model = mapping.get(job)
+    if not model:
+        logger.warning(f"No model mapping for job {job}; skip wipe.")
+        return
+
+    db = SessionLocal()
+    try:
+        cnt = db.query(model).delete(synchronize_session=False)
+        db.commit()
+        logger.info(f"sync_all FULL mode enabled for sync_{job}: cleaning {model.__name__} table before full import.")
+        logger.info(f"sync_{job} Deleted {cnt} existing {model.__name__} (cleanup before import).")
+    except Exception:
+        db.rollback()
+        logger.exception(f"Failed to wipe table for job {job}")
+    finally:
+        db.close()
 
 
-def normalize_jobs_arg(raw_jobs: Optional[List[str]]) -> List[str]:
+def stream_subprocess(args: List[str], cwd: str, timeout: int) -> int:
     """
-    Normalize --jobs input to a list of job keys.
-    Accepts either: --jobs tournaments players
-    or: --jobs tournaments,players (single element with commas)
+    Run subprocess streaming stdout/stderr in real-time.
+    Returns exit code (or non-zero if killed by timeout).
     """
-    if not raw_jobs:
-        return list(JOB_BASE_ARGS.keys())
-    # flatten and split comma-separated tokens
-    out: List[str] = []
-    for token in raw_jobs:
-        if not token:
-            continue
-        parts = [p.strip() for p in token.split(",") if p.strip()]
-        out.extend(parts)
-    # validate
-    validated = []
-    for j in out:
-        if j in JOB_BASE_ARGS:
-            validated.append(j)
-        else:
-            logger.warning(f"Unknown job '{j}' ignored.")
-    return validated if validated else list(JOB_BASE_ARGS.keys())
+    logger.info(f"Executing: {' '.join(args)} (timeout={timeout}s) cwd={cwd}")
+    # Start process
+    proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1, cwd=cwd, env=os.environ.copy())
+
+    start = time.time()
+    stdout_buf = []
+    stderr_buf = []
+
+    # Read until process ends or timeout
+    try:
+        while True:
+            # read stdout
+            if proc.stdout:
+                line = proc.stdout.readline()
+                if line:
+                    stdout_buf.append(line)
+                    # forward to parent's stdout (preserve child log format)
+                    print(line, end="", flush=True)
+
+            # read stderr
+            if proc.stderr:
+                eline = proc.stderr.readline()
+                if eline:
+                    stderr_buf.append(eline)
+                    print(eline, end="", flush=True)
+
+            # check if process finished
+            if proc.poll() is not None:
+                # drain remaining
+                if proc.stdout:
+                    for line in proc.stdout:
+                        stdout_buf.append(line)
+                        print(line, end="", flush=True)
+                if proc.stderr:
+                    for line in proc.stderr:
+                        stderr_buf.append(line)
+                        print(line, end="", flush=True)
+                break
+
+            # timeout check
+            if timeout is not None and (time.time() - start) > timeout:
+                proc.kill()
+                logger.error("Subprocess timeout expired; killed.")
+                return 124  # common timeout exit code
+            # small sleep to avoid busy loop
+            time.sleep(0.01)
+
+    except Exception:
+        proc.kill()
+        logger.exception("Exception while streaming subprocess - killed it.")
+        return 1
+
+    return proc.returncode if proc.returncode is not None else 0
 
 
 def main():
-    import argparse
-    parser = argparse.ArgumentParser(description="Run sync jobs as subprocesses (supports --full and --daily)")
-    parser.add_argument("--jobs", nargs="*", help="Which jobs to run; default = all. Accepts space-separated or comma-separated (e.g. --jobs tournaments,players).")
-    # Make state default None so we can detect whether user explicitly set it.
-    parser.add_argument("--state", default=None, help="State for players job (e.g. SP). If not provided and --full is used, defaults to ALL. If not provided and neither --full nor --daily, defaults to SP.")
-    parser.add_argument("--max-pages", type=int, default=None, help="Max pages to scrape per job")
-    parser.add_argument("--limit", type=int, default=None, help="Limit items per job")
-    parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT_SECONDS, help="Timeout per job in seconds")
-    parser.add_argument("--full", action="store_true", help="Run full import (when supported by the job)")
-    parser.add_argument("--daily", action="store_true", help="Run daily incremental mode (uses current year/month for tournaments). Mutually exclusive with --full.")
-    parser.add_argument("--start-year", type=int, default=None, help="Start year for full import (passed to tournaments job)")
-    parser.add_argument("--end-year", type=int, default=None, help="End year for full import (passed to tournaments job)")
+    parser = argparse.ArgumentParser(description="Run OTB sync jobs together")
+    parser.add_argument("--jobs", nargs="*", help="Jobs to run (space-separated). Options: tournaments players news announcements. Default = all.")
+    parser.add_argument("--state", default=None, help="State for players job (e.g. SP). If not provided and --full or --daily, defaults to ALL; otherwise defaults to SP.")
+    parser.add_argument("--limit", type=int, default=None, help="Global limit per job (if supported).")
+    parser.add_argument("--pages", type=int, default=None, help="Pages (passed to players as --pages).")
+    parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT, help="Timeout per job in seconds (default 1800).")
+    parser.add_argument("--full", action="store_true", help="Full import (pass --full to children and wipe per-job tables before run).")
+    parser.add_argument("--daily", action="store_true", help="Daily incremental import (uses current month/year for tournaments).")
+    parser.add_argument("--clean", action="store_true", help="Wipe target table before running each job (even if not --full).")
+    parser.add_argument("--start-year", type=int, default=None, help="Start year for tournaments full import.")
+    parser.add_argument("--end-year", type=int, default=None, help="End year for tournaments full import.")
     args = parser.parse_args()
 
-    # validate mutual exclusivity
+    # validate
     if args.full and args.daily:
-        logger.error("Options --full and --daily are mutually exclusive. Choose one.")
+        logger.error("--full and --daily are mutually exclusive. Choose one.")
         sys.exit(2)
 
-    to_run = normalize_jobs_arg(args.jobs)
-    results = []
+    # normalize jobs list
+    if args.jobs:
+        jobs = [j.strip() for j in args.jobs if j.strip() in JOB_KEYS]
+        if not jobs:
+            jobs = JOB_KEYS.copy()
+    else:
+        jobs = JOB_KEYS.copy()
 
-    # compute year/month for daily mode (server local time)
-    daily_year = None
-    daily_month = None
-    if args.daily:
-        now = datetime.now()  # server local time; adjust if you require a timezone
-        daily_year = now.year
-        daily_month = now.month
-
-    # Determine the effective state to pass to child jobs:
-    # - If user explicitly provided --state, respect it.
-    # - If user did NOT provide --state:
-    #     * in --full mode -> default to "ALL" (full import should cover all states)
-    #     * in --daily mode -> default to "ALL" (daily should check all states)
-    #     * otherwise -> default to "SP" (keep previous default behavior)
+    # effective state decision
     if args.state is not None:
         state_for_run = args.state
     else:
@@ -231,60 +208,58 @@ def main():
         else:
             state_for_run = "SP"
 
-    for job_key in to_run:
-        logger.info(f"Starting job {job_key} (effective state={state_for_run})")
+    # daily year/month
+    daily_year = None
+    daily_month = None
+    if args.daily:
+        now = datetime.now()
+        daily_year = now.year
+        daily_month = now.month
 
-        # compute job-specific params for daily vs normal
-        if args.daily:
-            # daily mode: pass year/month only to tournaments; players gets state_for_run (ALL by default)
-            if job_key == "tournaments":
-                res = run_job(job_key,
-                              state=state_for_run,
-                              max_pages=args.max_pages,
-                              limit=args.limit,
-                              full=False,
-                              start_year=args.start_year,
-                              end_year=args.end_year,
-                              year=daily_year,
-                              month=daily_month,
-                              timeout=args.timeout)
-            elif job_key == "players":
-                res = run_job(job_key,
-                              state=state_for_run,
-                              max_pages=args.max_pages,
-                              limit=args.limit,
-                              full=False,
-                              timeout=args.timeout)
-            else:
-                # news / announcements incremental for daily
-                res = run_job(job_key,
-                              state=state_for_run,
-                              max_pages=args.max_pages,
-                              limit=args.limit,
-                              full=False,
-                              timeout=args.timeout)
-        else:
-            # normal mode: pass --full if requested; use state_for_run for consistency
-            res = run_job(job_key,
-                          state=state_for_run,
-                          max_pages=args.max_pages,
-                          limit=args.limit,
-                          full=args.full,
-                          start_year=args.start_year,
-                          end_year=args.end_year,
-                          timeout=args.timeout)
+    repo_root = str(Path(__file__).resolve().parent.parent)
 
-        results.append(res)
-        logger.info(f"Finished job {job_key}: status={res.get('status')}")
+    overall_failed = False
+    results = []
 
+    for job in jobs:
+        logger.info(f"Starting job {job} (effective state={state_for_run})")
+
+        # wipe table if requested (either --full or explicit --clean)
+        if args.full or args.clean:
+            try:
+                wipe_table_for_job(job)
+            except Exception:
+                logger.exception("Wipe step failed for job %s", job)
+
+        # build args for child
+        child_args = build_child_args(
+            job,
+            state=state_for_run,
+            limit=args.limit,
+            pages=args.pages,
+            full=args.full,
+            start_year=args.start_year,
+            end_year=args.end_year,
+            year=daily_year if args.daily else None,
+            month=daily_month if args.daily else None,
+        )
+
+        # stream subprocess logs
+        rc = stream_subprocess(child_args, cwd=repo_root, timeout=args.timeout)
+        status = "success" if rc == 0 else ("timeout" if rc == 124 else "failed")
+        results.append({"job": job, "rc": rc, "status": status})
+        logger.info(f"Finished job {job}: status={status}")
+
+        if status != "success":
+            overall_failed = True
+
+    # summary
     logger.info("Sync summary:")
     for r in results:
         logger.info(r)
 
-    # non-zero exit if any job failed/timeout/error
-    for r in results:
-        if r.get("status") not in ("success",):
-            sys.exit(2)
+    if overall_failed:
+        sys.exit(2)
 
 
 if __name__ == "__main__":
