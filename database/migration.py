@@ -6,6 +6,6 @@ def create_tables():
     Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
-    print("Criando tabelas no DB...")
+    print("Creating Tables in the DataBase...")
     create_tables()
-    print("Tabelas criadas.")
+    print("Tables Created!")

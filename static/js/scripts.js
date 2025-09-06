@@ -315,7 +315,9 @@ async function searchNews() {
     try {
         showLoading();
         const news = await makeApiCall('/news', {
-            paginas: pages
+            pages: pages,
+            latest: false
+
         });
         
         displayNews(news);
@@ -339,7 +341,8 @@ async function searchAnnouncements() {
     try {
         showLoading();
         const announcements = await makeApiCall('/announcements', {
-            paginas: pages
+            pages: pages,
+            latest: false
         });
         
         displayAnnouncements(announcements);
