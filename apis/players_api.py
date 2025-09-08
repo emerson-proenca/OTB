@@ -40,8 +40,7 @@ def get_players(
                 "rapid": _safe_str(p.rapid),
                 "blitz": _safe_str(p.blitz),
                 "fide_id": _safe_str(p.fide_id),
-                "local_profile": _safe_str(p.local_profile),
-                "scraped_at": p.scraped_at.isoformat() if getattr(p, "scraped_at", None) else None
+                "local_profile": _safe_str(p.local_profile)
             })
 
         return CBXPlayerResponse(cbx=players)

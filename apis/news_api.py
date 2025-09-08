@@ -31,8 +31,7 @@ def get_news(limit: int = Query(50, ge=1, le=500), latest: bool = Query(True)):
                 "title": _safe_str(r.title),
                 "date_text": _safe_str(r.date_text),
                 "link": _safe_str(r.link),
-                "summary": _safe_str(r.summary),
-                "scraped_at": r.scraped_at.isoformat() if getattr(r, "scraped_at", None) else None
+                "summary": _safe_str(r.summary)
             })
         return out
     except Exception:

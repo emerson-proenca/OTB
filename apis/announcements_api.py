@@ -33,8 +33,7 @@ def get_announcements(limit: int = Query(50, ge=1, le=500), latest: bool = Query
                 "title": _safe_str(r.title),
                 "date_text": _safe_str(r.date_text),
                 "link": _safe_str(r.link),
-                "content": _safe_str(r.content),
-                "scraped_at": r.scraped_at.isoformat() if getattr(r, "scraped_at", None) else None
+                "content": _safe_str(r.content)
             })
         return out
     except Exception:
