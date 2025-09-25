@@ -82,14 +82,13 @@ if __name__ == "__main__":
     import uvicorn
     
     logger.info("🚀 Iniciando Over the Board...")
-    print("🚀 Iniciando Over the Board...")
     
     base_url = settings.BASE_URL
     
-    print(f"🏠 Home: {base_url}/")
-    print(f"📊 Docs: {base_url}/docs")
-    print(f"📋 Redoc: {base_url}/redoc")
-    print(f"🏥 Health: {base_url}/health")
-    print(f"📊 Cache Status: {base_url}/cache/stats")
+    logger.info(f"🏠 Home: {base_url}/")
+    logger.info(f"📊 Docs: {base_url}/docs")
+    logger.info(f"📋 Redoc: {base_url}/redoc")
+    logger.info(f"🏥 Health: {base_url}/health")
+    logger.info(f"📊 Cache Status: {base_url}/cache/stats")
     
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
