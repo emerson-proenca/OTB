@@ -1,11 +1,13 @@
 # database/migration.py
 from database.session import engine, Base
 from database import models  # garante que os modelos sejam importados
+from core.logger_config import logger
+
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
-    print("Creating Tables in the DataBase...")
+    logger.info(f"Creating Tables in the DataBase...")
     create_tables()
-    print("Tables Created!")
+    logger.info(f"Tables Created!")
