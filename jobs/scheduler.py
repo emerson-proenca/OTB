@@ -1,7 +1,7 @@
 # jobs/scheduler.py
+import time
 from apscheduler.schedulers.background import BackgroundScheduler
 from jobs.sync_tournaments import sync_cbxtournaments
-import time
 from core.logger_config import logger
 
 
