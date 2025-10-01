@@ -58,7 +58,7 @@ Values should:
 ### Example:
 
 ```json
-"home.welcome": "Welcome to the Over the Board"
+"home.welcome": "Welcome to Over the Board"
 ```
 
 ---

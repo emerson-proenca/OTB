@@ -1,6 +1,6 @@
 # database/migration.py
 from database.session import engine, Base
-from database import models  # garante que os modelos sejam importados
+from database import models
 from core.logger_config import logger
 
 

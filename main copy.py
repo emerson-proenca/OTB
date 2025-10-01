@@ -92,6 +92,7 @@ async def health_check():
     """Endpoint to check if the API is running"""
     return {"status": "healthy", "timestamp": "2025-08-01"}
 
+# Cache management endpoints
 @app.get("/cache/stats", tags=["Cache"])
 async def cache_stats():
     """Returns cache statistics"""
