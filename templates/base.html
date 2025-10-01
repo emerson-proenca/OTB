@@ -11,14 +11,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- CSS do projeto -->
-  <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', path='css/mobile-enhancements.css') }}">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <link rel="stylesheet" href="/static/css/mobile-enhancements.css">
 
   <!-- Favicons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icon/apple-touch-icon.png') }}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='icon/favicon-32x32.png') }}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', path='icon/favicon-16x16.png') }}">
-  <link rel="manifest" href="{{ url_for('static', path='icon/site.webmanifest') }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/icon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/icon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/icon/favicon-16x16.png">
+  <link rel="manifest" href="/static/icon/site.webmanifest">
 </head>
 <body>
 
@@ -38,12 +38,12 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
           <div class="navbar-nav ms-auto">
-            <a class="nav-link" href="{{ url_for('home') }}"><i class="fas fa-home"></i> <span data-i18n="header.home">Home</span></a>
-            <a class="nav-link" href="{{ url_for('tournaments') }}"><i class="fas fa-trophy"></i> <span data-i18n="header.tournaments">Tournaments</span></a>
-            <a class="nav-link" href="{{ url_for('players') }}"><i class="fas fa-users"></i> <span data-i18n="header.players">Players</span></a>
-            <a class="nav-link" href="{{ url_for('news') }}"><i class="fas fa-newspaper"></i> <span data-i18n="header.news">News</span></a>
-            <a class="nav-link" href="{{ url_for('announcements') }}"><i class="fas fa-bullhorn"></i> <span data-i18n="header.announcements">Announcements</span></a>
-            <a class="nav-link" href="{{ url_for('admin') }}"><i class="fas fa-cog"></i> <span data-i18n="header.admin">Admin</span></a>
+            <a class="nav-link" href="/"><i class="fas fa-home"></i> <span data-i18n="header.home">Home</span></a>
+            <a class="nav-link" href="/tournaments"><i class="fas fa-trophy"></i> <span data-i18n="header.tournaments">Tournaments</span></a>
+            <a class="nav-link" href="/players"><i class="fas fa-users"></i> <span data-i18n="header.players">Players</span></a>
+            <a class="nav-link" href="/news"><i class="fas fa-newspaper"></i> <span data-i18n="header.news">News</span></a>
+            <a class="nav-link" href="/announcements"><i class="fas fa-bullhorn"></i> <span data-i18n="header.announcements">Announcements</span></a>
+            <a class="nav-link" href="/admin"><i class="fas fa-cog"></i> <span data-i18n="header.admin">Admin</span></a>
           </div>
         </div>
       </nav>
@@ -98,8 +98,8 @@
   </script>
 
   <!-- seus scripts estáticos -->
-  <script src="{{ url_for('static', path='js/scripts.js') }}"></script>
-  <script src="{{ url_for('static', path='js/i18n.js') }}"></script>
+  <script src="static/js/scripts.js"></script>
+  <script src="static/js/i18n.js"></script>
 
   {% block scripts %}{% endblock %}
 </body>

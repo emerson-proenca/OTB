@@ -123,4 +123,4 @@ if __name__ == "__main__":
     logger.info(f"🏥 Health: {base_url}/health")
     logger.info(f"📊 Cache Status: {base_url}/cache/stats")
     
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, proxy_headers=True)
