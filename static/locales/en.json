@@ -1,6 +1,6 @@
 {
   "translator": "Emerson",
-  "version": "1.0.3",
+  "version": "0.0.1",
 
   "header.home": "Home",
   "header.tournaments": "Tournaments",
@@ -18,7 +18,7 @@
   "home.apiStatus": "API Status",
   "home.cacheCount": "0",
   "home.cacheTitle": "Cached Items",
-  "home.versionNumber": "1.0.3",
+  "home.versionNumber": "0.8.1",
   "home.versionTitle": "Current Version",
   "home.currentTime": "Current Time",
   "home.showTournaments": "View Tournaments",

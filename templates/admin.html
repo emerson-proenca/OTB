@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Admin - Over The Board{% endblock %}
+
+{% block content %}
+<section id="admin" class="section">
+  <div class="section-header text-center mb-4">
+    <h2><i class="fas fa-cog"></i> <span data-i18n="admin.title"> Administration</span></h2>
+    <p data-i18n="admin.subTitle">API and cache management</p>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="admin-card h-100 p-3">
+        <h3 class="h5"><i class="fas fa-heartbeat"></i> <span data-i18n="admin.statusTitle"> API Status</span></h3>
+        <div id="healthStatus" class="status-indicator mb-3">
+          <span class="status-dot"></span>
+          <span class="status-text" data-i18n="admin.statusVerifying">Checking...</span>
+        </div>
+        <button class="btn btn-outline-primary btn-sm w-100" onclick="checkHealth()">
+          <i class="fas fa-sync"></i> <span data-i18n="admin.statusCheck">Check Status</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="admin-card h-100 p-3">
+        <h3 class="h5"><i class="fas fa-database"></i> <span data-i18n="admin.cacheTitle"> Cache</span></h3>
+        <p class="mb-3">Items in cache: <span id="adminCacheSize" data-i18n="home.cacheCount">0</span></p>
+        <div class="d-grid gap-2">
+          <button class="btn btn-outline-primary btn-sm" onclick="getCacheStats()"><i class="fas fa-chart-bar"></i> View Stats</button>
+          <button class="btn btn-outline-danger btn-sm" onclick="clearCache()"><i class="fas fa-trash"></i> Clear Cache</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="admin-card h-100 p-3">
+        <h3 class="h5"><i class="fas fa-link" aria-hidden="true"></i> <span data-i18n="admin.linksTitle">Useful Links</span></h3>
+        <div class="d-grid gap-2">
+          <a class="api-link btn btn-outline-primary" data-path="/docs" href="#"><i class="fas fa-book"></i> Swagger Docs</a>
+          <a class="api-link btn btn-outline-primary" data-path="/redocs" href="#"><i class="fas fa-file-alt"></i> ReDoc</a>
+          <a class="api-link btn btn-outline-primary" href="https://github.com/Emersh0w/Over-The-Board" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i> GitHub</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card p-3">
+    <h3 class="h5" data-i18n="admin.apiResponse"><i class="fas fa-terminal"></i> API Response</h3>
+    <pre id="apiResponse" class="code-block" data-i18n="admin.apiResponse.none">No response yet...</pre>
+  </div>
+</section>
+{% endblock %}

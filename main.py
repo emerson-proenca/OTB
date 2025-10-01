@@ -2,6 +2,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 # Router imports
@@ -20,7 +21,7 @@ from core.config import settings
 # FastAPI initial configuration
 app = FastAPI(
     title="Over the Board",
-    version="1.0.3",
+    version="0.8.1",
     description="Your platform for finding and registering for live chess tournaments",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -38,49 +39,49 @@ app.middleware("http")(rate_limit_middleware)
 
 # Static files and templates setup
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="static")
+templates = Jinja2Templates(directory="templates")
 
 
 # Router registration
-app.include_router(tournaments_router)
-app.include_router(players_router)
-app.include_router(news_router)
-app.include_router(announcements_router)
-app.include_router(status_router)
+app.include_router(tournaments_router, prefix="/api")
+app.include_router(players_router, prefix="/api")
+app.include_router(news_router, prefix="/api")
+app.include_router(announcements_router, prefix="/api")
+app.include_router(status_router, prefix="/api")
 
 
 # WEBSITE PAGES
-@app.get("/")
+@app.get("/", response_class=HTMLResponse, name="home",)
 async def home_page(request: Request):
     """Application home page"""
     return templates.TemplateResponse("home.html", {"request": request})
 
-@app.get("/admin")
+@app.get("/admin", response_class=HTMLResponse, name="admin")
 async def admin_page(request: Request):
     """Site admin page"""
     return templates.TemplateResponse("admin.html", {"request": request})
 
-@app.get("/about")
+@app.get("/about", response_class=HTMLResponse, name="about")
 async def about_page(request: Request):
     """About page"""
     return templates.TemplateResponse("about.html", {"request": request})
 
-@app.get("/announcements")
+@app.get("/announcements", response_class=HTMLResponse, name="announcements")
 async def announcements_page(request: Request):
     """Announcements page"""
     return templates.TemplateResponse("announcements.html", {"request": request})
 
-@app.get("/news")
+@app.get("/news", response_class=HTMLResponse, name="news")
 async def news_page(request: Request):
     """News page"""
     return templates.TemplateResponse("news.html", {"request": request})
 
-@app.get("/tournaments")
+@app.get("/tournaments", response_class=HTMLResponse, name="tournaments")
 async def tournaments_page(request: Request):
     """Tournaments page"""
     return templates.TemplateResponse("tournaments.html", {"request": request})
 
-@app.get("/players")
+@app.get("/players", response_class=HTMLResponse, name="players")
 async def players_page(request: Request):
     """Players page"""
     return templates.TemplateResponse("players.html", {"request": request})

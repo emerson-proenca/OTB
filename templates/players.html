@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Players - Over The Board{% endblock %}
+
+{% block content %}
+<section id="players" class="section">
+  <div class="section-header text-center mb-4">
+    <h2><i class="fas fa-users"></i> <span data-i18n="players.title"> Chess Players</span></h2>
+    <p data-i18n="players.subTitle">Query players by state</p>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+      <label for="playerUF" class="form-label" data-i18n="players.stateTitle">State (UF):</label>
+      <select id="playerUF" class="form-select">
+        <!-- opçõess -->
+        <option value="SP">São Paulo (SP)</option>
+        <option value="RJ">Rio de Janeiro (RJ)</option>
+        <!-- ...restante ... -->
+      </select>
+    </div>
+    <div class="col-12 col-md-3">
+      <label for="playerPages" class="form-label" data-i18n="players.pagesTitle">Pages:</label>
+      <select id="playerPages" class="form-select">
+        <option value="1" data-i18n="players.pages.1">1</option>
+        <option value="2" data-i18n="players.pages.2">2</option>
+        <option value="3" data-i18n="players.pages.3">3</option>
+        <option value="5" data-i18n="players.pages.5">5</option>
+        <option value="10" data-i18n="players.pages.10">10</option>
+      </select>
+    </div>
+    <div class="col-12 col-md-3 d-flex align-items-end">
+      <button class="btn btn-primary w-100" onclick="searchPlayers()">
+        <i class="fas fa-search"></i> <span data-i18n="players.search">Search</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="playersResults" class="results-container">
+    <div class="empty-state text-center">
+      <i class="fas fa-users"></i>
+      <p data-i18n="players.searchDescription">Use the filters above to search for players</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

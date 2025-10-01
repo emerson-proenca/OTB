@@ -28,7 +28,7 @@ class Settings:
 
     # API
     APP_NAME = "Over the Board"
-    VERSION = "1.0.3"
+    VERSION = "0.8.1"
     DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
     # Rate Limiting

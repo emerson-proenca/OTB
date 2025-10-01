@@ -257,7 +257,7 @@ async function searchTournaments() {
     
     try {
         showLoading();
-        const response_tournaments = await makeApiCall('/tournaments', {
+        const response_tournaments = await makeApiCall('/api/tournaments', {
             federation: 'cbx',
             year: year,
             month: month,
@@ -287,7 +287,7 @@ async function searchPlayers() {
     
     try {
         showLoading();
-        const response_players = await makeApiCall('/players', {
+        const response_players = await makeApiCall('/api/players', {
             state: state,
             pages: pages
         });
@@ -314,7 +314,7 @@ async function searchNews() {
     
     try {
         showLoading();
-        const news = await makeApiCall('/news', {
+        const news = await makeApiCall('/api/news', {
             pages: pages,
             latest: false
 
@@ -340,7 +340,7 @@ async function searchAnnouncements() {
     
     try {
         showLoading();
-        const announcements = await makeApiCall('/announcements', {
+        const announcements = await makeApiCall('/api/announcements', {
             pages: pages,
             latest: false
         });

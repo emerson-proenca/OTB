@@ -233,7 +233,7 @@ This project is licensed under the **AGPL-3.0 license**. See the [LICENSE](LICEN
 
 ## 🚧 Project Status
 
-**Current version**: 1.0.3
+**Current version**: 0.8.1
 **Progress**: \~15% complete
 **Next milestone**: FIDE integration
 
