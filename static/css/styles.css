@@ -1,45 +1,196 @@
-    /* Tema escuro inspirado no screenshot */
-    body { background: #0f0f0f; color: #e8e8e8; }
-    .navbar { background: #0f0f0f; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .offcanvas-body { background: #0f0f0f; color: #e8e8e8; }
 
-    /* Logo dentro do header */
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      user-select: none;
-    }
-    .brand-logo img { height: 28px; width: auto; display: block; }
+:root {
+  --navbar-height: 72px;
+  --bg-dark: #000000;
+  --panel-dark: #232925;
+  --muted: #909692;
+  --muted-light: #e6e6e6;
+  --divider: #101411;
+  --btn-radius: 10px;
+  --btn-padding: .45rem .8rem;
+  --hover-bg: rgba(255,255,255,0.06);
+  --footer-bg: #0f1010;
+  --footer-border: rgba(255,255,255,0.04);
+}
 
-    /* Centralizar a barra de pesquisa no header */
-    .search-form {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(820px, 62%);
-      max-width: 90%;
-      transition: width .15s;
-    }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-weight: 600;
+  font-size: 1.05rem;
+  background: var(--bg-dark);
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-y: auto;
+}
 
-    /* Ajustes mobile: deixa a pesquisa ocupar mais espaço ou ficar em linha */
-    @media (max-width: 767.98px) {
-      .search-form { position: relative; left: 0; transform: none; width: 100%; margin: .5rem 0; }
-      .navbar .container-fluid { flex-wrap: wrap; gap: .25rem; }
-    }
+/* NAVBAR */
+.navbar {
+  height: var(--navbar-height);
+  background: var(--panel-dark);
+  border-bottom: 1px solid var(--divider);
+  z-index: 1050;
+}
 
-    /* Espaço para conteúdo abaixo do header fixo */
-    main { padding-top: 72px; }
+.navbar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
 
-    /* Estética dos links da sidebar */
-    .sidebar-link {
-      color: #e6e6e6;
-      text-decoration: none;
-      padding: .5rem .75rem;
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      border-radius: .375rem;
-    }
-    .sidebar-link:hover { background: rgba(255,255,255,0.03); text-decoration: none; color: #fff; }
-    .small-muted { color: rgba(255,255,255,0.5); font-size: .9rem; }
+.left-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Brand button */
+.brand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: var(--btn-padding);
+  border-radius: var(--btn-radius);
+  background: transparent;
+  border: none;
+  font-family: "Oswald", sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--muted-light);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .12s ease;
+}
+.brand-btn img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+.brand-btn:hover {
+  background: var(--hover-bg);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* YouTube-like buttons */
+.yt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: var(--btn-padding);
+  border-radius: var(--btn-radius);
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s ease;
+}
+.yt-btn .bi { font-size: 1.05rem; color: inherit; }
+.yt-btn:hover, .yt-btn:focus {
+  background: var(--hover-bg);
+  color: var(--muted);
+  text-decoration: none;
+  outline: none;
+}
+.yt-btn.dropdown-toggle::after {
+  margin-left: .35rem;
+  vertical-align: .1rem;
+  color: var(--muted);
+}
+
+/* Avatar user image */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-name {
+  color: var(--muted-light);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Dropdown customization */
+.dropdown-menu.custom {
+  background: var(--panel-dark);
+  border-color: var(--divider);
+  min-width: 200px;
+}
+.dropdown-menu.custom .dropdown-header,
+.dropdown-menu.custom .dropdown-item,
+.dropdown-menu.custom .dropdown-item .bi {
+  color: var(--muted-light) !important;
+}
+.dropdown-menu.custom .dropdown-item i { color: var(--muted-light) !important; }
+.dropdown-menu.custom .dropdown-item:hover,
+.dropdown-menu.custom .dropdown-item:focus {
+  background: rgba(255,255,255,0.03);
+  color: #fff !important;
+}
+.dropdown-header.custom { color: var(--muted-light); font-weight: 700; }
+
+main { padding-top: calc(var(--navbar-height) + 1rem); }
+
+/* FOOTER */
+.site-footer {
+  background: var(--footer-bg);
+  border-top: 1px solid var(--footer-border);
+  color: var(--muted);
+  padding: 2.25rem 0;
+  margin-top: 2.5rem;
+}
+.site-footer a { color: var(--muted); text-decoration: none; }
+.site-footer a:hover { color: #fff; text-decoration: underline; }
+.footer-about { font-size: .98rem; line-height: 1.45; color: var(--muted-light); }
+.footer-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+.footer-links .link-group { min-width: 150px; }
+.footer-links .group-title {
+  color: var(--muted-light);
+  font-weight: 700;
+  margin-bottom: .5rem;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  font-size: .85rem;
+}
+.footer-links ul { list-style: none; padding: 0; margin: 0; }
+.footer-links li { margin-bottom: .45rem; }
+.footer-links li a {
+  color: var(--muted);
+  font-weight: 600;
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.03);
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  color: var(--muted);
+  font-size: .9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .footer-links { gap: .75rem; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+}
+
+a:focus, button:focus, input:focus {
+  outline: 3px solid rgba(144,150,146,0.18);
+  outline-offset: 2px;
+}
