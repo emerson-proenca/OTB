@@ -27,7 +27,7 @@ class Settings:
         BASE_URL = f"http://localhost:{PORT}"
 
     # API
-    APP_NAME = "Over the Board"
+    APP_NAME = "OTB"
     VERSION = "0.8.1"
     DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 

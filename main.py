@@ -20,7 +20,7 @@ from core.config import settings
 
 # FastAPI initial configuration
 app = FastAPI(
-    title="Over the Board",
+    title="OTB",
     version="0.8.1",
     description="Your platform for finding and registering for live chess tournaments",
     docs_url="/docs",
@@ -86,6 +86,15 @@ async def players_page(request: Request):
     """Players page"""
     return templates.TemplateResponse("players.html", {"request": request})
 
+@app.get("/404", response_class=HTMLResponse, name="404",)
+async def home_page(request: Request):
+    """404 Not found"""
+    return templates.TemplateResponse("404.html", {"request": request})
+
+@app.get("/500", response_class=HTMLResponse, name="404",)
+async def home_page(request: Request):
+    """500 Internal Server Error"""
+    return templates.TemplateResponse("500.html", {"request": request})
   
 # HEALTH AND CACHE ENDPOINTS
 @app.get("/health", tags=["Health"])
@@ -113,7 +122,7 @@ async def clear_cache():
 if __name__ == "__main__":
     import uvicorn
     
-    logger.info("🚀 Starting Over the Board...")
+    logger.info("🚀 Starting OTB...")
     
     base_url = settings.BASE_URL
     
