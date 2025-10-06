@@ -9,10 +9,10 @@
   "header.announcements": "Announcements",
   "header.admin": "Admin",
 
-  "home.title": "Over The Board - Dashboard",
-  "home.header.name": "Over The Board",
+  "home.title": "OTB - Dashboard",
+  "home.header.name": "OTB",
   "home.name": "Chess API",
-  "home.welcome": "Welcome to the Over The Board",
+  "home.welcome": "Welcome to the OTB",
   "home.subTitle": "Your platform for finding and registring for live chess tournaments",
   "home.verifying": "Verifying...",
   "home.apiStatus": "API Status",
@@ -103,7 +103,7 @@
   "admin.apiResponse": "API Response",
   "admin.apiResponse.none": "No response yet...",
 
-  "footer.title": "&copy; 2025 Over The Board - Made with ❤️ for the Chess Community",
+  "footer.title": "&copy; 2025 OTB - Made with ❤️ for the Chess Community",
   "footer.subTitle": "OTB has no legal bond with any chess federations",
 
   "generic.loading": "Loading data...",

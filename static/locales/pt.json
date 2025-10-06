@@ -9,10 +9,10 @@
   "header.announcements": "Comunicados",
   "header.admin": "Admin",
 
-  "home.title": "Over the Board - Painel",
-  "home.header.name": "Over the Board",
+  "home.title": "OTB - Painel",
+  "home.header.name": "OTB",
   "home.name": "API Xadrez",
-  "home.welcome": "Bem-vindo à Over the Board",
+  "home.welcome": "Bem-vindo à OTB",
   "home.subTitle": "API moderna e robusta para consulta de informações sobre xadrez.",
   "home.verifying": "Verificando...",
   "home.apiStatus": "Status da API",
@@ -102,7 +102,7 @@
   "admin.apiResponse": "API Response",
   "admin.apiResponse.none": "Nenhuma resposta ainda...",
 
-  "footer.title": "© 2025 Over the Board - Feito com ❤️ para a comunidade brasileira de xadrez",
+  "footer.title": "© 2025 OTB - Feito com ❤️ para a comunidade brasileira de xadrez",
   "footer.subTitle": "API não oficial das Federações de Xadrez",
 
   "generic.loading": "Carregando dados...",
