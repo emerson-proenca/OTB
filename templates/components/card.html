@@ -1,14 +1,15 @@
 <!-- TOURNAMENT LINK -->
 <a
-  href="/tournaments/123"
+  href="{{ tournament.regulation }}"
   class="card card-link text-reset text-decoration-none position-relative d-flex flex-column"
+  target="_blank"
   aria-label="Abrir página do torneio"
 >
   <!-- TOURNAMENT IMAGE -->
   <img
-    class="card-img-top"
-    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfG4NrxFeo5KmDmDhTThRbwg9QZ6DlH6CjeQ&s"
-    alt="Banner do torneio"
+    class="card-img-top tournament-banner"
+    src="{{ tournament.banner_url or url_for('static', path='/t-no-banner.jpg') }}"
+    alt="Tournament Image"
   />
 
   <!-- SAVE STAR -->
@@ -36,10 +37,9 @@
   <!-- CARD BODY -->
   <div class="card-body d-flex flex-column">
     <!-- TOURNAMENT TITLE -->
-    <h3 class="card-title mb-2">
-      Leonardo Eifert 13 Chess Tournament Inspires New Chess Club
-    </h3>
-    <!-- TOURNAMENT DATE -->
+    <h3 class="card-title mb-2 truncate-2">{{ tournament.name }}</h3>
+
+    <!-- TOURNAMENT PERIOD -->
     <div class="text-secondary small">
       <div class="d-flex align-items-center mb-1">
         <svg
@@ -55,7 +55,7 @@
             d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005-.324l.005-.324a10 10 0 0 1 14.995-8.336zm-5 2.66v5l3 3"
           />
         </svg>
-        <time datetime="2023-10-01" class="fw-bold">October 1, 2023</time>
+        <span class="fw-bold truncate-1">{{ tournament.period }}</span>
       </div>
 
       <!-- TOURNAMENT PLACE -->
@@ -73,8 +73,9 @@
             d="M18.364 4.636a9 9 0 0 1 .203 12.519l-.203.21l-4.243 4.242a3 3 0 0 1 -4.097 .135l-4.244-4.243a9 9 0 0 1 12.728-12.728zm-6.364 3.364a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"
           />
         </svg>
-        <span class="fw-bold">Germany, Berlin, Vauschen</span>
+        <span class="fw-bold truncate-1">{{ tournament.place }}</span>
       </div>
+
       <!-- TOURNAMENT TIME CONTROL -->
       <div class="d-flex align-items-center">
         <svg
@@ -90,30 +91,34 @@
             d="M17 2a2 2 0 0 1 1.995 1.85l.005.15v2a7 7 0 0 1-3.393 6 7 7 0 0 1 3.388 5.728l.005.272v2a2 2 0 0 1-1.85 1.995l-.15.005h-10a2 2 0 0 1-1.995-1.85l-.005-.15v-2a7 7 0 0 1 3.393-6 7 7 0 0 1-3.388-5.728l-.005-.272v-2a2 2 0 0 1 1.85-1.995l.15-.005h10z"
           />
         </svg>
-        <span class="fw-bold">Classical 90+30</span>
+        <span class="fw-bold truncate-1">{{ tournament.time_control }}</span>
       </div>
     </div>
   </div>
 
   <!-- CARD FOOTER -->
-  <div class="card-footer d-flex align-items-center justify-content-between">
-    <div class="d-flex align-items-center">
+  <div
+    class="card-footer d-flex align-items-center justify-content-between flex-wrap gap-2"
+  >
+    <div class="d-flex align-items-center flex-shrink-1 min-w-0">
       <img
-        src="https://en.chessbase.com/Portals/all/thumbs/120/120271.jpeg"
-        alt="Avatar da organização"
-        class="rounded-circle me-2"
-        width="40"
-        height="40"
+        src="{{ tournament.organization_logo or url_for('static', path='t-no-org.jpg') }}"
+        alt="Organization Logo"
+        class="rounded-circle me-2 flex-shrink-0"
+        width="32"
+        height="32"
       />
-      <!-- ORGANIZATION -->
-      <div class="small">
-        <div class="fw-bold">FIDE</div>
+      <div class="small text-truncate" style="max-width: 140px">
+        <div class="fw-bold truncate-1">{{ tournament.organizer }}</div>
       </div>
     </div>
-    <!-- TAGS -->
-    <div class="d-flex gap-2">
-      <span class="badge bg-primary text-light">Classical</span>
-      <span class="badge bg-info text-light">Rated</span>
+
+    <div class="d-flex flex-wrap justify-content-end gap-2 flex-grow-1">
+      {% if tournament.rating %}
+      <span class="badge bg-info text-light truncate-1">
+        {{ tournament.rating }}
+      </span>
+      {% endif %}
     </div>
   </div>
 </a>

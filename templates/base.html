@@ -8,12 +8,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}Meu App{% endblock %}</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', path='icon/favicon.ico') }}"
+    />
+    <title>{% block title %}OTB{% endblock %}</title>
 
     <!-- Tabler CSS via CDN -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/custom.css') }}"
     />
 
     {% block head %}{% endblock %}
