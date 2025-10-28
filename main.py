@@ -1,4 +1,5 @@
-# FastAPI imports
+# FastAPI and httpx imports
+import httpx
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -51,10 +52,24 @@ app.include_router(status_router, prefix="/api")
 
 
 # WEBSITE PAGES
-@app.get("/", response_class=HTMLResponse, name="home",)
+@app.get("/", response_class=HTMLResponse, name="home")
 async def home_page(request: Request):
-    """Application home page"""
-    return templates.TemplateResponse("home.html", {"request": request})
+    """Application home page using async httpx"""
+    url = "http://localhost:8000/api/tournaments?limit=32"
+    
+    # Async HTTP request
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        tournaments = response.json()
+    
+    # Render template
+    return templates.TemplateResponse(
+        "home.html",
+        {
+            "request": request,
+            "tournaments": tournaments.get("cbx", [])
+        }
+    )
 
 @app.get("/admin", response_class=HTMLResponse, name="admin")
 async def admin_page(request: Request):
