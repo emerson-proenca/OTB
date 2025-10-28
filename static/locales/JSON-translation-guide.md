@@ -40,10 +40,10 @@ Use **dot notation** and **camelCase** to organize keys clearly:
 
 ### Rules:
 
-* Use `.` (dots) to represent hierarchy (like sections and subsections)
-* Use `camelCase` for compound words: `currentTime`, `subTitle`, `loggedInUser`
-* Avoid `snake_case` or `kebab-case`
-* Do not include trailing punctuation or symbols in keys
+- Use `.` (dots) to represent hierarchy (like sections and subsections)
+- Use `camelCase` for compound words: `currentTime`, `subTitle`, `loggedInUser`
+- Avoid `snake_case` or `kebab-case`
+- Do not include trailing punctuation or symbols in keys
 
 ---
 
@@ -51,9 +51,9 @@ Use **dot notation** and **camelCase** to organize keys clearly:
 
 Values should:
 
-* Be full, human-readable sentences or phrases
-* Use proper punctuation and capitalization
-* Not include HTML or Markdown unless explicitly required
+- Be full, human-readable sentences or phrases
+- Use proper punctuation and capitalization
+- Not include HTML or Markdown unless explicitly required
 
 ### Example:
 
@@ -76,9 +76,9 @@ Values should:
 
 ## 💡 Tips for Translators
 
-* Translate only the values (text after the colon `:`), never the keys
-* Make sure the translated phrase fits the same context as the original
-* If you're unsure about a term (e.g., "Rating" or "Cache"), ask the project manager for clarification
+- Translate only the values (text after the colon `:`), never the keys
+- Make sure the translated phrase fits the same context as the original
+- If you're unsure about a term (e.g., "Rating" or "Cache"), ask the project manager for clarification
 
 ---
 
