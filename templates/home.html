@@ -1,46 +1,15 @@
-{% extends "base.html" %} {% block title %}OTB{% endblock %} {% block content %}
+{% extends "base.html" %} {% block title %}OTB - homepage {% endblock %} {%
+block content %}
 <div class="page-header d-print-none">
   <h1 class="page-title">Chess Tournaments</h1>
 </div>
 
-<!-- TOURNAMENT CARDS -->
 <div class="row row-cards">
+  {% for tournament in tournaments %}
   <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
+    {% include "components/card.html" with context %}
   </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
+  {% endfor %}
 </div>
 
 {% endblock %}
