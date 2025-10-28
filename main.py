@@ -87,12 +87,12 @@ async def players_page(request: Request):
     return templates.TemplateResponse("players.html", {"request": request})
 
 @app.get("/404", response_class=HTMLResponse, name="404",)
-async def home_page(request: Request):
+async def not_found(request: Request):
     """404 Not found"""
     return templates.TemplateResponse("404.html", {"request": request})
 
-@app.get("/500", response_class=HTMLResponse, name="404",)
-async def home_page(request: Request):
+@app.get("/500", response_class=HTMLResponse, name="500",)
+async def server_error(request: Request):
     """500 Internal Server Error"""
     return templates.TemplateResponse("500.html", {"request": request})
   
