@@ -1,25 +1,12 @@
-{% extends "base.html" %}
-
-{% block title %}OTB{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}OTB{% endblock %} {% block content %}
 <div class="page-header d-print-none">
   <h1 class="page-title">Chess Tournaments</h1>
 </div>
 
 <div class="row row-cards">
-  <div class="col-md-12 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-  <div class="col-md-12 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-    <div class="col-md-12 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
-    <div class="col-md-12 col-xl-3">
-    {% include "components/card.html" %}
-  </div>
+  <div class="col-md-12 col-xl-3">{% include "components/card.html" %}</div>
+  <div class="col-md-12 col-xl-3">{% include "components/card.html" %}</div>
+  <div class="col-md-12 col-xl-3">{% include "components/card.html" %}</div>
+  <div class="col-md-12 col-xl-3">{% include "components/card.html" %}</div>
 </div>
 {% endblock %}
-

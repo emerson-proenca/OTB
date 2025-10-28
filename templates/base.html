@@ -1,28 +1,33 @@
-<!doctype html>
-<html lang="pt-BR" data-bs-theme="dark" data-bs-theme-base="gray" data-bs-theme-primary="purple">
-  
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>{% block title %}Meu App{% endblock %}</title>
+<!DOCTYPE html>
+<html
+  lang="pt-BR"
+  data-bs-theme="dark"
+  data-bs-theme-base="gray"
+  data-bs-theme-primary="purple"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Meu App{% endblock %}</title>
 
-  <!-- Tabler CSS via CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css"/>
-  
-  {% block head %}{% endblock %}
-</head>
-<body>
-  <div class="page">
-    {% include "components/navbar.html" %}
-    <div class="page-wrapper">
-      <div class="container-xl">
-        {% block content %}{% endblock %}
+    <!-- Tabler CSS via CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css"
+    />
+
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <div class="page">
+      {% include "components/navbar.html" %}
+      <div class="page-wrapper">
+        <div class="container-xl">{% block content %}{% endblock %}</div>
       </div>
     </div>
-  </div>
-{% include "components/footer.html" %}
-  <!-- Tabler JS via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
-  {% block scripts %}{% endblock %}
-</body>
+    {% include "components/footer.html" %}
+    <!-- Tabler JS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
+    {% block scripts %}{% endblock %}
+  </body>
 </html>

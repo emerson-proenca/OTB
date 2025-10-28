@@ -2,194 +2,196 @@
 
 /* Touch-friendly improvements */
 @media (max-width: 991.98px) {
-    /* Show text on mobile navigation */
-    .nav-btn span {
-        display: inline !important;
-    }
-    
-    /* Increase touch targets */
-    .nav-btn {
-        min-height: 44px;
-        font-size: 1rem;
-        padding: 0.75rem 1rem;
-    }
-    
-    .btn {
-        min-height: 44px;
-        padding: 0.75rem 1.5rem;
-    }
-    
-    /* Better spacing for mobile */
-    .main {
-        padding: 1rem 0;
-    }
-    
-    .section-header {
-        margin-bottom: 2rem;
-    }
-    
-    .section-header h2 {
-        font-size: 1.75rem;
-    }
-    
-    /* Form improvements */
-    .form-select, .form-control {
-        min-height: 44px;
-        font-size: 1rem;
-    }
-    
-    /* Card adjustments */
-    .stat-card {
-        padding: 1rem;
-    }
-    
-    .admin-card {
-        margin-bottom: 1rem;
-    }
-    
-    /* Navbar improvements */
-    .navbar-toggler {
-        padding: 0.5rem;
-        border: 1px solid var(--bg-tertiary);
-    }
-    
-    .navbar-brand h1 {
-        font-size: 1rem;
-    }
-    
-    /* Ensure buttons show text on mobile */
-    .btn span {
-        display: inline !important;
-    }
+  /* Show text on mobile navigation */
+  .nav-btn span {
+    display: inline !important;
+  }
+
+  /* Increase touch targets */
+  .nav-btn {
+    min-height: 44px;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: 0.75rem 1.5rem;
+  }
+
+  /* Better spacing for mobile */
+  .main {
+    padding: 1rem 0;
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.75rem;
+  }
+
+  /* Form improvements */
+  .form-select,
+  .form-control {
+    min-height: 44px;
+    font-size: 1rem;
+  }
+
+  /* Card adjustments */
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .admin-card {
+    margin-bottom: 1rem;
+  }
+
+  /* Navbar improvements */
+  .navbar-toggler {
+    padding: 0.5rem;
+    border: 1px solid var(--bg-tertiary);
+  }
+
+  .navbar-brand h1 {
+    font-size: 1rem;
+  }
+
+  /* Ensure buttons show text on mobile */
+  .btn span {
+    display: inline !important;
+  }
 }
 
 /* Medium screens - show more text */
 @media (max-width: 1199.98px) {
-    .d-none.d-lg-inline {
-        display: inline !important;
-    }
+  .d-none.d-lg-inline {
+    display: inline !important;
+  }
 }
 
 /* Small screens - show essential text */
 @media (max-width: 767.98px) {
-    .d-none.d-sm-inline {
-        display: inline !important;
-    }
-    
-    /* Override Bootstrap hide classes for better mobile experience */
-    .d-sm-none {
-        display: none !important;
-    }
+  .d-none.d-sm-inline {
+    display: inline !important;
+  }
+
+  /* Override Bootstrap hide classes for better mobile experience */
+  .d-sm-none {
+    display: none !important;
+  }
 }
 
 /* Very small screens */
 @media (max-width: 575.98px) {
-    .container-fluid {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    
-    .hero h2 {
-        font-size: 1.75rem;
-        line-height: 1.2;
-    }
-    
-    .hero p {
-        font-size: 0.9rem;
-    }
-    
-    .stat-card h3 {
-        font-size: 1rem;
-    }
-    
-    .stat-card p {
-        font-size: 0.8rem;
-    }
-    
-    .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        padding: 0.7rem 1rem;
-    }
-    
-    .d-flex.gap-2 {
-        flex-direction: column;
-        gap: 0.5rem !important;
-    }
-    
-    .d-flex.gap-2 .btn {
-        margin-bottom: 0;
-    }
-    
-    /* Force text visibility */
-    .btn span, .nav-btn span {
-        display: inline !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-    
-    /* Navbar adjustments for very small screens */
-    .navbar-brand {
-        font-size: 0.9rem;
-    }
-    
-    .navbar-toggler i {
-        font-size: 1.1rem;
-    }
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .hero h2 {
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  .hero p {
+    font-size: 0.9rem;
+  }
+
+  .stat-card h3 {
+    font-size: 1rem;
+  }
+
+  .stat-card p {
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+  }
+
+  .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+
+  .d-flex.gap-2 .btn {
+    margin-bottom: 0;
+  }
+
+  /* Force text visibility */
+  .btn span,
+  .nav-btn span {
+    display: inline !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Navbar adjustments for very small screens */
+  .navbar-brand {
+    font-size: 0.9rem;
+  }
+
+  .navbar-toggler i {
+    font-size: 1.1rem;
+  }
 }
 
 /* Text visibility overrides */
 @media (max-width: 991.98px) {
-    /* Force show all button text */
-    .btn .d-none,
-    .nav-btn .d-none {
-        display: inline !important;
-    }
-    
-    /* Ensure proper text spacing */
-    .btn i + span,
-    .nav-btn i + span {
-        margin-left: 0.5rem;
-    }
+  /* Force show all button text */
+  .btn .d-none,
+  .nav-btn .d-none {
+    display: inline !important;
+  }
+
+  /* Ensure proper text spacing */
+  .btn i + span,
+  .nav-btn i + span {
+    margin-left: 0.5rem;
+  }
 }
 
 /* Landscape orientation on mobile */
 @media (max-height: 500px) and (orientation: landscape) {
-    .hero {
-        padding: 1rem 0;
-    }
-    
-    .section-header {
-        margin-bottom: 1rem;
-    }
-    
-    .main {
-        padding: 0.5rem 0;
-    }
+  .hero {
+    padding: 1rem 0;
+  }
+
+  .section-header {
+    margin-bottom: 1rem;
+  }
+
+  .main {
+    padding: 0.5rem 0;
+  }
 }
 
 /* Dark mode support (if needed in the future) */
 @media (prefers-color-scheme: dark) {
-    /* You can add dark mode styles here */
+  /* You can add dark mode styles here */
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-    .btn {
-        border: 2px solid currentColor;
-    }
-    
-    .nav-btn {
-        border: 1px solid currentColor;
-    }
+  .btn {
+    border: 2px solid currentColor;
+  }
+
+  .nav-btn {
+    border: 1px solid currentColor;
+  }
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
