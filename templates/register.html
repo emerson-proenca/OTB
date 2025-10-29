@@ -7,7 +7,7 @@ endblock %} {% block content %}
     <div class="card-body">
       <h2 class="card-title text-center mb-4 fs-1">Create your account</h2>
 
-      <!-- Username -->
+      <!-- USERNAME -->
       <div class="mb-3">
         <label class="form-label required">Username</label>
         <input
@@ -20,7 +20,7 @@ endblock %} {% block content %}
         <div class="invalid-feedback">Username is required.</div>
       </div>
 
-      <!-- Email -->
+      <!-- EMAIL -->
       <div class="mb-3">
         <label class="form-label required">Email address</label>
         <input
@@ -33,7 +33,7 @@ endblock %} {% block content %}
         <div class="invalid-feedback">Please enter a valid email.</div>
       </div>
 
-      <!-- Password -->
+      <!-- PASSWORD -->
       <div class="mb-3">
         <label class="form-label required">Password</label>
         <div class="input-group input-group-flat">
@@ -51,7 +51,7 @@ endblock %} {% block content %}
               id="togglePassword"
               aria-label="Show password"
             >
-              <!-- 👁️ Olho fechado inicial -->
+              <!-- INITIALLY EYE CLOSED -->
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 id="eyeIcon"
@@ -80,7 +80,7 @@ endblock %} {% block content %}
         <div class="invalid-feedback">Password is required.</div>
       </div>
 
-      <!-- Submit -->
+      <!-- SUBMIT -->
       <div class="form-footer">
         <button type="submit" class="btn btn-primary w-100">
           Create account
@@ -89,12 +89,13 @@ endblock %} {% block content %}
     </div>
   </form>
 
+  <!-- LOGIN -->
   <div class="text-center text-secondary mt-3">
     Already have an account? <a href="/login" tabindex="-1">Login</a>
   </div>
 </div>
 
-<!-- Toast container -->
+<!-- ALERT MESSAGE -->
 <div
   class="toast-container position-fixed top-0 end-0 p-3"
   id="toast-container"
@@ -105,7 +106,7 @@ endblock %} {% block content %}
   const inputs = form.querySelectorAll("input");
   const toastContainer = document.getElementById("toast-container");
 
-  // ---- Mostrar/Ocultar senha ----
+  // ---- SHOW/HIDE PASSWORD ----
   document
     .getElementById("togglePassword")
     .addEventListener("click", function (e) {
@@ -114,7 +115,7 @@ endblock %} {% block content %}
       const icon = document.getElementById("eyeIcon");
       if (pwd.type === "password") {
         pwd.type = "text";
-        // Ícone de olho aberto
+        // OPEN EYE ICON
         icon.outerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" id="eyeIcon" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -124,7 +125,7 @@ endblock %} {% block content %}
       `;
       } else {
         pwd.type = "password";
-        // Ícone de olho fechado
+        // CLOSED EYE ICON
         icon.outerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" id="eyeIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-eye-closed">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -138,7 +139,7 @@ endblock %} {% block content %}
       }
     });
 
-  // ---- Mostrar toast ----
+  // ---- SHOW MESSAGE ----
   function showToast(type, message) {
     const color = type === "success" ? "bg-success" : "bg-danger";
     const toast = document.createElement("div");
@@ -154,11 +155,11 @@ endblock %} {% block content %}
     setTimeout(() => toast.remove(), 4000);
   }
 
-  // ---- Validação visual e envio ----
+  // ---- VISUAL VALIDATION AND SUBMIT ----
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Reset visual
+    // VISUAL RESET
     inputs.forEach((i) => i.classList.remove("is-valid", "is-invalid"));
 
     let valid = true;
@@ -167,7 +168,7 @@ endblock %} {% block content %}
     inputs.forEach((input) => {
       const value = input.value.trim();
 
-      // valida email de forma mais realista
+      // EMAIL VALIDATION
       if (input.id === "email") {
         if (!emailRegex.test(value)) {
           input.classList.add("is-invalid");
