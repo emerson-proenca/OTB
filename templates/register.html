@@ -1,57 +1,60 @@
-{% extends "base.html" %} {% block title %}OTB - register {% endblock %} {%
-block meta_description %}Register for OTB (Over The Board).{% endblock %} {%
-block content %}
+{% extends "base.html" %} {% block title %}OTB - Register{% endblock %} {% block
+meta_description %}Create your OTB account to join tournaments and events.{%
+endblock %} {% block content %}
 
 <div class="container container-tight py-4">
-  <form
-    class="card card-md"
-    method="post"
-    action="/register"
-    autocomplete="off"
-    novalidate=""
-  >
+  <form id="register-form" class="card card-md" autocomplete="off" novalidate>
     <div class="card-body">
-      <h2 class="card-title text-center mb-4 fs-1">Create new account</h2>
+      <h2 class="card-title text-center mb-4 fs-1">Create your account</h2>
+
+      <!-- Username -->
       <div class="mb-3">
-        <label class="form-label required">Name</label>
+        <label class="form-label required">Username</label>
         <input
           type="text"
-          name="username"
+          id="username"
           class="form-control"
-          placeholder="Enter name"
-          autocomplete="on"
+          placeholder="Enter username"
+          required
         />
+        <div class="invalid-feedback">Username is required.</div>
       </div>
+
+      <!-- Email -->
       <div class="mb-3">
         <label class="form-label required">Email address</label>
         <input
           type="email"
-          name="email"
+          id="email"
           class="form-control"
           placeholder="Enter email"
-          autocomplete="on"
+          required
         />
+        <div class="invalid-feedback">Please enter a valid email.</div>
       </div>
+
+      <!-- Password -->
       <div class="mb-3">
         <label class="form-label required">Password</label>
         <div class="input-group input-group-flat">
           <input
             type="password"
+            id="password"
             class="form-control"
-            name="password"
             placeholder="Password"
-            autocomplete="off"
+            required
           />
           <span class="input-group-text">
             <a
               href="#"
               class="link-secondary"
-              data-bs-toggle="tooltip"
+              id="togglePassword"
               aria-label="Show password"
-              data-bs-original-title="Show password"
             >
+              <!-- 👁️ Olho fechado inicial -->
               <svg
                 xmlns="http://www.w3.org/2000/svg"
+                id="eyeIcon"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -60,48 +63,139 @@ block content %}
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="icon icon-1"
+                class="icon icon-tabler icon-tabler-eye-closed"
               >
-                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path
-                  d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"
-                ></path>
+                  d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4"
+                />
+                <path d="M3 15l2.5 -3.8" />
+                <path d="M21 14.976l-2.492 -3.776" />
+                <path d="M9 17l.5 -4" />
+                <path d="M15 17l-.5 -4" />
               </svg>
             </a>
           </span>
         </div>
+        <div class="invalid-feedback">Password is required.</div>
       </div>
-      <div class="mb-3"></div>
+
+      <!-- Submit -->
       <div class="form-footer">
         <button type="submit" class="btn btn-primary w-100">
-          Create new account
+          Create account
         </button>
       </div>
     </div>
   </form>
+
   <div class="text-center text-secondary mt-3">
-    Already have account? <a href="./login" tabindex="-1">Login</a>
+    Already have an account? <a href="/login" tabindex="-1">Login</a>
   </div>
 </div>
 
-{% if message %}
-<p style="color: green">{{ message }}</p>
-{% endif %}
+<!-- Toast container -->
+<div
+  class="toast-container position-fixed top-0 end-0 p-3"
+  id="toast-container"
+></div>
 
 <script>
   const form = document.getElementById("register-form");
-  const msg = document.getElementById("message");
+  const inputs = form.querySelectorAll("input");
+  const toastContainer = document.getElementById("toast-container");
 
+  // ---- Mostrar/Ocultar senha ----
+  document
+    .getElementById("togglePassword")
+    .addEventListener("click", function (e) {
+      e.preventDefault();
+      const pwd = document.getElementById("password");
+      const icon = document.getElementById("eyeIcon");
+      if (pwd.type === "password") {
+        pwd.type = "text";
+        // Ícone de olho aberto
+        icon.outerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" id="eyeIcon" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <circle cx="12" cy="12" r="2" />
+          <path d="M22 12c-2.4 4 -5.4 6 -10 6c-4.6 0 -7.6 -2 -10 -6c2.4 -4 5.4 -6 10 -6c4.6 0 7.6 2 10 6" />
+        </svg>
+      `;
+      } else {
+        pwd.type = "password";
+        // Ícone de olho fechado
+        icon.outerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" id="eyeIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-eye-closed">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4" />
+          <path d="M3 15l2.5 -3.8" />
+          <path d="M21 14.976l-2.492 -3.776" />
+          <path d="M9 17l.5 -4" />
+          <path d="M15 17l-.5 -4" />
+        </svg>
+      `;
+      }
+    });
+
+  // ---- Mostrar toast ----
+  function showToast(type, message) {
+    const color = type === "success" ? "bg-success" : "bg-danger";
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white ${color} border-0 show`;
+    toast.role = "alert";
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    `;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
+
+  // ---- Validação visual e envio ----
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    // Reset visual
+    inputs.forEach((i) => i.classList.remove("is-valid", "is-invalid"));
+
+    let valid = true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    inputs.forEach((input) => {
+      const value = input.value.trim();
+
+      // valida email de forma mais realista
+      if (input.id === "email") {
+        if (!emailRegex.test(value)) {
+          input.classList.add("is-invalid");
+          valid = false;
+          input.nextElementSibling.textContent =
+            "Please enter a valid email address.";
+          return;
+        }
+      }
+
+      if (!value) {
+        input.classList.add("is-invalid");
+        valid = false;
+      } else {
+        input.classList.add("is-valid");
+      }
+    });
+
+    if (!valid) {
+      showToast("error", "Please fix the highlighted fields.");
+      return;
+    }
 
     const data = {
       username: document.getElementById("username").value,
       email: document.getElementById("email").value,
       password: document.getElementById("password").value,
     };
-
-    msg.textContent = "Criando conta...";
 
     try {
       const res = await fetch("/api/register", {
@@ -110,16 +204,20 @@ block content %}
         body: JSON.stringify(data),
       });
 
-      if (res.status === 204) {
-        msg.textContent = "Conta criada com sucesso!";
+      if (res.ok) {
+        showToast("success", "Account created successfully!");
         form.reset();
+        inputs.forEach((i) => i.classList.remove("is-valid"));
       } else {
-        const error = await res.json();
-        msg.textContent =
-          "Erro: " + (error.detail || "Não foi possível criar a conta.");
+        const errorData = await res.json();
+        const message =
+          errorData?.detail ||
+          errorData?.message ||
+          "An unexpected error occurred.";
+        showToast("error", message);
       }
     } catch (err) {
-      msg.textContent = "Erro de conexão com o servidor.";
+      showToast("error", "Connection error. Please try again.");
     }
   });
 </script>
