@@ -54,22 +54,8 @@ app.include_router(status_router, prefix="/api")
 # WEBSITE PAGES
 @app.get("/", response_class=HTMLResponse, name="home")
 async def home_page(request: Request):
-    """Application home page using async httpx"""
-    url = "http://localhost:8000/api/tournaments?limit=32"
-    
-    # Async HTTP request
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        tournaments = response.json()
-    
-    # Render template
-    return templates.TemplateResponse(
-        "home.html",
-        {
-            "request": request,
-            "tournaments": tournaments.get("cbx", [])
-        }
-    )
+    """Site home page"""
+    return templates.TemplateResponse("home.html", {"request": request})
 
 @app.get("/admin", response_class=HTMLResponse, name="admin")
 async def admin_page(request: Request):
@@ -93,8 +79,20 @@ async def news_page(request: Request):
 
 @app.get("/tournaments", response_class=HTMLResponse, name="tournaments")
 async def tournaments_page(request: Request):
-    """Tournaments page"""
-    return templates.TemplateResponse("tournaments.html", {"request": request})
+    """Tournaments page using async httpx"""
+    url = "http://localhost:8000/api/tournaments?limit=32"
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        tournaments = response.json()
+    
+    return templates.TemplateResponse(
+        "home.html",
+        {
+            "request": request,
+            "tournaments": tournaments.get("cbx", [])
+        }
+    )
 
 @app.get("/players", response_class=HTMLResponse, name="players")
 async def players_page(request: Request):
