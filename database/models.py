@@ -1,5 +1,6 @@
 # database/models.py
-from sqlalchemy import Column, Integer, String, DateTime, Text, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, Text, UniqueConstraint, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database.session import Base
 from datetime import datetime, timezone
@@ -97,11 +98,53 @@ class SyncJob(Base):
     updated = Column(Integer, nullable=True)
     error = Column(Text, nullable=True)
 
-# PLAYERS
-class User(Base):
-    __tablename__ = "users"
+# =====================
+#   MODELO: PESSOAS
+# =====================
+class People(Base):
+    __tablename__ = "people"
 
     id = Column(Integer, primary_key=True, index=True)
+
+    # Dados de login e segurança
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+
+    # Dados de perfil
+    name = Column(String, nullable=True)
+    gender = Column(String, nullable=True)
+    birthdate = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    region = Column(String, nullable=True)
+    active = Column(Integer, default=1)  # 1 = ativo, 0 = inativo
+    role = Column(String, default="player")  # player, organizer, admin etc.
+    profile_picture = Column(String, nullable=True)
+    rating_id = Column(String, nullable=True)  # FIDE ID, CBX ID etc.
+    bio = Column(Text, nullable=True)
+
+    # Relacionamentos
+    organizations = relationship("Organizations", back_populates="owner", cascade="all, delete-orphan")
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+# ==========================
+#   MODELO: ORGANIZAÇÕES
+# ==========================
+class Organizations(Base):
+    __tablename__ = "organizations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    country = Column(String, nullable=True)
+    region = Column(String, nullable=True)
+    active = Column(Integer, default=1)  # 1 = ativa, 0 = inativa
+
+    # FK para o dono da organização
+    owner_id = Column(Integer, ForeignKey("people.id"), nullable=False)
+
+    # Relacionamento inverso
+    owner = relationship("People", back_populates="organizations")
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

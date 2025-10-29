@@ -1,6 +1,6 @@
 # FastAPI and httpx imports
 import httpx
-from fastapi import FastAPI, Request, UploadFile ,Form, Depends
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
@@ -12,6 +12,7 @@ from apis.status_api import router as status_router
 from apis.players_api import router as players_router
 from apis.announcements_api import router as announcements_router
 from apis.news_api import router as news_router
+from apis.people_api import router as people_router
 
 # Configuration and utilities imports
 from core.rate_limiter import rate_limit_middleware
@@ -20,13 +21,11 @@ from core.cache import cache
 from core.config import settings
 
 # Database and models imports
-from sqlalchemy.orm import Session
-from passlib.hash import bcrypt
 from database.session import SessionLocal, engine
-from database.models import Base, User
+from database.models import Base
+
 
 Base.metadata.create_all(bind=engine)
-
 
 # FastAPI initial configuration
 app = FastAPI(
@@ -58,6 +57,7 @@ app.include_router(players_router, prefix="/api")
 app.include_router(news_router, prefix="/api")
 app.include_router(announcements_router, prefix="/api")
 app.include_router(status_router, prefix="/api")
+app.include_router(people_router, prefix="/api")
 
 def get_db():
     db = SessionLocal()
@@ -72,70 +72,9 @@ async def home_page(request: Request):
     """Site home page"""
     return templates.TemplateResponse("home.html", {"request": request})
 
-# REGISTER PAGE
 @app.get("/register", response_class=HTMLResponse)
 async def register_form(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
-
-@app.post("/register", response_class=HTMLResponse)
-async def register_user(request: Request, db: Session = Depends(get_db)):
-    """Handle user registration accepting JSON."""
-    # Determine content type and extract data
-    content_type = request.headers.get("content-type", "")
-    username = email = password = None
-
-    if "application/json" in content_type:
-        body = await request.json()
-        username = body.get("username")
-        email = body.get("email")
-        password = body.get("password")
-    else:
-        # Handles both form-urlencoded and multipart/form-data (including UploadFile)
-        form = await request.form()
-        username = form.get("username")
-        email = form.get("email")
-        password_field = form.get("password")
-
-        # Handle the password field
-        if password_field is not None:
-            # If the field is an uploaded file, read its contents; otherwise treat it as a plain string
-            if isinstance(password_field, UploadFile):
-                raw = await password_field.read()
-                try:
-                    password = raw.decode("utf-8")
-                except Exception:
-                    password = raw.decode("utf-8", errors="ignore")
-            else:
-                password = str(password_field)
-        else:
-            password = None
-
-    # Validate required fields
-    if not username or not email or not password:
-        return templates.TemplateResponse(
-            "register.html",
-            {"request": request, "message": "Por favor, preencha username, email e password."}
-        )
-
-    # Check if user already exists
-    user_exists = db.query(User).filter(User.email == email).first()
-    if user_exists:
-        return templates.TemplateResponse(
-            "register.html",
-            {"request": request, "message": "Email já cadastrado."}
-        )
-
-    # Hash password and create user
-    hashed_password = bcrypt.hash(password[:72])
-    new_user = User(username=username, email=email, password=hashed_password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return templates.TemplateResponse(
-        "register.html",
-        {"request": request, "message": "Usuário cadastrado com sucesso!"}
-    )
 
 @app.get("/admin", response_class=HTMLResponse, name="admin")
 async def admin_page(request: Request):
@@ -217,7 +156,6 @@ if __name__ == "__main__":
 
     logger.info("🚀 Starting OTB...")
     
-
     base_url = settings.BASE_URL
     
     logger.info(f"🏠 Home: {base_url}/")
