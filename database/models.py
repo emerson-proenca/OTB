@@ -96,3 +96,12 @@ class SyncJob(Base):
     created = Column(Integer, nullable=True)
     updated = Column(Integer, nullable=True)
     error = Column(Text, nullable=True)
+
+# PLAYERS
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
