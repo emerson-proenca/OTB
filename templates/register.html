@@ -80,10 +80,48 @@ block content %}
     </div>
   </form>
   <div class="text-center text-secondary mt-3">
-    Already have account? <a href="./sign-in" tabindex="-1">Sign in</a>
+    Already have account? <a href="./login" tabindex="-1">Login</a>
   </div>
 </div>
 
 {% if message %}
 <p style="color: green">{{ message }}</p>
-{% endif %} {% endblock %}
+{% endif %}
+
+<script>
+  const form = document.getElementById("register-form");
+  const msg = document.getElementById("message");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      username: document.getElementById("username").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+    };
+
+    msg.textContent = "Criando conta...";
+
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (res.status === 204) {
+        msg.textContent = "Conta criada com sucesso!";
+        form.reset();
+      } else {
+        const error = await res.json();
+        msg.textContent =
+          "Erro: " + (error.detail || "Não foi possível criar a conta.");
+      }
+    } catch (err) {
+      msg.textContent = "Erro de conexão com o servidor.";
+    }
+  });
+</script>
+
+{% endblock %}
