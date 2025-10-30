@@ -13,6 +13,7 @@ from apis.players_api import router as players_router
 from apis.announcements_api import router as announcements_router
 from apis.news_api import router as news_router
 from apis.people_api import router as people_router
+from apis.organization_api import router as organization_router
 
 # Configuration and utilities imports
 from core.rate_limiter import rate_limit_middleware
@@ -58,6 +59,7 @@ app.include_router(news_router, prefix="/api")
 app.include_router(announcements_router, prefix="/api")
 app.include_router(status_router, prefix="/api")
 app.include_router(people_router, prefix="/api")
+app.include_router(organization_router, prefix="/api")
 
 def get_db():
     db = SessionLocal()
@@ -75,6 +77,16 @@ async def home_page(request: Request):
 @app.get("/register", response_class=HTMLResponse)
 async def register_form(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
+
+
+
+@app.get("/create", response_class=HTMLResponse,)
+async def create_form(request: Request):
+    return templates.TemplateResponse("register_org.html", {"request": request})
+
+@app.get("/login_org", response_class=HTMLResponse)
+async def loginorg_form(request: Request):
+    return templates.TemplateResponse("login_org.html", {"request": request})
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_form(request: Request):
