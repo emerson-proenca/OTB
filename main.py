@@ -1,6 +1,6 @@
 # FastAPI and httpx imports
 import httpx
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
@@ -23,10 +23,19 @@ from core.config import settings
 
 # Database and models imports
 from database.session import SessionLocal, engine
-from database.models import Base
+from database.models import Base, People
+from sqlalchemy.orm import Session
+
+# JWT imports
+from jose import jwt, JWTError
+from starlette.middleware.base import BaseHTTPMiddleware
 
 
-Base.metadata.create_all(bind=engine)
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = "HS256"
+
+
+# Base.metadata.create_all(bind=engine) # Apenas se o gerenciamento de migração não for usado.
 
 # FastAPI initial configuration
 app = FastAPI(
@@ -49,7 +58,14 @@ app.middleware("http")(rate_limit_middleware)
 
 # Static files and templates setup
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+
+templates = Jinja2Templates(
+    directory="templates",
+    context_processors=[
+        # Injects 'current_user' in ALL templates
+        lambda request: {"current_user": request.state.current_user}
+    ]
+)
 
 
 # Router registration
@@ -60,6 +76,33 @@ app.include_router(announcements_router, prefix="/api")
 app.include_router(status_router, prefix="/api")
 app.include_router(people_router, prefix="/api")
 app.include_router(organization_router, prefix="/api")
+
+
+class CurrentUserMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if not SECRET_KEY:
+            raise RuntimeError("SECRET_KEY is not set! Check your otb.env file.")
+        token = request.cookies.get("access_token")
+        request.state.current_user = None
+        if token:
+            try:
+                payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+                user_id = payload.get("sub")
+                if user_id:
+                    db = SessionLocal()
+                    user = db.query(People).filter(People.id == user_id).first()
+                    db.close()
+                    if user:
+                        request.state.current_user = user
+            except JWTError:
+                pass
+
+        response = await call_next(request)
+        return response
+
+# Registrar o middleware
+app.add_middleware(CurrentUserMiddleware)
+
 
 def get_db():
     db = SessionLocal()
@@ -77,8 +120,6 @@ async def home_page(request: Request):
 @app.get("/register", response_class=HTMLResponse)
 async def register_form(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
-
-
 
 @app.get("/create", response_class=HTMLResponse,)
 async def create_form(request: Request):
@@ -164,6 +205,27 @@ async def clear_cache():
     cache.clear()
     logger.info("Cache cleared manually")
     return {"message": "Cache cleared successfully"}
+
+
+@app.get("/{username}/", response_class=HTMLResponse)
+async def person_profile(
+    request: Request,
+    username: str,
+    db: Session = Depends(get_db),
+):
+    """Página de perfil de uma pessoa (ex: /joao/)."""
+    user = db.query(People).filter(People.username == username).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    return templates.TemplateResponse(
+        "profile.html",
+        {
+            "request": request,
+            "user": user,
+        },
+    )
 
 
 # Application entry point

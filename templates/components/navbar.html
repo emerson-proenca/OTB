@@ -49,7 +49,7 @@
           <a href="#" class="nav-link p-0" data-bs-toggle="dropdown">
             <span
               class="avatar avatar-sm"
-              style="background-image: url(./static/avatar.jpg)"
+              style="background-image: url({{ current_user.profile_picture if current_user.profile_picture else '/static/default-avatar.png' }})"
             ></span>
           </a>
           <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
@@ -334,6 +334,7 @@
         <div class="col d-flex justify-content-end">
           <ul class="navbar-nav align-items-center">
             <li class="nav-item dropdown">
+              {% if current_user %}
               <a
                 href="#"
                 class="nav-link d-flex lh-1 p-0 px-2"
@@ -341,18 +342,25 @@
               >
                 <span
                   class="avatar avatar-sm"
-                  style="background-image: url(./static/avatar.jpg)"
+                  style="background-image: url(/static/avatar.jpg)"
                 ></span>
                 <div class="d-none d-xl-block ps-2">
-                  <div>Name of the User</div>
-                  <div class="mt-1 small text-secondary">Player</div>
+                  <div>{{ current_user.username }}</div>
+                  <div class="mt-1 small text-secondary">
+                    {{ current_user.role or "Player" }}
+                  </div>
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <a href="./profile" class="dropdown-item">Profile</a>
+                <a href="/{{ current_user.username }}/" class="dropdown-item"
+                  >Profile</a
+                >
                 <a href="./settings" class="dropdown-item">Settings</a>
                 <a href="./sign-in" class="dropdown-item">Logout</a>
               </div>
+              {% else %}
+              <a href="/login" class="btn btn-outline-primary">Login</a>
+              {% endif %}
             </li>
           </ul>
         </div>
