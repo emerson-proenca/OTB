@@ -124,7 +124,7 @@ class People(Base):
     bio = Column(Text, nullable=True)
 
     # Relacionamentos
-    organizations = relationship("Organizations", back_populates="owner", cascade="all, delete-orphan")
+    Organization = relationship("Organization", back_populates="owner", cascade="all, delete-orphan")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -132,19 +132,27 @@ class People(Base):
 # ==========================
 #   MODELO: ORGANIZAÇÕES
 # ==========================
-class Organizations(Base):
-    __tablename__ = "organizations"
+class Organization(Base):
+    __tablename__ = "Organization"
 
     id = Column(Integer, primary_key=True, index=True)
+
+    # Dados de login e segurança
     name = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
+
+    # Dados de perfil
     country = Column(String, nullable=True)
     region = Column(String, nullable=True)
+    description = Column(Text, nullable=True)
+    logo = Column(String, nullable=True)
     active = Column(Integer, default=1)  # 1 = ativa, 0 = inativa
 
     # FK para o dono da organização
-    owner_id = Column(Integer, ForeignKey("people.id"), nullable=False)
+    owner_id = Column(Integer, ForeignKey("people.id", ondelete="CASCADE"), nullable=False)
 
     # Relacionamento inverso
-    owner = relationship("People", back_populates="organizations")
+    owner = relationship("People", back_populates="Organization")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
