@@ -179,6 +179,8 @@ endblock %} {% block content %}
       return;
     }
 
+    const username = document.getElementById("username").value.trim();
+
     try {
       const response = await fetch("/api/register", {
         method: "POST",
@@ -194,7 +196,7 @@ endblock %} {% block content %}
 
       if (response.ok) {
         showToast("success", "Account created successfully!");
-        setTimeout(() => (window.location.href = "/"), 1500);
+        setTimeout(() => (window.location.href = `/${username}`), 1500);
       } else {
         showToast("error", data.detail || "Registration failed.");
       }
