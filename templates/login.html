@@ -1,24 +1,11 @@
-{% extends "base.html" %} {% block title %}OTB - Register{% endblock %} {% block
-meta_description %}Create your OTB account to join tournaments and events.{%
+{% extends "base.html" %} {% block title %}OTB - Login{% endblock %} {% block
+meta_description %}Login to access your OTB account and manage tournaments.{%
 endblock %} {% block content %}
 
 <div class="container container-tight py-4">
-  <form id="register-form" class="card card-md" autocomplete="off" novalidate>
+  <form id="login-form" class="card card-md" autocomplete="off" novalidate>
     <div class="card-body">
-      <h2 class="card-title text-center mb-4 fs-1">Create your account</h2>
-
-      <!-- USERNAME -->
-      <div class="mb-3">
-        <label class="form-label required">Username</label>
-        <input
-          type="text"
-          id="username"
-          class="form-control"
-          placeholder="Enter username"
-          required
-        />
-        <div class="invalid-feedback">Username is required.</div>
-      </div>
+      <h2 class="card-title text-center mb-4 fs-1">Login to your account</h2>
 
       <!-- EMAIL -->
       <div class="mb-3">
@@ -51,7 +38,7 @@ endblock %} {% block content %}
               id="togglePassword"
               aria-label="Show password"
             >
-              <!-- INITIALLY EYE CLOSED -->
+              <!-- CLOSED EYE -->
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 id="eyeIcon"
@@ -80,33 +67,29 @@ endblock %} {% block content %}
         <div class="invalid-feedback">Password is required.</div>
       </div>
 
-      <!-- SUBMIT -->
       <div class="form-footer">
-        <button type="submit" class="btn btn-primary w-100">
-          Create account
-        </button>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
       </div>
     </div>
   </form>
 
-  <!-- LOGIN -->
   <div class="text-center text-secondary mt-3">
-    Already have an account? <a href="/login" tabindex="-1">Login</a>
+    Don't have an account? <a href="/register" tabindex="-1">Register</a>
   </div>
 </div>
 
-<!-- ALERT MESSAGE -->
+<!-- MESSAGE -->
 <div
   class="toast-container position-fixed top-0 end-0 p-3"
   id="toast-container"
 ></div>
 
 <script>
-  const form = document.getElementById("register-form");
+  const form = document.getElementById("login-form");
   const inputs = form.querySelectorAll("input");
   const toastContainer = document.getElementById("toast-container");
 
-  // ---- SHOW/HIDE PASSWORD ----
+  // SHOW/HIDE PASSWORD
   document
     .getElementById("togglePassword")
     .addEventListener("click", function (e) {
@@ -117,6 +100,7 @@ endblock %} {% block content %}
         pwd.type = "text";
         icon.outerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" id="eyeIcon" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
           <circle cx="12" cy="12" r="2" />
           <path d="M22 12c-2.4 4 -5.4 6 -10 6c-4.6 0 -7.6 -2 -10 -6c2.4 -4 5.4 -6 10 -6c4.6 0 7.6 2 10 6" />
         </svg>`;
@@ -134,7 +118,7 @@ endblock %} {% block content %}
       }
     });
 
-  // ---- TOAST FUNCTION ----
+  // SHOW MESSAGE
   function showToast(type, message) {
     const color = type === "success" ? "bg-success" : "bg-danger";
     const toast = document.createElement("div");
@@ -149,24 +133,20 @@ endblock %} {% block content %}
     setTimeout(() => toast.remove(), 4000);
   }
 
-  // ---- VALIDATION + SUBMIT ----
+  // VISUAL VALIDATION AND SUBMIT
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    // VISUAL RESET
     inputs.forEach((i) => i.classList.remove("is-valid", "is-invalid"));
 
     let valid = true;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+    // INPUT VALIDATION
     inputs.forEach((input) => {
       const value = input.value.trim();
-      if (input.id === "email" && !emailRegex.test(value)) {
-        input.classList.add("is-invalid");
-        valid = false;
-        input.nextElementSibling.textContent =
-          "Please enter a valid email address.";
-        return;
-      }
-      if (!value) {
+      if (!value || (input.id === "email" && !emailRegex.test(value))) {
         input.classList.add("is-invalid");
         valid = false;
       } else {
@@ -179,13 +159,13 @@ endblock %} {% block content %}
       return;
     }
 
+    // SUBMIT TO API
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: document.getElementById("username").value.trim(),
-          email: document.getElementById("email").value.trim(),
+          email: document.getElementById("email").value,
           password: document.getElementById("password").value,
         }),
       });
@@ -193,10 +173,10 @@ endblock %} {% block content %}
       const data = await response.json();
 
       if (response.ok) {
-        showToast("success", "Account created successfully!");
-        setTimeout(() => (window.location.href = "/"), 1500);
+        showToast("success", "Welcome back!");
+        setTimeout(() => (window.location.href = "/"), 1000);
       } else {
-        showToast("error", data.detail || "Registration failed.");
+        showToast("error", data.detail || "Invalid email or password.");
       }
     } catch (err) {
       showToast("error", "Server connection error.");
