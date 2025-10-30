@@ -185,7 +185,7 @@ async def tournaments_page(request: Request):
         tournaments = response.json()
     
     return templates.TemplateResponse(
-        "home.html",
+        "tournaments.html",
         {
             "request": request,
             "tournaments": tournaments.get("cbx", [])
