@@ -76,6 +76,10 @@ async def home_page(request: Request):
 async def register_form(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
+@app.get("/login", response_class=HTMLResponse)
+async def login_form(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
 @app.get("/admin", response_class=HTMLResponse, name="admin")
 async def admin_page(request: Request):
     """Site admin page"""
