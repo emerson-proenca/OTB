@@ -6,7 +6,7 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from typing import Optional
 from database.session import SessionLocal
-from database.models import People
+from database.models import Member
 from core.config import settings
 
 router = APIRouter(tags=["Auth"])
@@ -73,7 +73,7 @@ def get_current_user(request: Request, db: Session):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    user = db.query(People).filter(People.id == user_id).first()
+    user = db.query(Member).filter(Member.id == user_id).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return user
@@ -85,14 +85,14 @@ def get_current_user(request: Request, db: Session):
 async def register_user(user: UserCreate, response: Response, db: Session = Depends(get_db)):
     """Creates new user and logins in by setting JWT cookie"""
 
-    if db.query(People).filter(People.email == user.email).first():
+    if db.query(Member).filter(Member.email == user.email).first():
         raise HTTPException(status_code=400, detail="email already registered.")
-    if db.query(People).filter(People.username == user.username).first():
+    if db.query(Member).filter(Member.username == user.username).first():
         raise HTTPException(status_code=400, detail="username already registered.")
 
     hashed_password = ph.hash(user.password)
 
-    new_user = People(username=user.username, email=user.email, password=hashed_password)
+    new_user = Member(username=user.username, email=user.email, password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -114,16 +114,16 @@ async def register_user(user: UserCreate, response: Response, db: Session = Depe
 async def login_user(user: UserLogin, response: Response, db: Session = Depends(get_db)):
     """Login and set JWT cookie"""
 
-    person = db.query(People).filter(People.email == user.email).first()
-    if not person:
+    member = db.query(Member).filter(Member.email == user.email).first()
+    if not member:
         raise HTTPException(status_code=401, detail="Incorrect email or password.")
 
     try:
-        ph.verify(str(person.password), user.password)
+        ph.verify(str(member.password), user.password)
     except argon2_exceptions.VerifyMismatchError:
         raise HTTPException(status_code=401, detail="Incorrect email or password.")
 
-    token = create_access_token({"sub": str(person.id)})
+    token = create_access_token({"sub": str(member.id)})
     response.set_cookie(
         key="access_token",
         value=token,

@@ -11,7 +11,7 @@ from faker import Faker
 from argon2 import PasswordHasher
 
 from database.session import SessionLocal, engine, Base
-from database.models import People, Club, Tournament
+from database.models import Member, Club, Tournament
 
 fake = Faker()
 ph = PasswordHasher()
@@ -44,10 +44,10 @@ def random_rating_system():
     return random.choice(["FIDE", "CBX", "Lichess", "OTB"])
 
 # ---------------------------------------
-# Cria usuários (People)
+# Cria usuários (Member)
 # ---------------------------------------
 print("👤 Criando usuários...")
-people_list = []
+member_list = []
 for _ in range(10):
     username = fake.user_name()
     email = fake.email()
@@ -58,7 +58,7 @@ for _ in range(10):
     region = random_region(country)
     bio = fake.sentence(nb_words=12)
 
-    person = People(
+    member = Member(
         username=username,
         email=email,
         password=password,
@@ -72,11 +72,11 @@ for _ in range(10):
         rating_id=None,
         bio=bio,
     )
-    people_list.append(person)
-    db.add(person)
+    member_list.append(member)
+    db.add(member)
 
 db.commit()
-print(f"✅ {len(people_list)} usuários criados.")
+print(f"✅ {len(member_list)} usuários criados.")
 
 # ---------------------------------------
 # Cria clubes (Club)
@@ -89,7 +89,7 @@ for _ in range(5):
     password = ph.hash("clubpass")
     country = random_country()
     region = random_region(country)
-    owner = random.choice(people_list)
+    owner = random.choice(member_list)
 
     club = Club(
         name=name,
