@@ -68,13 +68,18 @@ async def register_organization(org: OrgCreate, response: Response, db: Session 
 
     # Gera JWT
     exp = datetime.utcnow() + timedelta(days=365)
-    token = jwt.encode({"org_id": new_org.id, "exp": exp}, SECRET_KEY, algorithm=ALGORITHM)
+    payload = {
+        "id": new_org.id,
+        "role": "organization",
+        "exp": exp
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
     response.set_cookie(
         key="org_jwt",
         value=token,
         httponly=True,
-        secure=False,  # True em produção com HTTPS
+        secure=False,
         samesite="lax",
         max_age=365 * 24 * 60 * 60
     )
@@ -104,6 +109,16 @@ async def login_organization(org: OrgLogin, response: Response, db: Session = De
 
     exp = datetime.utcnow() + timedelta(days=365)
     token = jwt.encode({"org_id": organization.id, "exp": exp}, SECRET_KEY, algorithm=ALGORITHM)
+
+    # Gera JWT
+    exp = datetime.utcnow() + timedelta(days=365)
+    payload = {
+        "id": organization.id,
+        "role": "organization",
+        "exp": exp
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
 
     response.set_cookie(
         key="org_jwt",
