@@ -9,11 +9,11 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Router imports
 from apis.tournaments_api import router as tournaments_router
-from apis.status_api import router as status_router
 from apis.players_api import router as players_router
 from apis.announcements_api import router as announcements_router
 from apis.news_api import router as news_router
 from apis.member_api import router as member_router
+from apis.auth_api import router as auth_router
 from apis.club_api import router as club_router
 from routes import club
 
@@ -75,9 +75,9 @@ app.include_router(tournaments_router, prefix="/api")
 app.include_router(players_router, prefix="/api")
 app.include_router(news_router, prefix="/api")
 app.include_router(announcements_router, prefix="/api")
-app.include_router(status_router, prefix="/api")
 app.include_router(member_router, prefix="/api")
 app.include_router(club_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
 
 app.include_router(club.router)
 
