@@ -15,6 +15,10 @@ from apis.announcements_api import router as announcements_router
 from apis.news_api import router as news_router
 from apis.people_api import router as people_router
 from apis.club_api import router as club_router
+from routes import club
+
+
+
 
 # Configuration and utilities imports
 from core.rate_limiter import rate_limit_middleware
@@ -77,6 +81,8 @@ app.include_router(announcements_router, prefix="/api")
 app.include_router(status_router, prefix="/api")
 app.include_router(people_router, prefix="/api")
 app.include_router(club_router, prefix="/api")
+
+app.include_router(club.router)
 
 
 class CurrentUserMiddleware(BaseHTTPMiddleware):
