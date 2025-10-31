@@ -132,6 +132,8 @@ class People(Base):
     profile_picture = Column(String, nullable=True)
     rating_id = Column(String, nullable=True)  # FIDE ID, CBX ID etc.
     bio = Column(Text, nullable=True)
+    # social_links = Column(Text, nullable=True)  # JSON string with social media links
+
 
     # Relacionamentos
     Club = relationship("Club", back_populates="owner", cascade="all, delete-orphan")
@@ -158,6 +160,9 @@ class Club(Base):
     description = Column(Text, nullable=True)
     logo = Column(String, nullable=True)
     active = Column(Integer, default=1)  # 1 = ativa, 0 = inativa
+    description = Column(String(100), nullable=True) # Short description, up to 100 chars
+    # social_links = Column(Text, nullable=True)  # JSON string with social media links
+    # markdown = Column(Text, nullable=True)  # Detailed description in Markdown
 
     # FK para o dono do clube (Pessoa)
     owner_id = Column(Integer, ForeignKey("people.id", ondelete="CASCADE"), nullable=False)
