@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Date, Integer, String, DateTime, Text, UniqueConstraint, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from database.session import Base
+from db.session import Base
 
 
 # TOURNAMENTS

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
-from database.session import get_db
-from database.models import Club, Tournament
+from db.session import get_db
+from db.models import Club, Tournament
 from starlette.templating import Jinja2Templates
 from urllib.parse import unquote_plus, quote_plus
 

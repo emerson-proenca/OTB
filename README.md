@@ -170,7 +170,7 @@ over-the-board/
 │   ├── cache.py
 │   ├── schemas.py
 │   └── utils.py
-├── database/
+├── db/
 │   ├── models.py
 │   ├── session.py
 │   └── migration.py

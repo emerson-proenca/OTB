@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, status, Depends, Response
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from argon2 import PasswordHasher
-from database.session import SessionLocal
-from database.models import Club, Member
+from db.session import SessionLocal
+from db.models import Club, Member
 from jose import jwt
 from datetime import datetime, timedelta
 from core.config import settings
