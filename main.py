@@ -17,9 +17,6 @@ from apis.people_api import router as people_router
 from apis.club_api import router as club_router
 from routes import club
 
-
-
-
 # Configuration and utilities imports
 from core.rate_limiter import rate_limit_middleware
 from core.logger_config import logger
@@ -266,7 +263,5 @@ if __name__ == "__main__":
     logger.info(f"🏠 Home: {base_url}/")
     logger.info(f"📊 Docs: {base_url}/docs")
     logger.info(f"📋 Redoc: {base_url}/redoc")
-    logger.info(f"🏥 Health: {base_url}/health")
-    logger.info(f"📊 Cache Status: {base_url}/cache/stats")
 
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, proxy_headers=True)
