@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 
 # ESSENCIAL: Todos os Schemas Pydantic devem vir daqui.
 from core.schemas import CBXTournamentResponse, TournamentCreate 
-from database.session import SessionLocal
-from database.models import Tournament, Club
+from db.session import SessionLocal
+from db.models import Tournament, Club
 from core.utils import verify_club_jwt 
 
 # Configuração do Logger

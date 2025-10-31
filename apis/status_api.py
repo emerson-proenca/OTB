@@ -1,7 +1,7 @@
 # apis/status_api.py
 from fastapi import APIRouter
-from database.session import SessionLocal
-from database.models import SyncJob
+from db.session import SessionLocal
+from db.models import SyncJob
 from typing import Optional
 
 router = APIRouter(prefix="/status", tags=["status"])

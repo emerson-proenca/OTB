@@ -23,9 +23,9 @@ from core.logger_config import logger
 from core.cache import cache
 from core.config import settings
 
-# Database and models imports
-from database.session import SessionLocal, engine
-from database.models import Base, Member, Club
+# Db and models imports
+from db.session import SessionLocal, engine
+from db.models import Base, Member, Club
 from sqlalchemy.orm import Session
 
 # JWT imports
@@ -231,7 +231,7 @@ async def clear_cache():
     return {"message": "Cache cleared successfully"}
 
 
-@app.get("/member/{username}/", response_class=HTMLResponse)
+@app.get("/@/{username}/", response_class=HTMLResponse)
 async def member_profile(
     request: Request,
     username: str,

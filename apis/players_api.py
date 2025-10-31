@@ -1,8 +1,8 @@
 # apis/players_api.py
 from fastapi import APIRouter, Query, HTTPException
 from typing import Optional, List
-from database.session import SessionLocal
-from database.models import CBXPlayer
+from db.session import SessionLocal
+from db.models import CBXPlayer
 from core.schemas import CBXPlayerResponse
 import logging
 

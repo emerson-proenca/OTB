@@ -10,8 +10,8 @@ from datetime import datetime, timedelta, date
 from faker import Faker
 from argon2 import PasswordHasher
 
-from database.session import SessionLocal, engine, Base
-from database.models import Member, Club, Tournament
+from db.session import SessionLocal, engine, Base
+from db.models import Member, Club, Tournament
 
 fake = Faker()
 ph = PasswordHasher()

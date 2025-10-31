@@ -2,8 +2,8 @@
 import logging
 import os
 from scrapers.cbx.cbx_tournaments import fetch_tournaments_raw
-from database.session import SessionLocal
-from database.models import Tournament, SyncJob
+from db.session import SessionLocal
+from db.models import Tournament, SyncJob
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 import requests

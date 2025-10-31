@@ -2,8 +2,8 @@
 import logging
 from datetime import datetime, timezone
 from typing import Optional, List, Tuple
-from database.session import SessionLocal
-from database.models import CBXAnnouncement, SyncJob
+from db.session import SessionLocal
+from db.models import CBXAnnouncement, SyncJob
 from scrapers.cbx.cbx_announcements import fetch_announcements_raw
 import requests
 

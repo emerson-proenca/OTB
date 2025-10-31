@@ -5,7 +5,7 @@ from typing import Optional, Dict, Any
 from core.logger_config import logger
 from fastapi import Request
 from jose import jwt, JWTError
-from database.models import Club
+from db.models import Club
 from sqlalchemy.orm import Session
 from core.config import settings
  
