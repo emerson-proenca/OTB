@@ -1,39 +1,33 @@
-from fastapi import APIRouter, HTTPException, Depends, Response, Request
-from pydantic import BaseModel, EmailStr
+from fastapi import APIRouter, HTTPException, Depends, Request
 from sqlalchemy.orm import Session
-from argon2 import PasswordHasher, exceptions as argon2_exceptions
-from jose import JWTError, jwt
-from datetime import datetime, timedelta
-from typing import Optional
+from pydantic import BaseModel, EmailStr
+from typing import Optional, List
 from db.session import SessionLocal
 from db.models import Member
-from core.config import settings
+from apis.auth_api import get_current_user
+from argon2 import PasswordHasher
+from argon2 import exceptions as argon2_exceptions
 
-router = APIRouter(tags=["Auth"])
+router = APIRouter(prefix="/api/members", tags=["Members"])
 ph = PasswordHasher()
 
-# JWT Configuration
-SECRET_KEY = settings.SECRET_KEY
-if not SECRET_KEY:
-    raise RuntimeError("SECRET_KEY is not set! Check your otb.env file.")
+# ------------------ SCHEMAS ------------------
 
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_DAYS = 365
-
-# ------------------ HELPER FUNCTION ------------------
-
-class UserCreate(BaseModel):
+class MemberPublic(BaseModel):
     username: str
     email: EmailStr
-    password: str
+
+    class Config:
+        orm_mode = True
 
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
+class MemberUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
 
 
-# ------------------ HELPER FUNCTION ------------------
+# ------------------ DEPENDÊNCIA DB ------------------
 
 def get_db():
     db = SessionLocal()
@@ -43,107 +37,76 @@ def get_db():
         db.close()
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    if not SECRET_KEY:
-        raise RuntimeError("SECRET_KEY is not set! Check your otb.env file.")
+# ------------------ ROUTES ------------------
 
-    to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS))
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+@router.get("/", response_model=List[MemberPublic])
+async def list_members(db: Session = Depends(get_db)):
+    """Retorna todos os membros (apenas públicos)"""
+    members = db.query(Member).all()
+    return members
 
 
-def get_current_user(request: Request, db: Session):
-    """Reads JWT cookie and returns the current user"""
-    if not SECRET_KEY:
-        raise RuntimeError("SECRET_KEY is not set! Check your otb.env file.")
-
-    token = request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id_str = payload.get("sub")
-        if not user_id_str:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        user_id = int(user_id_str)
-
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    user = db.query(Member).filter(Member.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-    return user
-
-
-# ------------------ ROUTER ------------------
-
-@router.post("/register", status_code=201)
-async def register_user(user: UserCreate, response: Response, db: Session = Depends(get_db)):
-    """Creates new user and logins in by setting JWT cookie"""
-
-    if db.query(Member).filter(Member.email == user.email).first():
-        raise HTTPException(status_code=400, detail="email already registered.")
-    if db.query(Member).filter(Member.username == user.username).first():
-        raise HTTPException(status_code=400, detail="username already registered.")
-
-    hashed_password = ph.hash(user.password)
-
-    new_user = Member(username=user.username, email=user.email, password=hashed_password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    # GENERATES JWT TOKEN AND SETS COOKIE
-    token = create_access_token({"sub": str(new_user.id)})
-    response.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,
-        secure=False,  # SWITCH TO TRUE IN PRODUCTION WITH HTTPS
-        samesite="lax",
-        max_age=60 * 60 * 24 * 365,  # 1 YEAR
-    )
-    return {"message": "User created successfully"}
-
-
-@router.post("/login")
-async def login_user(user: UserLogin, response: Response, db: Session = Depends(get_db)):
-    """Login and set JWT cookie"""
-
-    member = db.query(Member).filter(Member.email == user.email).first()
+@router.get("/{member_name}", response_model=MemberPublic)
+async def get_member(member_name: str, db: Session = Depends(get_db)):
+    """Retorna informações de um único membro"""
+    member = db.query(Member).filter(Member.username == member_name).first()
     if not member:
-        raise HTTPException(status_code=401, detail="Incorrect email or password.")
-
-    try:
-        ph.verify(str(member.password), user.password)
-    except argon2_exceptions.VerifyMismatchError:
-        raise HTTPException(status_code=401, detail="Incorrect email or password.")
-
-    token = create_access_token({"sub": str(member.id)})
-    response.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,
-        secure=False,  # TRUE IN PRODUCTION WITH HTTPS
-        samesite="lax",
-        max_age=60 * 60 * 24 * 365,
-    )
-    return {"message": "Login successful"}
+        raise HTTPException(status_code=404, detail="Member not found.")
+    return member
 
 
-@router.get("/me")
-async def get_me(request: Request, db: Session = Depends(get_db)):
-    """Obtains current logged in user info"""
-    user = get_current_user(request, db)
-    return {"id": user.id, "username": user.username, "email": user.email}
+@router.put("/{member_name}")
+async def update_member(
+    member_name: str,
+    data: MemberUpdate,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Atualiza o perfil do membro — somente o dono pode"""
+    current_user, user_type = get_current_user(request, db)
+
+    if user_type != "member":
+        raise HTTPException(status_code=403, detail="Only members can update member profiles.")
+
+    member = db.query(Member).filter(Member.username == member_name).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found.")
+    if member.id != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only update your own account.")
+
+    # Atualização condicional dos campos
+    if data.username:
+        if db.query(Member).filter(Member.username == data.username).first():
+            raise HTTPException(status_code=400, detail="Username already taken.")
+        member.username = data.username
+
+    if data.email:
+        if db.query(Member).filter(Member.email == data.email).first():
+            raise HTTPException(status_code=400, detail="Email already taken.")
+        member.email = data.email
+
+    if data.password:
+        member.password = ph.hash(data.password)
+
+    db.commit()
+    db.refresh(member)
+    return {"message": "Member updated successfully."}
 
 
-@router.post("/logout")
-async def logout_user(response: Response):
-    """Deletes the JWT cookie to logout the user"""
-    response.delete_cookie("access_token")
-    return {"message": "Logged out successfully"}
+@router.delete("/{member_name}")
+async def delete_member(member_name: str, request: Request, db: Session = Depends(get_db)):
+    """Deleta o membro logado — somente o dono pode"""
+    current_user, user_type = get_current_user(request, db)
+
+    if user_type != "member":
+        raise HTTPException(status_code=403, detail="Only members can delete member profiles.")
+
+    member = db.query(Member).filter(Member.username == member_name).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found.")
+    if member.id != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only delete your own account.")
+
+    db.delete(member)
+    db.commit()
+    return {"message": "Member deleted successfully."}

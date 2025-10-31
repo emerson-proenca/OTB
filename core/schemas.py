@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import date
 
 
@@ -20,9 +20,6 @@ class Tournament(BaseModel):
     regulation: str
 
 
-# Schema para torneios da CBX
-class CBXTournamentResponse(BaseModel):
-    cbx: List[Tournament]
 
 # ===== SCHEMA PARA JOGADORES ===== #
 # Futuramente irá ser adicionado otb_id, id do jogador para este site 
@@ -76,3 +73,15 @@ class TournamentCreate(BaseModel):
                 "image_url": "https://example.com/poster.jpg"
             }
         }
+
+class TournamentUpdate(BaseModel):
+    title: Optional[str]
+    start_date: Optional[date]
+    end_date: Optional[date]
+    place: Optional[str]
+    federation: Optional[str]
+    rating: Optional[str]
+    time_control: Optional[str]
+
+class CBXTournamentResponse(BaseModel):
+    cbx: List[Dict[str, Any]]
