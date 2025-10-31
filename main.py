@@ -13,7 +13,7 @@ from apis.status_api import router as status_router
 from apis.players_api import router as players_router
 from apis.announcements_api import router as announcements_router
 from apis.news_api import router as news_router
-from apis.people_api import router as people_router
+from apis.member_api import router as member_router
 from apis.club_api import router as club_router
 from routes import club
 
@@ -25,7 +25,7 @@ from core.config import settings
 
 # Database and models imports
 from database.session import SessionLocal, engine
-from database.models import Base, People, Club
+from database.models import Base, Member, Club
 from sqlalchemy.orm import Session
 
 # JWT imports
@@ -76,7 +76,7 @@ app.include_router(players_router, prefix="/api")
 app.include_router(news_router, prefix="/api")
 app.include_router(announcements_router, prefix="/api")
 app.include_router(status_router, prefix="/api")
-app.include_router(people_router, prefix="/api")
+app.include_router(member_router, prefix="/api")
 app.include_router(club_router, prefix="/api")
 
 app.include_router(club.router)
@@ -94,7 +94,7 @@ class CurrentUserMiddleware(BaseHTTPMiddleware):
                 user_id = payload.get("sub")
                 if user_id:
                     db = SessionLocal()
-                    user = db.query(People).filter(People.id == user_id).first()
+                    user = db.query(Member).filter(Member.id == user_id).first()
                     db.close()
                     if user:
                         request.state.current_user = user
@@ -232,13 +232,13 @@ async def clear_cache():
 
 
 @app.get("/member/{username}/", response_class=HTMLResponse)
-async def person_profile(
+async def member_profile(
     request: Request,
     username: str,
     db: Session = Depends(get_db),
 ):
     """Página de perfil de uma pessoa (ex: /emerson/)."""
-    user = db.query(People).filter(People.username == username).first()
+    user = db.query(Member).filter(Member.username == username).first()
 
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")

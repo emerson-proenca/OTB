@@ -111,8 +111,8 @@ class SyncJob(Base):
 # =====================
 #   MODELO: PESSOAS
 # =====================
-class People(Base):
-    __tablename__ = "people"
+class Member(Base):
+    __tablename__ = "member"
 
     id = Column(Integer, primary_key=True, index=True)
 
@@ -165,9 +165,9 @@ class Club(Base):
     # markdown = Column(Text, nullable=True)  # Detailed description in Markdown
 
     # FK para o dono do clube (Pessoa)
-    owner_id = Column(Integer, ForeignKey("people.id", ondelete="CASCADE"), nullable=False)
+    owner_id = Column(Integer, ForeignKey("member.id", ondelete="CASCADE"), nullable=False)
 
     # Relacionamento inverso
-    owner = relationship("People", back_populates="Club")
+    owner = relationship("Member", back_populates="Club")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())

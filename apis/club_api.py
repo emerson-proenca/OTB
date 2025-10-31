@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from argon2 import PasswordHasher
 from database.session import SessionLocal
-from database.models import Club, People
+from database.models import Club, Member
 from jose import jwt
 from datetime import datetime, timedelta
 from core.config import settings
@@ -43,7 +43,7 @@ async def register_club(club: ClubCreate, response: Response, db: Session = Depe
         raise RuntimeError("SECRET_KEY is not set! Check your otb.env file.")
 
     # Verifica se o owner existe
-    owner = db.query(People).filter(People.id == club.owner_id).first()
+    owner = db.query(Member).filter(Member.id == club.owner_id).first()
     if not owner:
         raise HTTPException(status_code=404, detail="Owner not found.")
 
