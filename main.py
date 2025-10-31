@@ -14,7 +14,7 @@ from apis.players_api import router as players_router
 from apis.announcements_api import router as announcements_router
 from apis.news_api import router as news_router
 from apis.people_api import router as people_router
-from apis.organization_api import router as organization_router
+from apis.club_api import router as club_router
 
 # Configuration and utilities imports
 from core.rate_limiter import rate_limit_middleware
@@ -24,7 +24,7 @@ from core.config import settings
 
 # Database and models imports
 from database.session import SessionLocal, engine
-from database.models import Base, People, Organization
+from database.models import Base, People, Club
 from sqlalchemy.orm import Session
 
 # JWT imports
@@ -76,7 +76,7 @@ app.include_router(news_router, prefix="/api")
 app.include_router(announcements_router, prefix="/api")
 app.include_router(status_router, prefix="/api")
 app.include_router(people_router, prefix="/api")
-app.include_router(organization_router, prefix="/api")
+app.include_router(club_router, prefix="/api")
 
 
 class CurrentUserMiddleware(BaseHTTPMiddleware):
@@ -144,11 +144,11 @@ async def register_form(request: Request):
 
 @app.get("/create", response_class=HTMLResponse,)
 async def create_form(request: Request):
-    return templates.TemplateResponse("register_org.html", {"request": request})
+    return templates.TemplateResponse("register_club.html", {"request": request})
 
-@app.get("/login_org", response_class=HTMLResponse)
-async def loginorg_form(request: Request):
-    return templates.TemplateResponse("login_org.html", {"request": request})
+@app.get("/login_club", response_class=HTMLResponse)
+async def loginclub_form(request: Request):
+    return templates.TemplateResponse("login_club.html", {"request": request})
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_form(request: Request):
