@@ -92,4 +92,3 @@ logs/
 *.tmp
 *.temp
 temp/
-newer.py
