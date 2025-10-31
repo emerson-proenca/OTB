@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Router imports
@@ -37,7 +36,7 @@ SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 
 
-# Base.metadata.create_all(bind=engine) # Apenas se o gerenciamento de migração não for usado.
+Base.metadata.create_all(bind=engine)
 
 # FastAPI initial configuration
 app = FastAPI(
