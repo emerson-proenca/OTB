@@ -9,8 +9,8 @@ from sqlalchemy.orm import Session
 # ESSENCIAL: Todos os Schemas Pydantic devem vir daqui.
 from core.schemas import CBXTournamentResponse, TournamentCreate 
 from database.session import SessionLocal
-from database.models import Tournament, Organization
-from core.utils import verify_organization_jwt 
+from database.models import Tournament, Club
+from core.utils import verify_club_jwt 
 
 # Configuração do Logger
 logger = logging.getLogger("apis.tournaments")
@@ -100,17 +100,17 @@ async def create_tournament(
     request: Request,
     db: Session = Depends(get_db)
 ):
-    """Cria um novo torneio (somente organizações)"""
+    """Cria um novo torneio (somente clubes)"""
     
-    # Verifica JWT de organização
-    org: Organization = verify_organization_jwt(request, db)
-    if not org:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only organizations can create tournaments")
+    # Verifica JWT de Clube
+    club: Club = verify_club_jwt(request, db)
+    if not club:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only clubs can create tournaments")
 
     # Cria o torneio.
     tournament = Tournament(
         **tournament_data.model_dump(exclude_unset=True),
-        organization_id=org.id
+        club_id=club.id
     )
 
     db.add(tournament)

@@ -30,7 +30,7 @@ class Tournament(Base):
     time_control = Column(String, nullable=True)
     rating = Column(String, nullable=True)
     image_url = Column(String, nullable=True)
-    organization_id = Column(Integer, ForeignKey("Organization.id"), nullable=True)
+    club_id = Column(Integer, ForeignKey("Club.id"), nullable=True)
 
     year = Column(String, nullable=True)
     month = Column(String, nullable=True)
@@ -38,7 +38,7 @@ class Tournament(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     scraped_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    organization = relationship("Organization", backref="tournament")
+    club = relationship("Club", backref="tournament")
 
     __table_args__ = (
         UniqueConstraint("federation", "external_id", name="uix_fed_externalid"),
@@ -134,16 +134,16 @@ class People(Base):
     bio = Column(Text, nullable=True)
 
     # Relacionamentos
-    Organization = relationship("Organization", back_populates="owner", cascade="all, delete-orphan")
+    Club = relationship("Club", back_populates="owner", cascade="all, delete-orphan")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 # ==========================
-#   MODELO: ORGANIZAÇÕES
+#   MODELO: CLUBES
 # ==========================
-class Organization(Base):
-    __tablename__ = "Organization"
+class Club(Base):
+    __tablename__ = "Club"
 
     id = Column(Integer, primary_key=True, index=True)
 
@@ -159,10 +159,10 @@ class Organization(Base):
     logo = Column(String, nullable=True)
     active = Column(Integer, default=1)  # 1 = ativa, 0 = inativa
 
-    # FK para o dono da organização
+    # FK para o dono do clube (Pessoa)
     owner_id = Column(Integer, ForeignKey("people.id", ondelete="CASCADE"), nullable=False)
 
     # Relacionamento inverso
-    owner = relationship("People", back_populates="Organization")
+    owner = relationship("People", back_populates="Club")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
