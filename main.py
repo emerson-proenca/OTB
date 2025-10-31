@@ -24,7 +24,7 @@ from core.config import settings
 
 # Database and models imports
 from database.session import SessionLocal, engine
-from database.models import Base, People
+from database.models import Base, People, Organization
 from sqlalchemy.orm import Session
 
 # JWT imports
@@ -228,13 +228,13 @@ async def clear_cache():
     return {"message": "Cache cleared successfully"}
 
 
-@app.get("/{username}/", response_class=HTMLResponse)
+@app.get("/member/{username}/", response_class=HTMLResponse)
 async def person_profile(
     request: Request,
     username: str,
     db: Session = Depends(get_db),
 ):
-    """Página de perfil de uma pessoa (ex: /joao/)."""
+    """Página de perfil de uma pessoa (ex: /emerson/)."""
     user = db.query(People).filter(People.username == username).first()
 
     if not user:
