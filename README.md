@@ -11,10 +11,7 @@ A modern and robust **open-source API** to fetch chess tournament and player inf
 
 ### ✅ Available
 
-* **CBX Tournaments** – List tournaments by year and month
-* **CBX Players** – Query players by Brazilian state
-* **CBX News** – Latest news from the official site
-* **CBX Announcements** – Official federation announcements
+
 * **Smart caching** – Faster performance with in-memory cache
 * **Rate limiting** – Protection against abuse and overload
 * **Advanced logging** – Structured logs for debugging
