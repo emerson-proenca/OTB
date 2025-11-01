@@ -15,8 +15,17 @@ ph = PasswordHasher()
 
 class MemberPublic(BaseModel):
     username: str
-    email: EmailStr
-
+    profile_picture: Optional[str] = None
+    active: bool
+    role: str
+    rating_id: Optional[str] = None
+    bio: Optional[str] = None
+    
+    name: Optional[str] = None
+    gender: Optional[str] = None
+    country: Optional[str] = None
+    birth_date: Optional[str] = None
+    
     class Config:
         orm_mode = True
 

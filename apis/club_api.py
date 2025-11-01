@@ -15,7 +15,12 @@ ph = PasswordHasher()
 
 class ClubPublic(BaseModel):
     name: str
-    email: EmailStr
+    active: bool
+    logo: Optional[str] = None
+    description: Optional[str] = None
+    country: Optional[str] = None
+    region: Optional[str] = None
+    
     owner_id: int
 
     class Config:
@@ -67,7 +72,7 @@ async def list_club_members(club_name: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Club not found.")
     return [
         {"member_id": cm.member_id, "member_name": cm.member.username, "role": cm.role}
-        for cm in club.members  # club.members = relacionamento com ClubMember
+        for cm in club.club_members
     ]
 
 
