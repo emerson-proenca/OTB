@@ -6,10 +6,12 @@ from fastapi import APIRouter, Query, HTTPException, Depends, Request, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
-from core.schemas import CBXTournamentResponse, TournamentCreate, TournamentUpdate
+from core.schemas import TournamentCreate, TournamentUpdate, TournamentResponse
 from db.session import SessionLocal
 from db.models import Tournament, Club
 from core.utils import verify_club_jwt
+
+
 
 # Logger
 logger = logging.getLogger("apis.tournaments")
@@ -29,49 +31,9 @@ def get_db():
 # =========================================
 #               GET ALL
 # =========================================
-@router.get("", response_model=CBXTournamentResponse)
-def get_tournaments(
-    db: Session = Depends(get_db),
-    federation: Optional[str] = Query(None),
-    year: Optional[str] = Query(None, min_length=4, max_length=4),
-    month: Optional[str] = Query(None, max_length=2),
-    limit: int = Query(32, ge=1),
-):
-    """Retorna uma lista de torneios, com filtros opcionais."""
-    try:
-        q = db.query(Tournament)
-        if federation:
-            q = q.filter(Tournament.federation == federation.lower())
-        if year:
-            q = q.filter(Tournament.year == year)
-        if month:
-            q = q.filter(Tournament.month == month)
-
-        tournaments = q.order_by(Tournament.scraped_at.desc()).limit(limit).all()
-
-        cbx = []
-        for t in tournaments:
-            cbx.append({
-                "page": getattr(t, "page", 1),
-                "name": t.title or "",
-                "id": t.external_id or "",
-                "status": t.status or "",
-                "time_control": t.time_control or "",
-                "rating": t.rating or "",
-                "total_players": t.total_players or "",
-                "organizer": t.organizer or "",
-                "place": t.place or "",
-                "fide_players": t.fide_players or "",
-                "period": t.period or "",
-                "observation": t.observation or "",
-                "regulation": t.regulation or "",
-            })
-
-        return CBXTournamentResponse(cbx=cbx)
-
-    except Exception as e:
-        logger.exception("Erro ao buscar torneios")
-        raise HTTPException(status_code=500, detail="Erro ao listar torneios")
+@router.get("", response_model=List[TournamentResponse])
+async def list_tournaments(db: Session = Depends(get_db)):
+    return db.query(Tournament).all()
 
 # =========================================
 #              GET ONE

@@ -35,10 +35,6 @@ class Player(BaseModel):
     rapid: str
     blitz: str
     fide_id: str
-
-# Schema para Jogadores CBX
-class CBXPlayerResponse(BaseModel):
-    cbx: List[Player]
     
 class TournamentCreate(BaseModel):
     """Schema usado para validar o corpo da requisição POST para criar um novo torneio."""
@@ -83,5 +79,38 @@ class TournamentUpdate(BaseModel):
     rating: Optional[str]
     time_control: Optional[str]
 
-class CBXTournamentResponse(BaseModel):
-    cbx: List[Dict[str, Any]]
+    
+class TournamentResponse(BaseModel):
+    title: Optional[str] = None
+    status: Optional[str] = None
+    total_players: Optional[int] = None
+    regulation: Optional[str] = None
+    place: Optional[str] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    image_url: Optional[str] = None
+    time_control: Optional[str] = None
+    rating: Optional[str] = None
+    organizer: Optional[str] = None
+    
+    class Config:
+        orm_mode = True
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+# DEPRECATED CLASSES
+# LEGACY: these classes are no longer used, kept here for reference
+
+# class CBXPlayerResponse(BaseModel):
+#     cbx: List[Player]
+    
+# class CBXTournamentResponse(BaseModel):
+#     cbx: List[Player]            
