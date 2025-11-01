@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup
+
 import logging
 import re
 from typing import Optional, Dict, Any

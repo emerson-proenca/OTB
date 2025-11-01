@@ -1,6 +1,5 @@
 # database/migration.py
 from db.session import engine, Base
-from db import models
 from core.logger_config import logger
 
 

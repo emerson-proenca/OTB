@@ -1,6 +1,5 @@
 import logging
 import sys
-from datetime import datetime
 
 def setup_logger():
     """Configura o sistema de logging da aplicação"""

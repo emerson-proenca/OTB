@@ -8,10 +8,10 @@ from fastapi.templating import Jinja2Templates
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Router imports
-from apis.tournaments_api import router as tournaments_router
-from apis.member_api import router as member_router
-from apis.auth_api import router as auth_router
-from apis.club_api import router as club_router
+from api.tournaments_api import router as tournaments_router
+from api.member_api import router as member_router
+from api.auth_api import router as auth_router
+from api.club_api import router as club_router
 from routes import club
 
 # Configuration and utilities imports
@@ -22,24 +22,14 @@ from core.config import settings
 
 # Db and models imports
 from db.session import SessionLocal, engine
-from db.models import Base, Member, Club
+from db.models import Base, Member
 from sqlalchemy.orm import Session
 
 # JWT imports
 from jose import jwt, JWTError
 from starlette.middleware.base import BaseHTTPMiddleware
 
-# DEPRECATED ROUTER IMPORTS
-# LEGACY: these routers are no longer used, kept here for reference
-
-# from apis.players_api import router as players_router
-# from apis.announcements_api import router as announcements_router
-# from apis.news_api import router as news_router
-
-# app.include_router(players_router, prefix="/api")
-# app.include_router(news_router, prefix="/api")
-# app.include_router(announcements_router, prefix="/api")
-
+# JWT configuration
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 
@@ -171,16 +161,6 @@ async def about_page(request: Request):
     """About page"""
     return templates.TemplateResponse("about.html", {"request": request})
 
-@app.get("/announcements", response_class=HTMLResponse, name="announcements")
-async def announcements_page(request: Request):
-    """Announcements page"""
-    return templates.TemplateResponse("announcements.html", {"request": request})
-
-@app.get("/news", response_class=HTMLResponse, name="news")
-async def news_page(request: Request):
-    """News page"""
-    return templates.TemplateResponse("news.html", {"request": request})
-
 @app.get("/tournaments", response_class=HTMLResponse, name="tournaments")
 async def tournaments_page(request: Request):
     """Tournaments page using async httpx"""
@@ -197,11 +177,6 @@ async def tournaments_page(request: Request):
             "tournaments": tournaments
         }
     )
-
-@app.get("/players", response_class=HTMLResponse, name="players")
-async def players_page(request: Request):
-    """Players page"""
-    return templates.TemplateResponse("players.html", {"request": request})
 
 @app.get("/404", response_class=HTMLResponse, name="404",)
 async def not_found(request: Request):

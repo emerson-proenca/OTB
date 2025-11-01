@@ -43,12 +43,6 @@ class Settings:
     CACHE_TTL_PLAYERS = int(os.getenv("CACHE_TTL_PLAYERS", "600"))  # 10 min
     CACHE_TTL_NEWS = int(os.getenv("CACHE_TTL_NEWS", "180"))  # 3 min
 
-    # URLs da CBX
-    CBX_BASE_URL = "https://www.cbx.org.br"
-    CBX_TOURNAMENTS_URL = f"{CBX_BASE_URL}/torneios"
-    CBX_PLAYERS_URL = f"{CBX_BASE_URL}/rating"
-    CBX_NEWS_URL = f"{CBX_BASE_URL}/noticias"
-    CBX_ANNOUNCEMENTS_URL = f"{CBX_BASE_URL}/comunicados"
 
     # Timeout para requisições HTTP
     HTTP_TIMEOUT = int(os.getenv("HTTP_TIMEOUT", "30"))

@@ -4,9 +4,8 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from db.session import SessionLocal
 from db.models import Member
-from apis.auth_api import get_current_user
+from api.auth_api import get_current_user
 from argon2 import PasswordHasher
-from argon2 import exceptions as argon2_exceptions
 
 router = APIRouter(prefix="/members", tags=["Members"])
 ph = PasswordHasher()

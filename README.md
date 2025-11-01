@@ -84,7 +84,7 @@ The goal is to build something genuinely useful through incremental and communit
 
 ## About the Creator
 
-OTB is developed by a **chess player, arbiter, and tournament organizer** who, from the very beginning, felt the lack of a single, accessible tool to find and register for chess tournaments.
+OTB is developed by a **chess player, arbiter, and tournament organizer** who, from the very beginning, felt the lack of a single, accessible tool to gather all tournaments in one place.
 The project was created to make finding and joining live chess tournaments simple, free, and available to everyone.
 
 ---

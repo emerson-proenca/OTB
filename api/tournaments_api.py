@@ -1,20 +1,19 @@
 import logging
-from typing import Optional, List, Dict, Any
-from datetime import date
+from typing import List
 
-from fastapi import APIRouter, Query, HTTPException, Depends, Request, status
+from fastapi import APIRouter, HTTPException, Depends, Request
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
 from core.schemas import TournamentCreate, TournamentUpdate, TournamentResponse
 from db.session import SessionLocal
-from db.models import Tournament, Club
+from db.models import Tournament
 from core.utils import verify_club_jwt
 
 
 
 # Logger
-logger = logging.getLogger("apis.tournaments")
+logger = logging.getLogger("api.tournaments")
 
 router = APIRouter(prefix="/tournaments", tags=["Tournaments"])
 
