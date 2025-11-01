@@ -1,7 +1,19 @@
 from bs4 import BeautifulSoup
+import logging
 import re
 from typing import Optional, Dict, Any
 from core.logger_config import logger
+from fastapi import Request
+from jose import jwt, JWTError
+from db.models import Club
+from sqlalchemy.orm import Session
+from core.config import settings
+ 
+logger = logging.getLogger("core.utils")
+
+SECRET_KEY = settings.SECRET_KEY
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY is not set! Check your otb.env file.")
 
 def get_hidden_fields(soup):
     """Retorna os campos ASP.NET necessários para postback."""
@@ -119,3 +131,46 @@ def format_tournament_data(raw_data: Dict[str, Any]) -> Dict[str, Any]:
         "regulation_link": raw_data.get("regulation", ""),
         "page": raw_data.get("page", 1)
     })
+
+
+
+ALGORITHM = "HS256"
+
+def verify_club_jwt(request: Request, db: Session) -> Club | None:
+    if not SECRET_KEY:
+        raise RuntimeError("SECRET_KEY is not set! Check your otb.env file.")
+    token = request.cookies.get("club_jwt")
+        
+    if not token:
+        logger.debug("Tentativa de criação sem o cookie 'club_jwt'.")
+        return None 
+        
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        
+        club_id = payload.get("id")
+        role = payload.get("role")
+        
+        if not club_id:
+             logger.warning("Token JWT de C decodificado, mas sem o campo 'id'.")
+             return None
+        
+        if role != "club":
+             logger.warning(f"Acesso negado: ID {club_id} possui Role '{role}', mas 'club' é esperado.")
+             return None
+
+        club = db.query(Club).filter(Club.id == club_id).first()
+        
+        if not club:
+            logger.warning(f"C com ID {club_id} (do token) não encontrada no DB.")
+            return None
+            
+        return club
+            
+    except JWTError as e:
+        logger.warning(f"Token JWT inválido, expirado ou com erro de decodificação: {e}")
+        return None
+        
+    except Exception as e:
+        logger.error(f"Erro inesperado durante a verificação do JWT: {e}")
+        return None

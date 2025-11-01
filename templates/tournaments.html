@@ -1,0 +1,16 @@
+{% extends "base.html" %} {% block title %}OTB - Tournaments {% endblock %} {%
+block meta_description %}Browse all chess tournaments and events on Over The
+Board platform.{% endblock %} {% block content %}
+<div class="page-header d-print-none">
+  <h1 class="page-title">Chess Tournaments</h1>
+</div>
+
+<div class="row row-cards">
+  {% for tournament in tournaments %}
+  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+    {% include "components/card.html" with context %}
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,8 +1,8 @@
 # apis/news_api.py
 from fastapi import APIRouter, Query, HTTPException
 from typing import Optional, List
-from database.session import SessionLocal
-from database.models import CBXNews
+from db.session import SessionLocal
+from db.models import CBXNews
 import logging
 
 router = APIRouter(prefix="/news", tags=["news"])

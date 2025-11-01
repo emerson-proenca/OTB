@@ -1,27 +1,56 @@
-# Importações do FastAPI
-from fastapi import FastAPI, Request
+# FastAPI and httpx imports
+import httpx
+from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
-# Importações dos roteadores
+# Router imports
 from apis.tournaments_api import router as tournaments_router
-from apis.status_api import router as status_router
-from apis.players_api import router as players_router
-from apis.announcements_api import router as announcements_router
-from apis.news_api import router as news_router
+from apis.member_api import router as member_router
+from apis.auth_api import router as auth_router
+from apis.club_api import router as club_router
+from routes import club
 
-# Importações de configuração e utilitários
+# Configuration and utilities imports
 from core.rate_limiter import rate_limit_middleware
 from core.logger_config import logger
 from core.cache import cache
 from core.config import settings
 
-# Configuração inicial do FastAPI
+# Db and models imports
+from db.session import SessionLocal, engine
+from db.models import Base, Member, Club
+from sqlalchemy.orm import Session
+
+# JWT imports
+from jose import jwt, JWTError
+from starlette.middleware.base import BaseHTTPMiddleware
+
+# DEPRECATED ROUTER IMPORTS
+# LEGACY: these routers are no longer used, kept here for reference
+
+# from apis.players_api import router as players_router
+# from apis.announcements_api import router as announcements_router
+# from apis.news_api import router as news_router
+
+# app.include_router(players_router, prefix="/api")
+# app.include_router(news_router, prefix="/api")
+# app.include_router(announcements_router, prefix="/api")
+
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = "HS256"
+
+
+Base.metadata.create_all(bind=engine)
+
+# FastAPI initial configuration
 app = FastAPI(
-    title="Over the Board",
-    version="1.0.3",
-    description="API for tournaments, players, news and announcements for all chess federations (In the future)",
+    title="OTB",
+    version="0.8.1",
+    description="Your platform for finding and registering for live chess tournaments",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -36,59 +65,207 @@ app.add_middleware(
 )
 app.middleware("http")(rate_limit_middleware)
 
-# Montagem de arquivos estáticos e templates
+# Static files and templates setup
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="static")
 
-# Registro de roteadores
-app.include_router(tournaments_router)
-app.include_router(players_router)
-app.include_router(news_router)
-app.include_router(announcements_router)
-app.include_router(status_router)
+templates = Jinja2Templates(
+    directory="templates",
+    context_processors=[
+        # Injects 'current_user' in ALL templates
+        lambda request: {"current_user": request.state.current_user}
+    ]
+)
 
-# Endpoints principais
-@app.get("/")
-async def home_page(request: Request):
-    """Página inicial da aplicação"""
+
+# Router registration
+app.include_router(tournaments_router, prefix="/api")
+app.include_router(member_router, prefix="/api")
+app.include_router(club_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
+
+app.include_router(club.router)
+
+
+class CurrentUserMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if not SECRET_KEY:
+            raise RuntimeError("SECRET_KEY is not set! Check your otb.env file.")
+        token = request.cookies.get("access_token")
+        request.state.current_user = None
+        if token:
+            try:
+                payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+                user_id = payload.get("sub")
+                if user_id:
+                    db = SessionLocal()
+                    user = db.query(Member).filter(Member.id == user_id).first()
+                    db.close()
+                    if user:
+                        request.state.current_user = user
+            except JWTError:
+                pass
+
+        response = await call_next(request)
+        return response
+
+# Registrar o middleware
+app.add_middleware(CurrentUserMiddleware)
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+# Handler para 404 Not Found
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    if exc.status_code == 404:
+        return templates.TemplateResponse(
+            "404.html", {"request": request}, status_code=404
+        )
+    return HTMLResponse(str(exc.detail), status_code=exc.status_code)
+
+
+# Handler para 500 Internal Server Error
+@app.exception_handler(Exception)
+async def internal_exception_handler(request: Request, exc: Exception):
+    print(f"Internal Server Error: {exc}")
     return templates.TemplateResponse(
-        "index.html", 
-        {"request": request}
+        "500.html", {"request": request}, status_code=500
     )
 
+
+# WEBSITE PAGES
+@app.get("/", response_class=HTMLResponse, name="home")
+async def home_page(request: Request):
+    """Site home page"""
+    return templates.TemplateResponse("home.html", {"request": request})
+
+@app.get("/register", response_class=HTMLResponse)
+async def register_form(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
+@app.get("/create", response_class=HTMLResponse,)
+async def create_form(request: Request):
+    return templates.TemplateResponse("register_club.html", {"request": request})
+
+@app.get("/login_club", response_class=HTMLResponse)
+async def loginclub_form(request: Request):
+    return templates.TemplateResponse("login_club.html", {"request": request})
+
+@app.get("/login", response_class=HTMLResponse)
+async def login_form(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.get("/admin", response_class=HTMLResponse, name="admin")
+async def admin_page(request: Request):
+    """Site admin page"""
+    return templates.TemplateResponse("admin.html", {"request": request})
+
+@app.get("/about", response_class=HTMLResponse, name="about")
+async def about_page(request: Request):
+    """About page"""
+    return templates.TemplateResponse("about.html", {"request": request})
+
+@app.get("/announcements", response_class=HTMLResponse, name="announcements")
+async def announcements_page(request: Request):
+    """Announcements page"""
+    return templates.TemplateResponse("announcements.html", {"request": request})
+
+@app.get("/news", response_class=HTMLResponse, name="news")
+async def news_page(request: Request):
+    """News page"""
+    return templates.TemplateResponse("news.html", {"request": request})
+
+@app.get("/tournaments", response_class=HTMLResponse, name="tournaments")
+async def tournaments_page(request: Request):
+    """Tournaments page using async httpx"""
+    url = "http://localhost:8000/api/tournaments?limit=32"
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        tournaments = response.json()
+    
+    return templates.TemplateResponse(
+        "tournaments.html",
+        {
+            "request": request,
+            "tournaments": tournaments
+        }
+    )
+
+@app.get("/players", response_class=HTMLResponse, name="players")
+async def players_page(request: Request):
+    """Players page"""
+    return templates.TemplateResponse("players.html", {"request": request})
+
+@app.get("/404", response_class=HTMLResponse, name="404",)
+async def not_found(request: Request):
+    """404 Not found"""
+    return templates.TemplateResponse("404.html", {"request": request})
+
+@app.get("/500", response_class=HTMLResponse, name="500",)
+async def server_error(request: Request):
+    """500 Internal Server Error"""
+    return templates.TemplateResponse("500.html", {"request": request})
+  
+# HEALTH AND CACHE ENDPOINTS
 @app.get("/health", tags=["Health"])
 async def health_check():
-    """Endpoint para verificar se a API está funcionando"""
+    """Endpoint to check if the API is running"""
     return {"status": "healthy", "timestamp": "2025-08-01"}
 
-# Endpoints de gerenciamento de cache
 @app.get("/cache/stats", tags=["Cache"])
 async def cache_stats():
-    """Retorna estatísticas do cache"""
+    """Returns cache statistics"""
     return {
         "cache_size": cache.size(),
-        "description": "Número de itens atualmente em cache"
+        "description": "Number of items currently in cache"
     }
 
 @app.delete("/cache/clear", tags=["Cache"])
 async def clear_cache():
-    """Limpa todo o cache"""
+    """Clears all cache"""
     cache.clear()
-    logger.info("Cache limpo manualmente")
-    return {"message": "Cache limpo com sucesso"}
+    logger.info("Cache cleared manually")
+    return {"message": "Cache cleared successfully"}
 
-# Ponto de entrada da aplicação
+
+@app.get("/@/{username}/", response_class=HTMLResponse)
+async def member_profile(
+    request: Request,
+    username: str,
+    db: Session = Depends(get_db),
+):
+    """Página de perfil de uma pessoa (ex: /@/emerson/)."""
+    user = db.query(Member).filter(Member.username == username).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    return templates.TemplateResponse(
+        "profile.html",
+        {
+            "request": request,
+            "user": user,
+        },
+    )
+
+
+# Application entry point
 if __name__ == "__main__":
     import uvicorn
-    
-    logger.info("🚀 Iniciando Over the Board...")
+
+    logger.info("🚀 Starting OTB...")
     
     base_url = settings.BASE_URL
     
     logger.info(f"🏠 Home: {base_url}/")
     logger.info(f"📊 Docs: {base_url}/docs")
     logger.info(f"📋 Redoc: {base_url}/redoc")
-    logger.info(f"🏥 Health: {base_url}/health")
-    logger.info(f"📊 Cache Status: {base_url}/cache/stats")
-    
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, proxy_headers=True)

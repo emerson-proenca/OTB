@@ -25,8 +25,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
-from database.session import SessionLocal
-from database import models
+from db.session import SessionLocal
+from db import models
 
 # Which jobs are supported
 JOB_KEYS = ["tournaments", "players", "news", "announcements"]

@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 # Carrega variáveis do arquivo .env (se existir)
-load_dotenv()
+load_dotenv("otb.env")
 
 class Settings:
     """Configurações da aplicação"""
@@ -14,6 +14,8 @@ class Settings:
     # Diretórios e Rede
     PORT = int(os.getenv("PORT", 8000))
     STATIC_DIR = "static"
+
+    SECRET_KEY = os.getenv("SECRET_KEY")
 
     # BASE URL
     if os.getenv("BASE_URL"):
@@ -27,8 +29,8 @@ class Settings:
         BASE_URL = f"http://localhost:{PORT}"
 
     # API
-    APP_NAME = "Over the Board"
-    VERSION = "1.0.3"
+    APP_NAME = "OTB"
+    VERSION = "0.8.1"
     DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
     # Rate Limiting
@@ -36,10 +38,10 @@ class Settings:
     RATE_LIMIT_WINDOW = int(os.getenv("RATE_LIMIT_WINDOW", "60"))
 
     # Cache
-    CACHE_TTL_DEFAULT = int(os.getenv("CACHE_TTL_DEFAULT", "300"))  # 5 minutos
+    CACHE_TTL_DEFAULT = int(os.getenv("CACHE_TTL_DEFAULT", "300"))  # 5 min
     CACHE_TTL_TOURNAMENTS = int(os.getenv("CACHE_TTL_TOURNAMENTS", "300"))
-    CACHE_TTL_PLAYERS = int(os.getenv("CACHE_TTL_PLAYERS", "600"))  # 10 minutos
-    CACHE_TTL_NEWS = int(os.getenv("CACHE_TTL_NEWS", "180"))  # 3 minutos
+    CACHE_TTL_PLAYERS = int(os.getenv("CACHE_TTL_PLAYERS", "600"))  # 10 min
+    CACHE_TTL_NEWS = int(os.getenv("CACHE_TTL_NEWS", "180"))  # 3 min
 
     # URLs da CBX
     CBX_BASE_URL = "https://www.cbx.org.br"

@@ -1,8 +1,8 @@
 # apis/announcements_api.py
 from fastapi import APIRouter, Query, HTTPException
 from typing import Optional, List
-from database.session import SessionLocal
-from database.models import CBXAnnouncement
+from db.session import SessionLocal
+from db.models import CBXAnnouncement
 import logging
 
 router = APIRouter(prefix="/announcements", tags=["announcements"])

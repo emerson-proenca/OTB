@@ -1,75 +1,131 @@
-# apis/tournaments_api.py
-from fastapi import APIRouter, Query, HTTPException
-from typing import Optional, List
-from core.schemas import CBXTournamentResponse
-from database.session import SessionLocal
-from database.models import Tournament
 import logging
+from typing import Optional, List, Dict, Any
+from datetime import date
 
-router = APIRouter(prefix="/tournaments", tags=["tournaments"])
+from fastapi import APIRouter, Query, HTTPException, Depends, Request, status
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
+
+from core.schemas import TournamentCreate, TournamentUpdate, TournamentResponse
+from db.session import SessionLocal
+from db.models import Tournament, Club
+from core.utils import verify_club_jwt
+
+
+
+# Logger
 logger = logging.getLogger("apis.tournaments")
 
-def _safe_str(v) -> str:
-    if v is None:
-        return ""
-    # evita "None" como string
-    return str(v)
+router = APIRouter(prefix="/tournaments", tags=["Tournaments"])
 
-def _safe_int_for_page(v) -> int:
-    try:
-        if v is None:
-            return 1
-        return int(v)
-    except Exception:
-        return 1
-
-@router.get("", response_model=CBXTournamentResponse)
-def get_tournaments(
-    federation: Optional[str] = Query(None, description="Sigla da federação (cbx, fide, uscf…)."),
-    year: Optional[str] = Query(None, min_length=4, max_length=4, description="Ano, ex: 2025"),
-    month: Optional[str] = Query("", max_length=2, description="Mês (1–12) ou vazio"),
-    limit: int = Query(10, ge=1, description="Máximo de torneios a retornar")
-):
+# =========================================
+#              DEPENDENCY
+# =========================================
+def get_db():
     db = SessionLocal()
     try:
-        q = db.query(Tournament)
-        if federation:
-            q = q.filter(Tournament.federation == federation.lower())
-        if year:
-            q = q.filter(Tournament.year == year)
-        if month:
-            q = q.filter(Tournament.month == month)
-        q = q.order_by(Tournament.scraped_at.desc())
-        results = q.limit(limit).all()
-
-        cbx = []
-        for t in results:
-            # normaliza tipos para evitar falhas no Pydantic
-            page_val = _safe_int_for_page(getattr(t, "page", None))
-            total_players_val = _safe_str(getattr(t, "total_players", ""))  # CBX schema espera string
-            fide_players_val = _safe_str(getattr(t, "fide_players", ""))    # se schema espera string
-            cbx_item = {
-                "page": page_val,
-                "name": _safe_str(t.name),
-                "id": _safe_str(t.external_id) or "",
-                "status": _safe_str(t.status),
-                "time_control": _safe_str(t.time_control),
-                "rating": _safe_str(t.rating),
-                "total_players": total_players_val,
-                "organizer": _safe_str(t.organizer),
-                "place": _safe_str(t.place),
-                "fide_players": fide_players_val,
-                "period": _safe_str(t.period),
-                "observation": _safe_str(t.observation),
-                "regulation": _safe_str(t.regulation),
-            }
-            cbx.append(cbx_item)
-
-        # Retorna o response_model — agora os itens estão tipados corretamente.
-        return CBXTournamentResponse(cbx=cbx)
-    except Exception as e:
-        logger.exception("Erro ao construir resposta de torneios")
-        # devolve 500 com mensagem curta — detalhes estarão nos logs
-        raise HTTPException(status_code=500, detail="Internal server error building tournament response")
+        yield db
     finally:
         db.close()
+
+# =========================================
+#               GET ALL
+# =========================================
+@router.get("", response_model=List[TournamentResponse])
+async def list_tournaments(db: Session = Depends(get_db)):
+    return db.query(Tournament).all()
+
+# =========================================
+#              GET ONE
+# =========================================
+@router.get("/{title}")
+def get_tournament(title: str, db: Session = Depends(get_db)):
+    """Retorna um único torneio pelo título."""
+    tournament = db.query(Tournament).filter(Tournament.title == title).first()
+    if not tournament:
+        raise HTTPException(status_code=404, detail="Tournament not found")
+    return tournament
+
+# =========================================
+#               CREATE
+# =========================================
+@router.post("", status_code=201)
+async def create_tournament(
+    tournament_data: TournamentCreate,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """Cria um novo torneio (somente clubes)."""
+    club = verify_club_jwt(request, db)
+    if not club:
+        raise HTTPException(status_code=403, detail="Only clubs can create tournaments")
+
+    tournament = Tournament(
+        **tournament_data.model_dump(exclude_unset=True),
+        club_id=club.id
+    )
+
+    try:
+        db.add(tournament)
+        db.commit()
+        db.refresh(tournament)
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.exception("Erro ao criar torneio")
+        raise HTTPException(status_code=500, detail="Erro ao criar torneio")
+
+    return {"message": "Tournament created successfully", "tournament": tournament}
+
+# =========================================
+#               UPDATE
+# =========================================
+@router.put("/{title}")
+async def update_tournament(
+    title: str,
+    data: TournamentUpdate,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """Atualiza um torneio (somente o dono do clube)."""
+    club = verify_club_jwt(request, db)
+    if not club:
+        raise HTTPException(status_code=403, detail="Only clubs can update tournaments")
+
+    tournament = db.query(Tournament).filter(Tournament.title == title).first()
+    if not tournament:
+        raise HTTPException(status_code=404, detail="Tournament not found")
+
+    if tournament.club_id != club.id:
+        raise HTTPException(status_code=403, detail="You do not own this tournament")
+
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(tournament, field, value)
+
+    db.commit()
+    db.refresh(tournament)
+    return {"message": "Tournament updated successfully", "tournament": tournament}
+
+# =========================================
+#               DELETE
+# =========================================
+@router.delete("/{title}")
+async def delete_tournament(
+    title: str,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """Remove um torneio (somente o dono do clube)."""
+    club = verify_club_jwt(request, db)
+    if not club:
+        raise HTTPException(status_code=403, detail="Only clubs can delete tournaments")
+
+    tournament = db.query(Tournament).filter(Tournament.title == title).first()
+    if not tournament:
+        raise HTTPException(status_code=404, detail="Tournament not found")
+
+    if tournament.club_id != club.id:
+        raise HTTPException(status_code=403, detail="You do not own this tournament")
+
+    db.delete(tournament)
+    db.commit()
+    return {"message": "Tournament deleted successfully"}
