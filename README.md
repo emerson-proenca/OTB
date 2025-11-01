@@ -1,217 +1,93 @@
-# Over The Board 🏆
+# Over The Board (OTB)
 
-Welcome to **Over The Board (OTB)**!
-A modern and robust **open-source API** to fetch chess tournament and player information from federations worldwide.
-
-> **Note**: This is a community-driven project and has no official connection with any chess federation.
+> **Your platform for finding and registering for live chess tournaments.**
 
 ---
 
-## 🚀 Features
+## OTB - Overview
 
-### ✅ Available
+### What does it do?
 
+OTB is a free and ad-free web platform that allows chess players to find and register for over-the-board tournaments. It centralizes tournaments in one place, providing a simple, clear, and accessible interface for both players and organizers.
 
-* **Smart caching** – Faster performance with in-memory cache
-* **Rate limiting** – Protection against abuse and overload
-* **Advanced logging** – Structured logs for debugging
-* **CORS enabled** – Access API from any origin
-* **Auto-generated documentation** – Swagger UI and ReDoc
+### Why use it?
 
-### 🔄 In Development
+Because it focuses on what truly matters: Chess.
+OTB removes unnecessary complexity, avoids clutter, and delivers a fast, functional, and modern experience for anyone who wants to play or organize tournaments without distractions.
 
-- **FIDE Tournaments** – International tournaments
-- **USCF Integration** – United States Chess Federation
-- **Chess-results.com** – Largest tournament database worldwide
+### Who is it for?
+
+OTB is for chess players, clubs, and organizers who want a practical way to share and participate in live chess events. Whether you’re a player looking for your next tournament or an organizer publishing your events, OTB is built for you.
 
 ---
 
-## 📋 Endpoints
+## Tech Stack
 
-| Endpoint         | Method | Description                      |
-| ---------------- | ------ | -------------------------------- |
-| `/`              | GET    | API information                  |
-| `/health`        | GET    | Application health status        |
+OTB is built on a lightweight and efficient stack referred to as **SFJT**:
 
-| `/cache/stats`   | GET    | Cache statistics                 |
-| `/cache/clear`   | DELETE | Clear cache                      |
-| `/docs`          | GET    | Swagger documentation            |
-| `/redoc`         | GET    | ReDoc documentation              |
+**S**QLite – Simple, portable, and reliable local database
+**F**astAPI – Modern and fast Python web framework
+**J**inja2 – Clean and flexible HTML templating engine
+**T**abler – Responsive and minimalist front-end UI system
 
----
-
-## 🛠️ Tech Stack
-
-- **FastAPI** – Modern Python web framework
-- **Python 3.8+** – Main programming language
-- **BeautifulSoup4** – Web scraping utilities
-- **Uvicorn** – ASGI server
-- **Requests** – HTTP client
-- **Jinja2** – Template engine
+This stack keeps the project easy to maintain, fast to deploy, and friendly for contributors.
 
 ---
 
-## 🏃‍♂️ How to Run
+## Getting Started
 
-### Requirements
-
-- Python 3.8+
-- pip (package manager)
-
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone <repository-url>
-   cd otb-api
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Create the Database**
-
-   ```bash
-   python -m database.migration
-   ```
-
-4. **Run the API**
-
-   ```bash
-   python main.py
-   ```
-
-   Or run directly with Uvicorn:
-
-   ```bash
-   python -m uvicorn main:app --reload
-   ```
-
-### 🌐 Access
-
-Once running, the API will be available at:
-
-- **API**: [https://over-the-board.onrender.com](https://over-the-board.onrender.com)
-- **Swagger Docs**: [https://over-the-board.onrender.com/docs](https://over-the-board.onrender.com/docs)
-- **ReDoc**: [https://over-the-board.onrender.com/redoc](https://over-the-board.onrender.com/redoc)
-
----
-
-## 📖 Usage Examples
-
-### Fetch tournaments from 2025
-
-
-
-### Fetch players from São Paulo
+To run OTB locally, follow these steps:
 
 ```bash
-curl "https://over-the-board.onrender.com/players?state=SP&pages=1"
+# 1. Clone the repository
+git clone https://github.com/Emersh0w/Over-The-Board.git
+cd Over-The-Board
+
+# 2. Create a virtual environment
+python -m venv venv
+source venv/bin/activate        # On Windows: venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Run the development server
+uvicorn main:app --reload
 ```
 
+Once running, open your browser and go to **[http://127.0.0.1:8000](http://127.0.0.1:8000)**.
 
 ---
 
-## ⚙️ Configuration
+## Contributing
 
-The API supports configuration via environment variables:
+Contributing to OTB is simple.
+Half of the project is written in Python, and the other half is HTML. You can choose the part you prefer and start improving the platform.
 
-- `DEBUG` – Debug mode (true/false)
-- `RATE_LIMIT_REQUESTS` – Requests per minute limit
-- `CACHE_TTL_DEFAULT` – Default cache TTL in seconds
-- `HTTP_TIMEOUT` – HTTP request timeout
-- `LOG_LEVEL` – Logging level (DEBUG, INFO, WARNING, ERROR)
+To contribute:
 
----
+1. Look for issues labeled **"Good First Issue"** in the repository.
+2. Pick one and work on it, or suggest a new feature.
+3. You can also add new pages, improve templates, or create new API routes.
 
-## 📊 Advanced Features
-
-### Cache
-
-- In-memory cache
-- Configurable TTL per endpoint
-- Monitoring endpoint: `/cache/stats`
-
-### Rate Limiting
-
-- Default: 100 requests/minute per IP (configurable)
-- Informative headers: `X-RateLimit-*`
-- Returns `429` when exceeded
-
-### Logging
-
-- Structured logs
-- Log file: `otb_api.log`
-- Verbosity levels configurable
+OTB is open to contributions from developers, designers, and chess enthusiasts alike.
 
 ---
 
-## 🏗️ Future Architecture
+## Development
 
-```
-over-the-board/
-├── apis/
-│   ├── players_api.py
-│   ├── tournaments_api.py
-
-├── core/
-│   ├── cache.py
-│   ├── schemas.py
-│   └── utils.py
-├── db/
-│   ├── models.py
-│   ├── session.py
-│   └── migration.py
-├── static/
-│   ├── css/
-│   │   └── css/styles.css
-│   ├── js/
-│   │   └── scripts.js
-│   ├── locales/
-│   │   ├── en-us.json
-│   │   ├── pt-br.json
-│   │   └── translation-guide.md
-│   └── index.html
-├── .gitignore
-├── LICENSE
-├── README.md
-├── requirements.txt
-└── main.py
-```
+OTB is developed following **AGILE principles**, with short iterations, regular feedback, and continuous improvement.
+The goal is to build something genuinely useful through incremental and community-driven updates, instead of large, infrequent releases.
 
 ---
 
-## 🤝 Contributing
+## About the Creator
 
-Contributions are welcome!
-The goal is to make **OTB the world’s most comprehensive chess tournament API**.
-
-### Steps:
-
-1. Fork the project
-2. Create a feature branch
-3. Commit your changes
-4. Push to your branch
-5. Open a Pull Request
+OTB is developed by a **chess player, arbiter, and tournament organizer** who, from the very beginning, felt the lack of a single, accessible tool to gather all tournaments in one place.
+The project was created to make finding and joining live chess tournaments simple, free, and available to everyone.
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the **AGPL-3.0 license**. See the [LICENSE](LICENSE) file for details.
-
----
-
-## 🚧 Project Status
-
-**Current version**: 0.8.1
-**Progress**: \~15% complete
-**Next milestone**: FIDE integration
-
----
-
-Made ❤️ for the chess community!
+This project is licensed under the **AGPL-3.0 License**.
+See the [LICENSE](./LICENSE) file for more details.
