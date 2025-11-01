@@ -9,9 +9,6 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Router imports
 from apis.tournaments_api import router as tournaments_router
-from apis.players_api import router as players_router
-from apis.announcements_api import router as announcements_router
-from apis.news_api import router as news_router
 from apis.member_api import router as member_router
 from apis.auth_api import router as auth_router
 from apis.club_api import router as club_router
@@ -32,6 +29,16 @@ from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from starlette.middleware.base import BaseHTTPMiddleware
 
+# DEPRECATED ROUTER IMPORTS
+# LEGACY: these routers are no longer used, kept here for reference
+
+# from apis.players_api import router as players_router
+# from apis.announcements_api import router as announcements_router
+# from apis.news_api import router as news_router
+
+# app.include_router(players_router, prefix="/api")
+# app.include_router(news_router, prefix="/api")
+# app.include_router(announcements_router, prefix="/api")
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
@@ -72,9 +79,6 @@ templates = Jinja2Templates(
 
 # Router registration
 app.include_router(tournaments_router, prefix="/api")
-app.include_router(players_router, prefix="/api")
-app.include_router(news_router, prefix="/api")
-app.include_router(announcements_router, prefix="/api")
 app.include_router(member_router, prefix="/api")
 app.include_router(club_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
@@ -190,7 +194,7 @@ async def tournaments_page(request: Request):
         "tournaments.html",
         {
             "request": request,
-            "tournaments": tournaments.get("cbx", [])
+            "tournaments": tournaments
         }
     )
 
@@ -237,7 +241,7 @@ async def member_profile(
     username: str,
     db: Session = Depends(get_db),
 ):
-    """Página de perfil de uma pessoa (ex: /emerson/)."""
+    """Página de perfil de uma pessoa (ex: /@/emerson/)."""
     user = db.query(Member).filter(Member.username == username).first()
 
     if not user:
