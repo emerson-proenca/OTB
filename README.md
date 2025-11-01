@@ -11,21 +11,21 @@ A modern and robust **open-source API** to fetch chess tournament and player inf
 
 ### ✅ Available
 
-* **CBX Tournaments** – List tournaments by year and month
-* **CBX Players** – Query players by Brazilian state
-* **CBX News** – Latest news from the official site
-* **CBX Announcements** – Official federation announcements
-* **Smart caching** – Faster performance with in-memory cache
-* **Rate limiting** – Protection against abuse and overload
-* **Advanced logging** – Structured logs for debugging
-* **CORS enabled** – Access API from any origin
-* **Auto-generated documentation** – Swagger UI and ReDoc
+- **CBX Tournaments** – List tournaments by year and month
+- **CBX Players** – Query players by Brazilian state
+- **CBX News** – Latest news from the official site
+- **CBX Announcements** – Official federation announcements
+- **Smart caching** – Faster performance with in-memory cache
+- **Rate limiting** – Protection against abuse and overload
+- **Advanced logging** – Structured logs for debugging
+- **CORS enabled** – Access API from any origin
+- **Auto-generated documentation** – Swagger UI and ReDoc
 
 ### 🔄 In Development
 
-* **FIDE Tournaments** – International tournaments
-* **USCF Integration** – United States Chess Federation
-* **Chess-results.com** – Largest tournament database worldwide
+- **FIDE Tournaments** – International tournaments
+- **USCF Integration** – United States Chess Federation
+- **Chess-results.com** – Largest tournament database worldwide
 
 ---
 
@@ -48,12 +48,12 @@ A modern and robust **open-source API** to fetch chess tournament and player inf
 
 ## 🛠️ Tech Stack
 
-* **FastAPI** – Modern Python web framework
-* **Python 3.8+** – Main programming language
-* **BeautifulSoup4** – Web scraping utilities
-* **Uvicorn** – ASGI server
-* **Requests** – HTTP client
-* **Jinja2** – Template engine
+- **FastAPI** – Modern Python web framework
+- **Python 3.8+** – Main programming language
+- **BeautifulSoup4** – Web scraping utilities
+- **Uvicorn** – ASGI server
+- **Requests** – HTTP client
+- **Jinja2** – Template engine
 
 ---
 
@@ -61,8 +61,8 @@ A modern and robust **open-source API** to fetch chess tournament and player inf
 
 ### Requirements
 
-* Python 3.8+
-* pip (package manager)
+- Python 3.8+
+- pip (package manager)
 
 ### Installation
 
@@ -79,7 +79,13 @@ A modern and robust **open-source API** to fetch chess tournament and player inf
    pip install -r requirements.txt
    ```
 
-3. **Run the API**
+3. **Create the Database**
+
+   ```bash
+   python -m database.migration
+   ```
+
+4. **Run the API**
 
    ```bash
    python main.py
@@ -95,9 +101,9 @@ A modern and robust **open-source API** to fetch chess tournament and player inf
 
 Once running, the API will be available at:
 
-* **API**: [https://over-the-board.onrender.com](https://over-the-board.onrender.com)
-* **Swagger Docs**: [https://over-the-board.onrender.com/docs](https://over-the-board.onrender.com/docs)
-* **ReDoc**: [https://over-the-board.onrender.com/redoc](https://over-the-board.onrender.com/redoc)
+- **API**: [https://over-the-board.onrender.com](https://over-the-board.onrender.com)
+- **Swagger Docs**: [https://over-the-board.onrender.com/docs](https://over-the-board.onrender.com/docs)
+- **ReDoc**: [https://over-the-board.onrender.com/redoc](https://over-the-board.onrender.com/redoc)
 
 ---
 
@@ -127,11 +133,11 @@ curl "https://over-the-board.onrender.com/news?pages=1"
 
 The API supports configuration via environment variables:
 
-* `DEBUG` – Debug mode (true/false)
-* `RATE_LIMIT_REQUESTS` – Requests per minute limit
-* `CACHE_TTL_DEFAULT` – Default cache TTL in seconds
-* `HTTP_TIMEOUT` – HTTP request timeout
-* `LOG_LEVEL` – Logging level (DEBUG, INFO, WARNING, ERROR)
+- `DEBUG` – Debug mode (true/false)
+- `RATE_LIMIT_REQUESTS` – Requests per minute limit
+- `CACHE_TTL_DEFAULT` – Default cache TTL in seconds
+- `HTTP_TIMEOUT` – HTTP request timeout
+- `LOG_LEVEL` – Logging level (DEBUG, INFO, WARNING, ERROR)
 
 ---
 
@@ -139,21 +145,21 @@ The API supports configuration via environment variables:
 
 ### Cache
 
-* In-memory cache
-* Configurable TTL per endpoint
-* Monitoring endpoint: `/cache/stats`
+- In-memory cache
+- Configurable TTL per endpoint
+- Monitoring endpoint: `/cache/stats`
 
 ### Rate Limiting
 
-* Default: 100 requests/minute per IP (configurable)
-* Informative headers: `X-RateLimit-*`
-* Returns `429` when exceeded
+- Default: 100 requests/minute per IP (configurable)
+- Informative headers: `X-RateLimit-*`
+- Returns `429` when exceeded
 
 ### Logging
 
-* Structured logs
-* Log file: `otb_api.log`
-* Verbosity levels configurable
+- Structured logs
+- Log file: `otb_api.log`
+- Verbosity levels configurable
 
 ---
 
