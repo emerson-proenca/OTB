@@ -1,6 +1,6 @@
 import time
 from collections import defaultdict
-from fastapi import HTTPException, Request
+from fastapi import Request
 from fastapi.responses import JSONResponse
 
 class RateLimiter:
@@ -48,7 +48,10 @@ rate_limiter = RateLimiter(max_requests=100, window_seconds=60)
 async def rate_limit_middleware(request: Request, call_next):
     """Middleware de rate limiting"""
     # Obtém IP do cliente
-    client_ip = request.client.host
+    if request.client is None:
+        client_ip = "127.0.0.1"
+    else:
+        client_ip = request.client.host
     
     # Verifica rate limit
     if not rate_limiter.is_allowed(client_ip):

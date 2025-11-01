@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, Integer, String, DateTime, Text, ForeignKey, UniqueConstraint
+from sqlalchemy import Date, Integer, String, DateTime, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.sql import func
 from db.session import Base
@@ -37,7 +37,6 @@ class Member(Base):
 # =====================
 # CLUB MODEL
 # =====================
-
 class Club(Base):
     __tablename__ = "clubs"
 
@@ -62,7 +61,6 @@ class Club(Base):
 # =====================
 # TOURNAMENT MODEL
 # =====================
-
 class Tournament(Base):
     __tablename__ = "tournaments"
 
@@ -108,7 +106,6 @@ class Tournament(Base):
 # =====================
 # GAME MODEL
 # =====================
-
 class Game(Base):
     __tablename__ = "games"
 
@@ -142,6 +139,7 @@ class Game(Base):
 # =====================
 # ASSOCIATIVE TABLES
 # =====================
+
 
 class TournamentMember(Base):
     __tablename__ = "tournament_members"
