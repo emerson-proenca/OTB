@@ -8,7 +8,7 @@ from apis.auth_api import get_current_user
 from argon2 import PasswordHasher
 from argon2 import exceptions as argon2_exceptions
 
-router = APIRouter(prefix="/api/clubs", tags=["Clubs"])
+router = APIRouter(prefix="/clubs", tags=["Clubs"])
 ph = PasswordHasher()
 
 # ------------------ SCHEMAS ------------------
