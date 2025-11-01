@@ -8,10 +8,10 @@ from fastapi.templating import Jinja2Templates
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Router imports
-from apis.tournaments_api import router as tournaments_router
-from apis.member_api import router as member_router
-from apis.auth_api import router as auth_router
-from apis.club_api import router as club_router
+from api.tournaments_api import router as tournaments_router
+from api.member_api import router as member_router
+from api.auth_api import router as auth_router
+from api.club_api import router as club_router
 from routes import club
 
 # Configuration and utilities imports
@@ -22,7 +22,7 @@ from core.config import settings
 
 # Db and models imports
 from db.session import SessionLocal, engine
-from db.models import Base, Member, Club
+from db.models import Base, Member
 from sqlalchemy.orm import Session
 
 # JWT imports
