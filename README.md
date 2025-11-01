@@ -1,5 +1,7 @@
 # Over The Board (OTB)
 
+<img width="640" height="320" alt="image" src="https://github.com/user-attachments/assets/382236f9-2469-4051-8c35-7075be475b3f" />
+
 > **Your platform for finding and registering for live chess tournaments.**
 
 ---
@@ -25,10 +27,10 @@ OTB is for chess players, clubs, and organizers who want a practical way to shar
 
 OTB is built on a lightweight and efficient stack referred to as **SFJT**:
 
-**S**QLite – Simple, portable, and reliable local database
-**F**astAPI – Modern and fast Python web framework
-**J**inja2 – Clean and flexible HTML templating engine
-**T**abler – Responsive and minimalist front-end UI system
+* **S**QLite – Simple, portable, and reliable local database
+* **F**astAPI – Modern and fast Python web framework
+* **J**inja2 – Clean and flexible HTML templating engine
+* **T**abler – Responsive and batteries included front-end UI system
 
 This stack keeps the project easy to maintain, fast to deploy, and friendly for contributors.
 
@@ -63,11 +65,11 @@ Once running, open your browser and go to **[http://127.0.0.1:8000](http://127.0
 Contributing to OTB is simple.
 Half of the project is written in Python, and the other half is HTML. You can choose the part you prefer and start improving the platform.
 
-To contribute:
+### To contribute:
 
-1. Look for issues labeled **"Good First Issue"** in the repository.
-2. Pick one and work on it, or suggest a new feature.
-3. You can also add new pages, improve templates, or create new API routes.
+* Create an Issue and give us feedback! It's that easy.
+* Or you can solve one issue labeled **"Good First Issue"** in the repository.
+* You can also add new pages, improve templates, or create new API routes.
 
 OTB is open to contributions from developers, designers, and chess enthusiasts alike.
 
