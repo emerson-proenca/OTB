@@ -13,6 +13,7 @@ from argon2 import PasswordHasher
 from db.session import SessionLocal, engine, Base
 from db.models import Member, Club, Tournament
 
+print("Certifique de instalar as dependências necessárias com 'pip install faker argon2-cffi'")
 fake = Faker()
 ph = PasswordHasher()
 
