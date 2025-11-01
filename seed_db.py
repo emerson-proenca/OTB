@@ -42,7 +42,7 @@ def random_time_control():
     return random.choice(["10+5", "15+10", "30+0", "90+30", "3+2"])
 
 def random_rating_system():
-    return random.choice(["FIDE", "CBX", "Lichess", "OTB"])
+    return random.choice(["FIDE", "USCF", "Lichess", "OTB"])
 
 # ---------------------------------------
 # Cria usuários (Member)

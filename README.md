@@ -11,10 +11,7 @@ A modern and robust **open-source API** to fetch chess tournament and player inf
 
 ### ✅ Available
 
-* **CBX Tournaments** – List tournaments by year and month
-* **CBX Players** – Query players by Brazilian state
-* **CBX News** – Latest news from the official site
-* **CBX Announcements** – Official federation announcements
+
 * **Smart caching** – Faster performance with in-memory cache
 * **Rate limiting** – Protection against abuse and overload
 * **Advanced logging** – Structured logs for debugging
@@ -35,10 +32,7 @@ A modern and robust **open-source API** to fetch chess tournament and player inf
 | ---------------- | ------ | -------------------------------- |
 | `/`              | GET    | API information                  |
 | `/health`        | GET    | Application health status        |
-| `/tournaments`   | GET    | List tournaments (currently CBX) |
-| `/players`       | GET    | List players by state (CBX)      |
-| `/news`          | GET    | Latest federation news           |
-| `/announcements` | GET    | Official announcements           |
+
 | `/cache/stats`   | GET    | Cache statistics                 |
 | `/cache/clear`   | DELETE | Clear cache                      |
 | `/docs`          | GET    | Swagger documentation            |
@@ -105,9 +99,7 @@ Once running, the API will be available at:
 
 ### Fetch tournaments from 2025
 
-```bash
-curl "https://over-the-board.onrender.com/tournaments?federation=cbx&year=2025&month=1&limit=5"
-```
+
 
 ### Fetch players from São Paulo
 
@@ -115,11 +107,6 @@ curl "https://over-the-board.onrender.com/tournaments?federation=cbx&year=2025&m
 curl "https://over-the-board.onrender.com/players?state=SP&pages=1"
 ```
 
-### Latest news
-
-```bash
-curl "https://over-the-board.onrender.com/news?pages=1"
-```
 
 ---
 
@@ -164,8 +151,7 @@ over-the-board/
 ├── apis/
 │   ├── players_api.py
 │   ├── tournaments_api.py
-│   ├── news_api.py
-│   └── announcements_api.py
+
 ├── core/
 │   ├── cache.py
 │   ├── schemas.py
@@ -174,23 +160,6 @@ over-the-board/
 │   ├── models.py
 │   ├── session.py
 │   └── migration.py
-├── jobs/
-│   ├── sync_playerss.py
-│   ├── sync_tournaments.py
-│   ├── sync_news.py
-│   └── sync_announcements.py
-├── scrapers/
-│   ├── cbx/
-│   │   ├── cbx_players.py
-│   │   ├── cbx_tournaments.py
-│   │   ├── cbx_news.py
-│   │   └── cbx_announcements.py
-│   ├── chess_results/
-│   │   └── cr_tournaments.py
-│   ├── fide/
-│   │   └── fide_players.py
-│   └── uscf/
-│       └── uscf_tournaments.py
 ├── static/
 │   ├── css/
 │   │   └── css/styles.css

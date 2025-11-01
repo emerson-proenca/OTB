@@ -29,17 +29,7 @@ from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from starlette.middleware.base import BaseHTTPMiddleware
 
-# DEPRECATED ROUTER IMPORTS
-# LEGACY: these routers are no longer used, kept here for reference
-
-# from apis.players_api import router as players_router
-# from apis.announcements_api import router as announcements_router
-# from apis.news_api import router as news_router
-
-# app.include_router(players_router, prefix="/api")
-# app.include_router(news_router, prefix="/api")
-# app.include_router(announcements_router, prefix="/api")
-
+# JWT configuration
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 
@@ -171,16 +161,6 @@ async def about_page(request: Request):
     """About page"""
     return templates.TemplateResponse("about.html", {"request": request})
 
-@app.get("/announcements", response_class=HTMLResponse, name="announcements")
-async def announcements_page(request: Request):
-    """Announcements page"""
-    return templates.TemplateResponse("announcements.html", {"request": request})
-
-@app.get("/news", response_class=HTMLResponse, name="news")
-async def news_page(request: Request):
-    """News page"""
-    return templates.TemplateResponse("news.html", {"request": request})
-
 @app.get("/tournaments", response_class=HTMLResponse, name="tournaments")
 async def tournaments_page(request: Request):
     """Tournaments page using async httpx"""
@@ -197,11 +177,6 @@ async def tournaments_page(request: Request):
             "tournaments": tournaments
         }
     )
-
-@app.get("/players", response_class=HTMLResponse, name="players")
-async def players_page(request: Request):
-    """Players page"""
-    return templates.TemplateResponse("players.html", {"request": request})
 
 @app.get("/404", response_class=HTMLResponse, name="404",)
 async def not_found(request: Request):

@@ -48,7 +48,7 @@ class TournamentCreate(BaseModel):
     
     # Detalhes do evento
     time_control: str = Field(..., description="Controle de tempo (ex: Rápido, Clássico, Blitz).")
-    rating: str = Field(..., description="Sistema de rating utilizado (ex: FIDE, CBX, Local).")
+    rating: str = Field(..., description="Sistema de rating utilizado (ex: FIDE, Local).")
     image_url: str = Field(..., description="URL para a imagem/cartaz do torneio.")
     
     # Campos Opcionais
@@ -65,7 +65,7 @@ class TournamentCreate(BaseModel):
                 "start_date": "2025-03-20",
                 "end_date": "2025-03-22",
                 "time_control": "Clássico (90'+30\")",
-                "rating": "CBX",
+                "rating": "FIDE",
                 "image_url": "https://example.com/poster.jpg"
             }
         }
@@ -95,22 +95,3 @@ class TournamentResponse(BaseModel):
     
     class Config:
         orm_mode = True
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-# DEPRECATED CLASSES
-# LEGACY: these classes are no longer used, kept here for reference
-
-# class CBXPlayerResponse(BaseModel):
-#     cbx: List[Player]
-    
-# class CBXTournamentResponse(BaseModel):
-#     cbx: List[Player]            
