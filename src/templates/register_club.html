@@ -1,0 +1,154 @@
+{% extends "base.html" %} {% block title %}OTB - Register{% endblock %} {% block
+meta_description %}Create your OTB account to join tournaments and events.{%
+endblock %} {% block content %}
+
+<div class="container container-tight py-4">
+  <form id="register-form" class="card card-md" autocomplete="off" novalidate>
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4 fs-1">Create your account</h2>
+
+      <!-- USERNAME -->
+      <div class="mb-3">
+        <label class="form-label required">Username</label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          placeholder="Enter username"
+          required
+        />
+        <div class="invalid-feedback">Username is required.</div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="mb-3">
+        <label class="form-label required">Email address</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control"
+          placeholder="Enter email"
+          required
+        />
+        <div class="invalid-feedback">Please enter a valid email.</div>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="mb-3">
+        <label class="form-label required">Password</label>
+        <div class="input-group input-group-flat">
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Password"
+            required
+          />
+          <span class="input-group-text">
+            <a
+              href="#"
+              class="link-secondary"
+              id="togglePassword"
+              aria-label="Show password"
+            >
+              <!-- INITIALLY EYE CLOSED -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                id="eyeIcon"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icon-tabler-eye-closed"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4"
+                />
+                <path d="M3 15l2.5 -3.8" />
+                <path d="M21 14.976l-2.492 -3.776" />
+                <path d="M9 17l.5 -4" />
+                <path d="M15 17l-.5 -4" />
+              </svg>
+            </a>
+          </span>
+        </div>
+        <div class="invalid-feedback">Password is required.</div>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="form-footer">
+        <button type="submit" class="btn btn-primary w-100">
+          Create account
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- LOGIN -->
+  <div class="text-center text-secondary mt-3">
+    Already have an account? <a href="/login" tabindex="-1">Login</a>
+  </div>
+</div>
+
+<!-- ALERT MESSAGE -->
+<div
+  class="toast-container position-fixed top-0 end-0 p-3"
+  id="toast-container"
+></div>
+
+<form id="club-login-form" class="card card-md" novalidate>
+  <div class="card-body">
+    <h2 class="card-title text-center mb-4 fs-1">Club Login</h2>
+
+    <div class="mb-3">
+      <label class="form-label required">Email address</label>
+      <input
+        type="email"
+        id="email"
+        class="form-control"
+        placeholder="Enter email"
+      />
+      <div class="invalid-feedback">Enter a valid email address.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label required">Password</label>
+      <div class="input-group input-group-flat">
+        <input
+          type="password"
+          id="password"
+          class="form-control"
+          placeholder="Password"
+        />
+        <span class="input-group-text">
+          <a href="#" id="togglePassword" class="link-secondary">
+            <svg
+              id="eyeIcon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              ...
+            ></svg>
+          </a>
+        </span>
+      </div>
+      <div class="invalid-feedback">Password is required.</div>
+    </div>
+
+    <div class="form-footer">
+      <button type="submit" class="btn btn-primary w-100">Login</button>
+    </div>
+  </div>
+</form>
+
+<div
+  id="toast-container"
+  class="toast-container position-fixed top-0 end-0 p-3"
+></div>
+
+{% endblock %}

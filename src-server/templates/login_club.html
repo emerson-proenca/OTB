@@ -1,0 +1,187 @@
+{% extends "base.html" %} {% block title %}OTB - Login{% endblock %} {% block
+meta_description %}Login to access your OTB account and manage tournaments.{%
+endblock %} {% block content %}
+
+<div class="container container-tight py-4">
+  <form id="login-form" class="card card-md" autocomplete="off" novalidate>
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4 fs-1">Login to your account</h2>
+
+      <!-- EMAIL -->
+      <div class="mb-3">
+        <label class="form-label required">Email address</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control"
+          placeholder="Enter email"
+          required
+        />
+        <div class="invalid-feedback">Please enter a valid email.</div>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="mb-3">
+        <label class="form-label required">Password</label>
+        <div class="input-group input-group-flat">
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Password"
+            required
+          />
+          <span class="input-group-text">
+            <a
+              href="#"
+              class="link-secondary"
+              id="togglePassword"
+              aria-label="Show password"
+            >
+              <!-- CLOSED EYE -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                id="eyeIcon"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icon-tabler-eye-closed"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4"
+                />
+                <path d="M3 15l2.5 -3.8" />
+                <path d="M21 14.976l-2.492 -3.776" />
+                <path d="M9 17l.5 -4" />
+                <path d="M15 17l-.5 -4" />
+              </svg>
+            </a>
+          </span>
+        </div>
+        <div class="invalid-feedback">Password is required.</div>
+      </div>
+
+      <div class="form-footer">
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="text-center text-secondary mt-3">
+    Don't have an account? <a href="/register" tabindex="-1">Register</a>
+  </div>
+</div>
+
+<!-- MESSAGE -->
+<div
+  class="toast-container position-fixed top-0 end-0 p-3"
+  id="toast-container"
+></div>
+
+<script>
+  const form = document.getElementById("login-form");
+  const inputs = form.querySelectorAll("input");
+  const toastContainer = document.getElementById("toast-container");
+
+  // SHOW/HIDE PASSWORD
+  document
+    .getElementById("togglePassword")
+    .addEventListener("click", function (e) {
+      e.preventDefault();
+      const pwd = document.getElementById("password");
+      const icon = document.getElementById("eyeIcon");
+      if (pwd.type === "password") {
+        pwd.type = "text";
+        icon.outerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" id="eyeIcon" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <circle cx="12" cy="12" r="2" />
+          <path d="M22 12c-2.4 4 -5.4 6 -10 6c-4.6 0 -7.6 -2 -10 -6c2.4 -4 5.4 -6 10 -6c4.6 0 7.6 2 10 6" />
+        </svg>`;
+      } else {
+        pwd.type = "password";
+        icon.outerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" id="eyeIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-eye-closed">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4" />
+          <path d="M3 15l2.5 -3.8" />
+          <path d="M21 14.976l-2.492 -3.776" />
+          <path d="M9 17l.5 -4" />
+          <path d="M15 17l-.5 -4" />
+        </svg>`;
+      }
+    });
+
+  // SHOW MESSAGE
+  function showToast(type, message) {
+    const color = type === "success" ? "bg-success" : "bg-danger";
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white ${color} border-0 show`;
+    toast.role = "alert";
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>`;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
+
+  // VISUAL VALIDATION AND SUBMIT
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // VISUAL RESET
+    inputs.forEach((i) => i.classList.remove("is-valid", "is-invalid"));
+
+    let valid = true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // INPUT VALIDATION
+    inputs.forEach((input) => {
+      const value = input.value.trim();
+      if (!value || (input.id === "email" && !emailRegex.test(value))) {
+        input.classList.add("is-invalid");
+        valid = false;
+      } else {
+        input.classList.add("is-valid");
+      }
+    });
+
+    if (!valid) {
+      showToast("error", "Please fix the highlighted fields.");
+      return;
+    }
+
+    // SUBMIT TO API
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: document.getElementById("email").value,
+          password: document.getElementById("password").value,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast("success", "Welcome back!");
+        setTimeout(() => (window.location.href = "/"), 1000);
+      } else {
+        showToast("error", data.detail || "Invalid email or password.");
+      }
+    } catch (err) {
+      showToast("error", "Server connection error.");
+    }
+  });
+</script>
+
+{% endblock %}

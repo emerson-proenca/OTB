@@ -1,0 +1,114 @@
+# ----------------------------------------
+# 1. ARQUIVOS GERAIS DO SITEMA OPERACIONAL E LOGS
+# ----------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs e Temporários
+*.log
+logs/
+*.tmp
+*.temp
+temp/
+
+# ----------------------------------------
+# 2. AMBIENTE PYTHON (src-server)
+# ----------------------------------------
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller / Empacotamento do Sidecar
+*.manifest
+*.spec
+/src-server/dist/    # Binários do sidecar
+/src-server/build/   # Build artifacts
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments (Geral e Específico)
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+/src-server/venv/ # Específico do sidecar
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Banco de Dados (SQLite)
+*.db
+*.sqlite3
+
+# Cache
+.cache/
+*.cache
+
+# ----------------------------------------
+# 3. FRONTEND SVELTEKIT / TAURI (node_modules, build)
+# ----------------------------------------
+node_modules
+/build           # Diretório de build do SvelteKit (se usar adapter-static)
+/.svelte-kit     # Cache e arquivos internos do SvelteKit
+/package
+.env
+.env.*
+!.env.example    # Manter o .env.example
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# ----------------------------------------
+# 4. BACKEND CLIENTE RUST (src-tauri)
+# ----------------------------------------
+/src-tauri/target/   # Binários e artefatos de compilação do Rust
