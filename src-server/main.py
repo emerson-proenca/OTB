@@ -12,7 +12,7 @@ from api.tournaments_api import router as tournaments_router
 from api.member_api import router as member_router
 from api.auth_api import router as auth_router
 from api.club_api import router as club_router
-from routes import club
+import routes.club  as club
 
 # Configuration and utilities imports
 from core.rate_limiter import rate_limit_middleware

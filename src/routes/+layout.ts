@@ -3,3 +3,19 @@
 // See: https://svelte.dev/docs/kit/single-page-apps
 // See: https://v2.tauri.app/start/frontend/sveltekit/ for more info
 export const ssr = false;
+
+// src/routes/+layout.js
+export async function load({ fetch }) {
+  // Simulação de carregamento de usuário (Substitua pela sua lógica real)
+  const userData = {
+    username: "ExemploUser",
+    profile_picture: null, // ou 'url/para/foto.jpg'
+    role: "Admin",
+  };
+
+  // Se o usuário não estiver logado, pode ser: const userData = null;
+
+  return {
+    user: userData,
+  };
+}

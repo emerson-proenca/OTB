@@ -1,0 +1,128 @@
+:root {
+  --tblr-primary: #1a1a1a;
+  --tblr-primary-rgb: 26, 26, 26;
+  --tblr-secondary: #ffffff;
+  --tblr-accent: #d4af37;
+  --tblr-light: #f5f5f5;
+  --tblr-dark: #2a2a2a;
+  --tblr-gray: #666;
+}
+
+.bg-primary {
+  background-color: var(--tblr-primary) !important;
+}
+
+.text-accent {
+  color: var(--tblr-accent) !important;
+}
+
+.bg-accent {
+  background-color: var(--tblr-accent) !important;
+}
+
+.border-accent {
+  border-color: var(--tblr-accent) !important;
+}
+
+.btn-accent {
+  background-color: var(--tblr-accent);
+  border-color: var(--tblr-accent);
+  color: var(--tblr-primary);
+  font-weight: 600;
+}
+
+.btn-accent:hover {
+  background-color: #b8941f;
+  border-color: #b8941f;
+  color: var(--tblr-primary);
+}
+
+.btn-outline-accent {
+  color: var(--tblr-accent);
+  border-color: var(--tblr-accent);
+}
+
+.btn-outline-accent:hover {
+  background-color: var(--tblr-accent);
+  color: var(--tblr-primary);
+}
+
+.chessboard-logo {
+  width: 40px;
+  height: 40px;
+  background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 20px 20px;
+  border: 2px solid var(--tblr-accent);
+  margin-right: 10px;
+}
+
+.hero-section {
+  background: linear-gradient(rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.95)),
+    url("https://images.unsplash.com/photo-1586165368502-1bad197a6461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80");
+  background-size: cover;
+  background-position: center;
+  padding: 6rem 0;
+}
+
+.feature-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.tournament-card {
+  transition: transform 0.3s;
+  height: 100%;
+}
+
+.tournament-card:hover {
+  transform: translateY(-5px);
+}
+
+.tournament-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+.value-icon {
+  font-size: 3rem;
+  color: var(--tblr-accent);
+  margin-bottom: 1.5rem;
+}
+
+.tag {
+  background: var(--tblr-light);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--tblr-primary);
+  font-weight: 500;
+}
+
+.slogan {
+  color: var(--tblr-accent);
+  font-weight: 600;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+}
+
+.search-container {
+  max-width: 700px;
+  margin: 0 auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    flex-direction: column;
+  }
+
+  .hero-section {
+    padding: 4rem 0;
+  }
+}

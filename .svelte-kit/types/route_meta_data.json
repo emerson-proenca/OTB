@@ -2,5 +2,9 @@
 	"/": [
 		"src/routes/+layout.ts",
 		"src/routes/+layout.ts"
+	],
+	"/tournaments": [
+		"src/routes/tournaments/+page.ts",
+		"src/routes/+layout.ts"
 	]
 }

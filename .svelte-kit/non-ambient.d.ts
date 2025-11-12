@@ -27,15 +27,18 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/";
+		RouteId(): "/" | "/clubs" | "/members" | "/tournaments";
 		RouteParams(): {
 			
 		};
 		LayoutParams(): {
-			"/": Record<string, never>
+			"/": Record<string, never>;
+			"/clubs": Record<string, never>;
+			"/members": Record<string, never>;
+			"/tournaments": Record<string, never>
 		};
-		Pathname(): "/";
+		Pathname(): "/" | "/clubs" | "/clubs/" | "/members" | "/members/" | "/tournaments" | "/tournaments/";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): "/favicon.png" | "/svelte.svg" | "/tauri.svg" | "/vite.svg" | string & {};
+		Asset(): "/favicon.png" | "/otb.svg" | string & {};
 	}
 }
