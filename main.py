@@ -53,7 +53,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.middleware("http")(rate_limit_middleware)
+# app.middleware("http")(rate_limit_middleware)
 
 # Static files and templates setup
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -110,23 +110,23 @@ def get_db():
         db.close()
 
 
-# Handler para 404 Not Found
-@app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
-    if exc.status_code == 404:
-        return templates.TemplateResponse(
-            "404.html", {"request": request}, status_code=404
-        )
-    return HTMLResponse(str(exc.detail), status_code=exc.status_code)
+# # Handler para 404 Not Found
+# @app.exception_handler(StarletteHTTPException)
+# async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+#     if exc.status_code == 404:
+#         return templates.TemplateResponse(
+#             "404.html", {"request": request}, status_code=404
+#         )
+#     return HTMLResponse(str(exc.detail), status_code=exc.status_code)
 
 
-# Handler para 500 Internal Server Error
-@app.exception_handler(Exception)
-async def internal_exception_handler(request: Request, exc: Exception):
-    print(f"Internal Server Error: {exc}")
-    return templates.TemplateResponse(
-        "500.html", {"request": request}, status_code=500
-    )
+# # Handler para 500 Internal Server Error
+# @app.exception_handler(Exception)
+# async def internal_exception_handler(request: Request, exc: Exception):
+#     print(f"Internal Server Error: {exc}")
+#     return templates.TemplateResponse(
+#         "500.html", {"request": request}, status_code=500
+#     )
 
 
 # WEBSITE PAGES
