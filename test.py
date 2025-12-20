@@ -1,19 +1,27 @@
+import os
+import re
+import sys
+import logging
 import requests
+from bs4 import BeautifulSoup
+from supabase import create_client, Client
+from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from bs4 import BeautifulSoup
-import json
-import re
-import logging
-import sys
 
-# Configuração de Logging para Vercel/Console
+# Configuração de Logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[logging.StreamHandler(sys.stdout)]
 )
 logger = logging.getLogger(__name__)
+
+# Configuração Supabase
+load_dotenv()
+url: str = os.environ['SUPABASE_URL']
+key: str = os.environ['SUPABASE_SECRET_KEY']
+supabase: Client = create_client(url, key)
 
 def safe(element) -> str:
     if not element: return ''
@@ -23,13 +31,13 @@ def safe(element) -> str:
 def extract_page_data(soup: BeautifulSoup, base_url: str):
     tables = soup.find_all('table', attrs={'class': 'torneios'})
     page_tournaments = []
-    logger.info(f"Encontrados {len(tables)} torneios na página atual.")
     
     for i in range(len(tables)):
         def get_text(field):
             return safe(soup.find('span', id=re.compile(f'ContentPlaceHolder1_gdvMain_{field}_{i}')))
         
         reg_elem = soup.find('a', id=re.compile(f'ContentPlaceHolder1_gdvMain_hlkTorneio_{i}'))
+        
         page_tournaments.append({
             'titulo': get_text('lblNomeTorneio'),
             'cbx_id': get_text('lblIDTorneio'),
@@ -45,6 +53,16 @@ def extract_page_data(soup: BeautifulSoup, base_url: str):
             'jogadores_fide': get_text('lblQtJogadoresFIDE')
         })
     return page_tournaments
+
+def save_to_supabase(data):
+    if not data:
+        return
+    try:
+        # Substitua 'torneios' pelo nome da sua tabela no Supabase
+        response = supabase.table('torneios').upsert(data, on_conflict='cbx_id').execute()
+        logger.info(f"Enviados {len(data)} registros para o Supabase.")
+    except Exception as e:
+        logger.error(f"Erro ao salvar no Supabase: {e}")
 
 def main():
     URL = 'https://www.cbx.org.br/torneios'
@@ -73,8 +91,8 @@ def main():
             tag = soup.find('input', id=id_name)
             return tag.get('value', '') if tag else ''
         
-        year = '2005' # 2005 até 2025 - vazio é mês atual
-        month = '' # 0 até 12 - vazio são todos
+        year = '2021' 
+        month = '' 
 
         payload = {
             '__EVENTTARGET': 'ctl00$ContentPlaceHolder1$cboMes',
@@ -86,7 +104,6 @@ def main():
             'ctl00$ContentPlaceHolder1$cboMes': month
         }
 
-        all_tournaments = []
         current_page = 1
         
         while True:
@@ -95,7 +112,10 @@ def main():
             res.raise_for_status()
             
             soup = BeautifulSoup(res.text, 'html.parser')
-            all_tournaments.extend(extract_page_data(soup, 'https://www.cbx.org.br/'))
+            
+            # Extrai e já envia para o Supabase (Salva o progresso por página)
+            tournaments = extract_page_data(soup, 'https://www.cbx.org.br/')
+            save_to_supabase(tournaments)
 
             link_next = soup.find('a', href=re.compile(rf"Page\${current_page + 1}"))
             if link_next:
@@ -109,15 +129,7 @@ def main():
             else:
                 logger.info("Fim da paginação alcançado.")
                 break
-
-        with open('torneios.json', 'w', encoding='utf-8') as f:
-            json.dump(all_tournaments, f, indent=4, ensure_ascii=False)
-        logger.info(f"Sucesso! {len(all_tournaments)} torneios salvos em torneios.json")
             
-    except requests.exceptions.ConnectTimeout:
-        logger.error("Erro: Timeout de conexão. O servidor demorou muito para responder.")
-    except requests.exceptions.HTTPError as e:
-        logger.error(f"Erro HTTP: {e}")
     except Exception as e:
         logger.critical(f"Erro inesperado: {str(e)}", exc_info=True)
 
