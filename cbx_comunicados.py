@@ -2,11 +2,12 @@ import re
 from bs4 import BeautifulSoup
 from cbx_utils import setup_logging, get_supabase, get_session, get_asp_vars, save_data
 
-# Configurações iniciais
+
 logger = setup_logging()
 supabase = get_supabase()
 URL = 'https://www.cbx.org.br/comunicados'
 BASE_DOMAIN = 'https://www.cbx.org.br'
+
 
 def extract_page_data(soup: BeautifulSoup):
     """Extrai os comunicados da tabela da página atual."""
@@ -29,6 +30,7 @@ def extract_page_data(soup: BeautifulSoup):
             
     return page_notices
 
+
 def main():
     session = get_session()
     
@@ -45,7 +47,7 @@ def main():
             
             # Extração e Salvamento
             notices = extract_page_data(soup)
-            save_data(supabase, 'cbx_comunicados', notices, 'cbx_link')
+            save_data(supabase, 'cbx_comunicados', notices, 'link')
 
             # Lógica de Paginação ASP.NET
             next_page = current_page + 1
@@ -66,6 +68,7 @@ def main():
             
     except Exception as e:
         logger.critical(f"Erro inesperado: {str(e)}", exc_info=True)
+
 
 if __name__ == '__main__':
     main()
