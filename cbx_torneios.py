@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+
 # Configuração de Logging
 logging.basicConfig(
     level=logging.INFO,
@@ -23,10 +24,16 @@ url: str = os.environ['SUPABASE_URL']
 key: str = os.environ['SUPABASE_SECRET_KEY']
 supabase: Client = create_client(url, key)
 
-def safe(element) -> str:
-    if not element: return ''
+
+def safe(element) -> str | None:
+    if not element:
+        return None
     match = re.search(r'.*?:\s*(.*)', element.text)
-    return match.group(1).strip() if match else element.text.strip()
+    if match:
+        return match.group(1).strip() 
+    else:
+        return element.text.strip()
+
 
 def extract_page_data(soup: BeautifulSoup, base_url: str):
     tables = soup.find_all('table', attrs={'class': 'torneios'})
@@ -54,15 +61,17 @@ def extract_page_data(soup: BeautifulSoup, base_url: str):
         })
     return page_tournaments
 
+
 def save_to_supabase(data):
     if not data:
         return
     try:
         # Substitua 'torneios' pelo nome da sua tabela no Supabase
-        response = supabase.table('torneios').upsert(data, on_conflict='cbx_id').execute()
+        response = supabase.table('cbx_torneios').upsert(data, on_conflict='cbx_id').execute()
         logger.info(f"Enviados {len(data)} registros para o Supabase.")
     except Exception as e:
         logger.error(f"Erro ao salvar no Supabase: {e}")
+
 
 def main():
     URL = 'https://www.cbx.org.br/torneios'
@@ -89,9 +98,9 @@ def main():
 
         def get_val(id_name):
             tag = soup.find('input', id=id_name)
-            return tag.get('value', '') if tag else ''
+            return tag.get('value', '') if tag else None
         
-        year = '2021' 
+        year = '2025' 
         month = '' 
 
         payload = {
@@ -132,6 +141,7 @@ def main():
             
     except Exception as e:
         logger.critical(f"Erro inesperado: {str(e)}", exc_info=True)
+
 
 if __name__ == '__main__':
     main()

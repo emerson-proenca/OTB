@@ -1,0 +1,23 @@
+country_abbreviations = [
+    "AFG", "ALB", "ALG", "AND", "ANG", "ANT", "ARG", "ARM", "ARU", "AUS",
+    "AUT", "AZE", "BAH", "BRN", "BAN", "BAR", "BLR", "BEL", "BIZ", "BER",
+    "BHU", "BOL", "BIH", "BOT", "BRA", "IVB", "BRU", "BUL", "BUR", "BDI",
+    "CAM", "CMR", "CAN", "CPV", "CAY", "CAF", "CHA", "CHI", "CHN", "TPE",
+    "COL", "COM", "CRC", "CIV", "CRO", "CUB", "CYP", "CZE", "COD", "DEN",
+    "DJI", "DMA", "DOM", "ECU", "EGY", "ESA", "ENG", "GEQ", "ERI", "EST",
+    "SWZ", "ETH", "FAI", "FIJ", "FIN", "FRA", "GAB", "GAM", "GEO", "GER",
+    "GHA", "GRE", "GRL", "GRN", "GUM", "GUA", "GCI", "GUI", "GUY", "HAI",
+    "HON", "HKG", "HUN", "ISL", "IND", "INA", "IRI", "IRQ", "IRL", "IOM",
+    "ISR", "ITA", "JAM", "JPN", "JCI", "JOR", "KAZ", "KEN", "KIR", "KOS",
+    "KUW", "KGZ", "LAO", "LAT", "LBN", "LES", "LBR", "LBA", "LIE", "LTU",
+    "LUX", "MAC", "MAD", "MAW", "MAS", "MDV", "MLI", "MLT", "MHL", "MTN",
+    "MRI", "MEX", "MDA", "MNC", "MGL", "MNE", "MAR", "MOZ", "MYA", "NAM",
+    "NRU", "NEP", "NED", "AHO", "NCL", "NZL", "NCA", "NIG", "NGR", "MKD",
+    "NOR", "OMA", "PAK", "PLW", "PLE", "PAN", "PNG", "PAR", "PER", "PHI",
+    "POL", "POR", "PUR", "QAT", "ROU", "RUS", "RWA", "SKN", "LCA", "VIN",
+    "SMR", "STP", "KSA", "SCO", "SEN", "SRB", "SEY", "SLE", "SGP", "SVK",
+    "SLO", "SOL", "SOM", "RSA", "KOR", "SSD", "ESP", "SRI", "SUD", "SUR",
+    "SWE", "SUI", "SYR", "TJK", "TAN", "THA", "TLS", "TOG", "TGA", "TTO",
+    "TUN", "TUR", "TKM", "UGA", "UKR", "UAE", "USA", "URU", "ISV", "UZB",
+    "VAN", "VEN", "VIE", "WLS", "YEM", "ZAM", "ZIM"
+]
