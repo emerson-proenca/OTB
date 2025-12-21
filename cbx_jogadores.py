@@ -5,12 +5,12 @@ from cbx_utils import setup_logging, get_supabase, get_session, get_asp_vars, sa
 
 logger = setup_logging()
 supabase = get_supabase()
-URL = "https://www.cbx.org.br/rating"
+URL = 'https://www.cbx.org.br/rating'
 UF_ALVO = 'SE' 
 
 
 def extract_page_data(soup: BeautifulSoup):
-    """Extrai os dados da tabela de rating."""
+    '''Extrai os dados da tabela de rating.'''
     table = soup.find('table', id='ContentPlaceHolder1_gdvMain')
     if not table: return []
     
@@ -51,7 +51,7 @@ def main():
         
         current_page = 1
         while True:
-            logger.info(f"Processando página {current_page} para {UF_ALVO}...")
+            logger.info(f'Processando página {current_page} para {UF_ALVO}...')
             res = session.post(URL, data=payload)
             soup = BeautifulSoup(res.text, 'html.parser')
             
@@ -61,7 +61,7 @@ def main():
             
             # 3. Paginação
             next_page_num = current_page + 1
-            if soup.find('a', href=re.compile(rf"Page\${next_page_num}")):
+            if soup.find('a', href=re.compile(rf'Page\${next_page_num}')):
                 payload = get_asp_vars(soup)
                 payload.update({
                     '__EVENTTARGET': 'ctl00$ContentPlaceHolder1$gdvMain',
@@ -70,11 +70,11 @@ def main():
                 })
                 current_page += 1
             else:
-                logger.info("Fim da lista alcançado.")
+                logger.info('Fim da lista alcançado.')
                 break
                 
     except Exception as e:
-        logger.error(f"Erro durante a execução: {e}")
+        logger.error(f'Erro durante a execução: {e}')
 
 
 if __name__ == '__main__':

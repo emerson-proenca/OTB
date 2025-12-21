@@ -5,12 +5,12 @@ from cbx_utils import setup_logging, get_supabase, get_session, get_asp_vars, sa
 
 logger = setup_logging()
 supabase = get_supabase()
-URL = 'https://www.cbx.org.br/torneios'
+URL = 'https://www.cbx.org.br/torneios/'
 BASE_URL = 'https://www.cbx.org.br/'
 
 
 def extract_page_data(soup: BeautifulSoup):
-    """Extrai os dados de cada tabela de torneio na página."""
+    '''Extrai os dados de cada tabela de torneio na página.'''
     tables = soup.find_all('table', attrs={'class': 'torneios'})
     page_tournaments = []
     
@@ -27,7 +27,7 @@ def extract_page_data(soup: BeautifulSoup):
             'local': get_text('lblLocal'),
             'periodo': get_text('lblPeriodo'),
             'observacao': get_text('lblObs'),
-            'regulamento': (BASE_URL + str(reg_elem.get('href'))) if (reg_elem and reg_elem.get('href')) else "",
+            'regulamento': (BASE_URL + str(reg_elem.get('href'))) if (reg_elem and reg_elem.get('href')) else '',
             'situacao': get_text('lblStatus'),
             'ritmo': get_text('lblRitmo'),
             'rating': get_text('lblRating'),
@@ -41,14 +41,15 @@ def main():
     session = get_session()
     
     try:
-        logger.info("Iniciando extração de torneios...")
+        logger.info('Iniciando extração de torneios...')
         res = session.get(URL, timeout=30)
         res.raise_for_status()
         
         soup = BeautifulSoup(res.text, 'html.parser')
         
         # Filtros iniciais
-        year, month = '2025', '' 
+        year = '2025'
+        month = '' 
         payload = get_asp_vars(soup)
         payload.update({
             '__EVENTTARGET': 'ctl00$ContentPlaceHolder1$cboMes',
@@ -58,7 +59,7 @@ def main():
 
         current_page = 1
         while True:
-            logger.info(f"Processando página {current_page}...")
+            logger.info(f'Processando página {current_page}...')
             res = session.post(URL, data=payload, timeout=30)
             res.raise_for_status()
             soup = BeautifulSoup(res.text, 'html.parser')
@@ -69,7 +70,7 @@ def main():
 
             # Paginação
             next_page = current_page + 1
-            if soup.find('a', href=re.compile(rf"Page\${next_page}")):
+            if soup.find('a', href=re.compile(rf'Page\${next_page}')):
                 payload = get_asp_vars(soup)
                 payload.update({
                     '__EVENTTARGET': 'ctl00$ContentPlaceHolder1$gdvMain',
@@ -79,11 +80,11 @@ def main():
                 })
                 current_page += 1
             else:
-                logger.info("Fim da paginação.")
+                logger.info('Fim da paginação.')
                 break
             
     except Exception as e:
-        logger.critical(f"Erro inesperado: {str(e)}", exc_info=True)
+        logger.critical(f'Erro inesperado: {str(e)}', exc_info=True)
 
 
 if __name__ == '__main__':

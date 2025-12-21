@@ -30,12 +30,12 @@ def main():
     current_page = 1
 
     while True:
-        logger.info(f"Processando página {current_page}...")
+        logger.info(f'Processando página {current_page}...')
         news = extract_page_data(soup)
         save_data(supabase, 'cbx_noticias', news, 'link')
 
         next_page = current_page + 1
-        if soup.find('a', href=re.compile(rf"Page\${next_page}")):
+        if soup.find('a', href=re.compile(rf'Page\${next_page}')):
             payload = get_asp_vars(soup)
             payload.update({
                 '__EVENTTARGET': 'ctl00$ContentPlaceHolder1$gdvMain',
