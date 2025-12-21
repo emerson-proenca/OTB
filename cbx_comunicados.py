@@ -10,7 +10,7 @@ BASE_DOMAIN = 'https://www.cbx.org.br'
 
 
 def extract_page_data(soup: BeautifulSoup):
-    """Extrai os comunicados da tabela da página atual."""
+    '''Extrai os comunicados da tabela da página atual.'''
     page_notices = []
     rows = soup.find_all('tr')
     
