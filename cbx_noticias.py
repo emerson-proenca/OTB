@@ -2,6 +2,7 @@ import re
 from bs4 import BeautifulSoup
 from cbx_utils import setup_logging, get_supabase, get_session, get_asp_vars, save_data
 
+
 logger = setup_logging()
 supabase = get_supabase()
 URL = 'https://www.cbx.org.br/noticias'

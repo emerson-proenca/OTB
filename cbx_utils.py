@@ -1,6 +1,7 @@
 import os
 import logging
 import requests
+import re
 from bs4 import BeautifulSoup
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -46,3 +47,11 @@ def save_data(supabase: Client, table: str, data: list, pk: str):
         supabase.table(table).upsert(data, on_conflict=pk).execute()
     except Exception as e:
         print(f"Erro ao salvar em {table}: {e}")
+
+
+def safe(element) -> str | None:
+    """Extrai o texto após o rótulo (ex: 'Local: Rio' -> 'Rio')."""
+    if not element:
+        return None
+    match = re.search(r'.*?:\s*(.*)', element.text)
+    return match.group(1).strip() if match else element.text.strip()
