@@ -1,4 +1,3 @@
-# tests/test_dispatcher.py
 from src.dispatcher import get_scraper_class, run_scrapers
 
 
