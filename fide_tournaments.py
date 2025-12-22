@@ -1,6 +1,5 @@
 import asyncio
 import json
-import logging
 import time
 from typing import Any, Dict, List
 
@@ -10,7 +9,7 @@ from bs4 import BeautifulSoup
 from cbx_utils import get_supabase, setup_logging
 
 # Configuração inicial
-logging = setup_logging()
+logger = setup_logging()
 supabase = get_supabase()
 
 HEADERS = {
@@ -21,9 +20,9 @@ HEADERS = {
 
 
 class AsyncFIDEScraper:
+    session: aiohttp.ClientSession
     def __init__(self, max_concurrent=5):
         self.max_concurrent = max_concurrent
-        self.session = None
         self.semaphore = asyncio.Semaphore(max_concurrent)
 
     async def __aenter__(self):
@@ -34,7 +33,7 @@ class AsyncFIDEScraper:
         if self.session:
             await self.session.close()
 
-    async def fetch_html(self, url: str) -> str:
+    async def fetch_html(self, url: str) -> str | None:
         """Busca conteúdo HTML/JSON de forma assíncrona"""
         async with self.semaphore:
             try:
@@ -42,8 +41,8 @@ class AsyncFIDEScraper:
                     response.raise_for_status()
                     return await response.text()
             except Exception as e:
-                logging.error(f"Erro ao buscar {url}: {e}")
-                return ""
+                logger.error(f"Erro ao buscar {url}: {e}")
+                return None
 
     async def fetch_all_country_codes(self) -> List[str]:
         """Extrai todos os códigos de países do dropdown"""
@@ -57,7 +56,7 @@ class AsyncFIDEScraper:
         select_country = soup.find("select", {"id": "select_country"})
 
         if not select_country:
-            logging.error("Elemento select_country não encontrado")
+            logger.error("Elemento select_country não encontrado")
             return []
 
         country_codes = [
@@ -66,7 +65,7 @@ class AsyncFIDEScraper:
             if option.get("value") and option["value"] != "all"
         ]
 
-        logging.info(f"Encontrados {len(country_codes)} códigos de país")
+        logger.info(f"Encontrados {len(country_codes)} códigos de país")
         return country_codes
 
     async def fetch_available_periods(self, country_code: str) -> List[str]:
@@ -82,7 +81,7 @@ class AsyncFIDEScraper:
             periods = [item["frl_publish"] for item in periods_data]
             return periods
         except (json.JSONDecodeError, KeyError) as e:
-            logging.error(f"Erro ao processar períodos para {country_code}: {e}")
+            logger.error(f"Erro ao processar períodos para {country_code}: {e}")
             return []
 
     async def fetch_tournaments_for_period(
@@ -110,12 +109,14 @@ class AsyncFIDEScraper:
                 name_link = soup_name.find("a")
                 name = name_link.get_text(strip=True) if name_link else item[1]
                 link_event = (
-                    name_link["href"] if name_link and "href" in name_link.attrs else ""
+                    name_link["href"]
+                    if name_link and "href" in name_link.attrs
+                    else None
                 )
                 rcvd = (
                     soup_rcvd.find("a").get_text(strip=True)
                     if soup_rcvd and soup_rcvd.find("a")
-                    else (item[5] if len(item) > 5 else "")
+                    else (item[5] if len(item) > 5 else None)
                 )
 
                 tournament = {
@@ -124,23 +125,23 @@ class AsyncFIDEScraper:
                     "name": name,
                     "link_event": f"https://ratings.fide.com{link_event}"
                     if link_event
-                    else "",
-                    "city": item[2] if len(item) > 2 else "",
-                    "s": item[3] if len(item) > 3 else "",
-                    "start": item[4] if len(item) > 4 else "",
+                    else None,
+                    "city": item[2] if len(item) > 2 else None,
+                    "s": item[3] if len(item) > 3 else None,
+                    "start": item[4] if len(item) > 4 else None,
                     "rcvd": rcvd,
                     "country": country_code,
                     "period": period,
                 }
                 tournaments.append(tournament)
 
-            logging.info(
+            logger.info(
                 f"País {country_code}, período {period}: {len(tournaments)} torneios"
             )
             return tournaments
 
         except (json.JSONDecodeError, IndexError, KeyError) as e:
-            logging.error(
+            logger.error(
                 f"Erro ao processar torneios para {country_code} ({period}): {e}"
             )
             return []
@@ -150,7 +151,7 @@ class AsyncFIDEScraper:
         periods = await self.fetch_available_periods(country_code)
 
         if not periods:
-            logging.warning(f"Nenhum período encontrado para {country_code}")
+            logger.warning(f"Nenhum período encontrado para {country_code}")
             return 0
 
         total_tournaments = 0
@@ -188,9 +189,9 @@ class AsyncFIDEScraper:
                 .upsert(tournaments)
                 .execute(),
             )
-            logging.info(f"UPSERT realizado: {len(tournaments)} registros")
+            logger.info(f"UPSERT realizado: {len(tournaments)} registros")
         except Exception as e:
-            logging.error(f"Erro no UPSERT: {e}")
+            logger.error(f"Erro no UPSERT: {e}")
 
     async def run(self, test_mode=False, max_countries=None):
         """Executa o scraping completo"""
@@ -198,28 +199,28 @@ class AsyncFIDEScraper:
 
         async with self:
             # 1. Buscar todos os países
-            logging.info("Buscando lista de países...")
+            logger.info("Buscando lista de países...")
             country_codes = await self.fetch_all_country_codes()
 
             if not country_codes:
-                logging.error("Nenhum país encontrado")
+                logger.error("Nenhum país encontrado")
                 return
 
             # Modo teste: limitar países
             if test_mode:
                 country_codes = country_codes[:5]
-                logging.info(f"Modo teste: processando {len(country_codes)} países")
+                logger.info(f"Modo teste: processando {len(country_codes)} países")
             elif max_countries:
                 country_codes = country_codes[:max_countries]
-                logging.info(f"Limitando a {max_countries} países")
+                logger.info(f"Limitando a {max_countries} países")
 
             total_countries = len(country_codes)
-            logging.info(f"Iniciando scraping para {total_countries} países")
+            logger.info(f"Iniciando scraping para {total_countries} países")
 
             # 2. Processar países em paralelo com limitação de concorrência
             all_tasks = []
             for i, country_code in enumerate(country_codes, 1):
-                logging.info(f"Agendando país {i}/{total_countries}: {country_code}")
+                logger.info(f"Agendando país {i}/{total_countries}: {country_code}")
                 task = asyncio.create_task(self.process_country(country_code))
                 all_tasks.append(task)
 
@@ -230,11 +231,11 @@ class AsyncFIDEScraper:
             total_tournaments = sum(r for r in results if isinstance(r, int))
             total_time = time.time() - start_time
 
-            logging.info("SCRAPING CONCLUÍDO!")
-            logging.info(f"Países processados: {total_countries}")
-            logging.info(f"Torneios capturados: {total_tournaments}")
-            logging.info(f"Tempo total: {total_time:.2f} segundos")
-            logging.info(
+            logger.info("SCRAPING CONCLUÍDO!")
+            logger.info(f"Países processados: {total_countries}")
+            logger.info(f"Torneios capturados: {total_tournaments}")
+            logger.info(f"Tempo total: {total_time:.2f} segundos")
+            logger.info(
                 f"Tempo médio por país: {total_time / total_countries:.2f} segundos"
             )
 

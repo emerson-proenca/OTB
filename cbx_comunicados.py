@@ -20,7 +20,7 @@ def extract_page_data(soup: BeautifulSoup):
         date_tag = row.find("span", class_="date")
 
         if link_tag and date_tag:
-            href = link_tag.get("href", "")
+            href = link_tag.get("href", None)
             full_link = BASE_DOMAIN.rstrip("/") + href if href.startswith("/") else href
 
             page_notices.append(
