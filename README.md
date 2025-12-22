@@ -7,3 +7,9 @@ E envio para o SupaBase novamente como DB Ouro
 
 Comando para executar todos os testes:
 `export PYTHONPATH=$PYTHONPATH:$(pwd)/src && pytest` ou `$env:PYTHONPATH = "src"; pytest`
+
+---
+
+> https://ratings.fide.com/tournament_information.phtml?event=34900
+> https://ratings.fide.com/report.phtml?event=15066
+
