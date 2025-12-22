@@ -2,7 +2,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from cbx_utils import get_asp_vars, get_session, get_supabase, save_data, setup_logging
+from legacy.cbx_utils import get_asp_vars, get_session, get_supabase, save_data, setup_logging
 
 logger = setup_logging()
 supabase = get_supabase()
