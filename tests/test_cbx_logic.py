@@ -1,4 +1,3 @@
-# tests/test_cbx_logic.py
 import pytest
 
 from src.scrapers.cbx.jogadores import ScraperCbxJogadores

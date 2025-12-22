@@ -4,16 +4,20 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException
 
 from dispatcher import run_scrapers
 
-# O logger seguirá o padrão que definimos no Dispatcher
 logger = logging.getLogger("API")
 
 app = FastAPI(title="Over-The-Board Scraper")
 
 
-@app.get("/healthz")
+@app.get("/")
 def health_check():
     """Rota para o Render verificar se o serviço está online."""
-    return {"status": "alive", "message": "Over-The-Board Scraper is running"}
+    return {
+        "status": "alive",
+        "message": "Over-The-Board Scraper is running",
+        "docs": "/docs",
+        "redoc": "/redoc",
+    }
 
 
 @app.post("/scrape")
@@ -38,5 +42,5 @@ async def trigger_scraping(payload: dict, background_tasks: BackgroundTasks):
 if __name__ == "__main__":
     import uvicorn
 
-    # Roda localmente para teste: python main.py
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Teste local -> `python main.py`
