@@ -45,7 +45,7 @@ def extract_page_data(soup: BeautifulSoup):
                 "observacao": get_text("lblObs"),
                 "regulamento": (BASE_URL + str(reg_elem.get("href")))
                 if (reg_elem and reg_elem.get("href"))
-                else "",
+                else None,
                 "situacao": get_text("lblStatus"),
                 "ritmo": get_text("lblRitmo"),
                 "rating": get_text("lblRating"),

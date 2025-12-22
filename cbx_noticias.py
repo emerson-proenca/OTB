@@ -10,7 +10,7 @@ URL = "https://www.cbx.org.br/noticias"
 BASE_URL = "https://www.cbx.org.br/"
 
 
-def extract_page_data(soup: BeautifulSoup):
+def extract_page_data(soup: BeautifulSoup) -> list[dict]:
     news_list = []
     for row in soup.find_all("tr"):
         link = row.find("a", id=re.compile(r"hlkTitulo"))

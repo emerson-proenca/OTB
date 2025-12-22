@@ -42,7 +42,7 @@ def get_asp_vars(soup: BeautifulSoup):
 
     def extract(id_name):
         tag = soup.find("input", id=id_name)
-        return tag.get("value", "") if tag else ""
+        return tag.get("value", "") if tag else None
 
     return {
         "__VIEWSTATE": extract("__VIEWSTATE"),
@@ -62,9 +62,16 @@ def save_data(supabase: Client, table: str, data: list, pk: str):
         logger.critical(f"Erro ao salvar em {table}: {e}")
 
 
-def safe(element) -> str:
+def safe(element) -> str | None:
     """Extrai o texto após o rótulo (ex: 'Local: Rio' -> 'Rio')."""
     if not element:
-        return ""
+        return None
     match = re.search(r".*?:\s*(.*)", element.text)
     return match.group(1).strip() if match else element.text.strip()
+
+
+def get_text(field):
+    
+    return safe(
+        soup.find("span", id=re.compile(f"ContentPlaceHolder1_gdvMain_{field}_{i}"))
+    )
