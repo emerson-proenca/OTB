@@ -1,8 +1,8 @@
 # tests/test_cbx_logic.py
 import pytest
 
-from scrapers.cbx.jogadores import ScraperCbxJogadores
-from scrapers.cbx.torneios import ScraperCbxTorneios
+from src.scrapers.cbx.jogadores import ScraperCbxJogadores
+from src.scrapers.cbx.torneios import ScraperCbxTorneios
 
 
 def test_cbx_torneios_missing_args():
