@@ -19,7 +19,7 @@ logger = setup_dispatcher_logging()
 def get_scraper_class(site_name, data_name):
     """Busca dinamicamente a classe do scraper."""
     try:
-        module_path = f"scrapers.{site_name.lower()}.{data_name.lower()}"
+        module_path = f"src.scrapers.{site_name.lower()}.{data_name.lower()}"
         module = importlib.import_module(module_path)
 
         # Nome esperado: ScraperCbxComunicados
