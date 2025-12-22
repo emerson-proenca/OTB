@@ -71,7 +71,6 @@ def safe(element) -> str | None:
 
 
 def get_text(field):
-    
     return safe(
         soup.find("span", id=re.compile(f"ContentPlaceHolder1_gdvMain_{field}_{i}"))
     )
