@@ -6,7 +6,7 @@ from typing import Any, Dict, List
 import aiohttp
 from bs4 import BeautifulSoup
 
-from cbx_utils import get_supabase, setup_logging
+from legacy.cbx_utils import get_supabase, setup_logging
 
 # Configuração inicial
 logger = setup_logging()
@@ -21,6 +21,7 @@ HEADERS = {
 
 class AsyncFIDEScraper:
     session: aiohttp.ClientSession
+
     def __init__(self, max_concurrent=5):
         self.max_concurrent = max_concurrent
         self.semaphore = asyncio.Semaphore(max_concurrent)

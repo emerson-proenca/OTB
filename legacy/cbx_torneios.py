@@ -2,7 +2,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from cbx_utils import (
+from legacy.cbx_utils import (
     get_asp_vars,
     get_session,
     get_supabase,
@@ -68,7 +68,7 @@ def main():
 
         # Filtros iniciais
         year = "2025"
-        month = ""
+        month = "1"
         payload = get_asp_vars(soup)
         payload.update(
             {
