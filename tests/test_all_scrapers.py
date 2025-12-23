@@ -1,6 +1,6 @@
 import pytest
 
-from dispatcher import get_scraper_class
+from src.dispatcher import get_scraper_class
 
 # Lista de todos os seus scrapers atuais
 SCRAPERS_TO_TEST = [

@@ -2,7 +2,7 @@ import logging
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 
-from dispatcher import run_scrapers
+from src.dispatcher import run_scrapers
 
 logger = logging.getLogger("API")
 

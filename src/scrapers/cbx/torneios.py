@@ -2,7 +2,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from scrapers.cbx.base_cbx import ScraperCbx
+from src.scrapers.cbx.base_cbx import ScraperCbx
 
 
 class ScraperCbxTorneios(ScraperCbx):
