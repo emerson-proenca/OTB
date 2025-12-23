@@ -1,6 +1,6 @@
 import re
 
-from scrapers.base import BaseScraper
+from src.scrapers.base import BaseScraper
 
 
 class ScraperCbx(BaseScraper):
