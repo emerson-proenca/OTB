@@ -109,33 +109,47 @@ class SyncFIDEScraper(BaseScraper):
             )
             return []
 
-    def run(self):
-        """Implementação do fluxo principal seguindo o padrão da BaseScraper."""
-        start_time = time.time()
-        country_codes = self.fetch_all_country_codes()
 
-        # Limita países baseado nos argumentos globais ou max_pages
-        if self.args.get("test_mode"):
-            country_codes = country_codes[:5]
+def run(self):
+    country = self.data_args.get("country")
+    if not country:
+        raise ValueError("O argumento 'country' é obrigatório para ChessResults.")
 
-        # Exemplo de uso do max_pages como limitador de países (se aplicável)
-        country_codes = country_codes[: self.max_pages]
+    self.logger.info(f"Iniciando Chess-Results para país: {country}")
 
-        total_tournaments = 0
-        for code in country_codes:
-            self.logger.info(f"Processando país: {code}")
-            periods = self.fetch_available_periods(code)
+    # 1. GET inicial para pegar tokens
+    res = self.session.get(self.url)
+    soup = BeautifulSoup(res.text, "html.parser")
 
-            for period in periods:
-                tournaments = self.fetch_tournaments_for_period(code, period)
-                if tournaments:
-                    # Utiliza o método save() da classe pai
-                    self.save(table="fide_tournaments", data=tournaments, pk="fide_id")
-                    total_tournaments += len(tournaments)
+    # 2. Payload simulando o clique no botão "Search"
+    payload = self.get_asp_vars(soup)
+    payload.update(
+        {
+            # Importante: O botão de busca precisa estar no payload para o ASP processar
+            "ctl00$P1$combo_land": country,
+            "ctl00$P1$combo_anzahl_zeilen": "5",  # 2000 linhas
+            "ctl00$P1$cb_incl_old_tournaments": "on",
+            "ctl00$P1$button_suchen": "Search",  # Simula o clique no botão
+            "__EVENTTARGET": "",  # No clique do botão, o target costuma ser vazio
+            "__EVENTARGUMENT": "",
+        }
+    )
 
-        total_time = time.time() - start_time
-        self.logger.info(
-            f"CONCLUÍDO! Torneios: {total_tournaments} em {total_time:.2f}s"
+    # 3. POST para submeter a busca real
+    res = self.session.post(self.url, data=payload)
+    soup = BeautifulSoup(res.text, "html.parser")
+
+    # DEBUG: Se quiser ver se a tabela existe no HTML retornado:
+    # self.logger.info(f"Tamanho do HTML: {len(res.text)}")
+
+    tournaments = self._extract_table_data(soup)
+
+    if tournaments:
+        self.save(self.table_name, tournaments, pk="dbkey")
+        self.logger.info(f"Sucesso: {len(tournaments)} torneios processados.")
+    else:
+        self.logger.warning(
+            "Nenhum torneio encontrado. Verifique se o Seletor CSS 'CRg2' ainda é válido."
         )
 
 

@@ -10,6 +10,15 @@ Comando para executar todos os testes:
 
 ---
 
-> https://ratings.fide.com/tournament_information.phtml?event=34900
-> https://ratings.fide.com/report.phtml?event=15066
+> https://ratings.fide.com/tournament_information.phtml?event=34900 > https://ratings.fide.com/report.phtml?event=15066
 
+```json
+{
+  "CHESSRESULTS": {
+    "torneios": "ScraperChessresultsTorneios",
+    "country": "AFG"
+  }
+}
+```
+2025-12-23 21:26:09,141 - INFO - [ScraperChessresultsTorneios] - Lote 1327201-1327300: Nenhum torneio encontrado.
+---
