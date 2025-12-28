@@ -13,6 +13,9 @@ dependencies = [
     "supabase>=2.27.0",
     "uvicorn>=0.40.0",
     "duckdb>=1.4.3",
+    "datasette>=0.65.2",
+    "pandas>=2.3.3",
+    "pyarrow>=22.0.0",
 ]
 [dependency-groups]
 dev = [
