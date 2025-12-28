@@ -5,7 +5,7 @@ from base import BaseScraper
 from bs4 import BeautifulSoup
 
 # URLs
-DB_NAME = "tournaments.db"
+DB_NAME = "fide_tournaments.db"
 BASE_URL = "https://ratings.fide.com/rated_tournaments.phtml"
 PANEL_ENDPOINT = "https://ratings.fide.com/a_tournaments_panel.php"
 DATA_ENDPOINT = "https://ratings.fide.com/a_tournaments.php"
@@ -120,5 +120,5 @@ class FideScraper(BaseScraper):
 
 
 if __name__ == "__main__":
-    scraper = FideScraper(start_date="", end_date="", countries=["AFG"])
+    scraper = FideScraper(start_date="", end_date="", countries=[])
     asyncio.run(scraper.run_scraper())

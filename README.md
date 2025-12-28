@@ -1,27 +1,47 @@
-Scraper do site da CBX, FIDE, ChessResults, USCF e sua federação!
+# Chess Tournaments Database Archive
 
-Todos os dados Brutos são enviados ao SupaBase DB Bronze
-Depois eu baixo de volta, faço um tratamento manual
-Passo por um tratamento programático, com os tipos corretos, ISO, bem padronizado
-E envio para o SupaBase novamente como DB Ouro
+Chess tournament data with 387995 FIDE tournaments.
 
-Comando para executar todos os testes:
-`export PYTHONPATH=$PYTHONPATH:$(pwd)/src && pytest` ou `$env:PYTHONPATH = "src"; pytest`
+**This project is discontinued**
 
----
+The data was collected by using web scraping from https://ratings.fide.com/rated_tournaments.phtml website. After [feedback](https://github.com/lichess-org/lila/issues/18989) from lichess, I've decided to discontinue at least temporary this project. The existing data is provided as-is for research, analytics, personal projects or whatever.
 
-> https://ratings.fide.com/tournament_information.phtml?event=34900 > https://ratings.fide.com/report.phtml?event=15066
+## Download
 
-```json
-{
-  "CHESSRESULTS": {
-    "torneios": "ScraperChessresultsTorneios",
-    "country": "AFG"
-  }
-}
+```bash
+git clone https://github.com/emerson-proenca/OTB
+cd otb
+pip install -r requirements.txt
 ```
-2025-12-23 21:26:09,141 - INFO - [ScraperChessresultsTorneios] - Lote 1327201-1327300: Nenhum torneio encontrado.
+
+**Schema:**
+
+```SQL
+CREATE TABLE [tournaments] (
+   [fide_id] INTEGER PRIMARY KEY,
+   [name] TEXT,
+   [city] TEXT,
+   [s] TEXT,
+   [start] TEXT,
+   [country] TEXT,
+   [rcvd] TEXT,
+   [period] TEXT
+);
+```
+
+## License
+
+- [LICENSE MIT](https://github.com/emerson-proenca/OTB/blob/main/LICENSE) - You can use the code here for any purpose. 
+- Data was collected from https://ratings.fide.com/rated_tournaments.phtml
+
+## Contact
+
+For questions about this archive, open an issue on GitHub.
+
 ---
 
+I haven't abandoned this project, but I just think there's no one (outside of me) who is interested in using scraped data. Even tho FIDE doesn't doesn't have a Terms of Service and robots.txt
 
-Todos os scrapers devem ser ASYNC! Ou majoritariamente ASYNC
+I have more scrapers and way more data (1.3 Million Chess Results tournaments), but I didn't show them here, because I might get isolated from the chess comunity by doing something "shady". If some people want it, I'll continue, until then it'll stay here.
+
+If you are the owner of the data, contact me and I'll remove it.
