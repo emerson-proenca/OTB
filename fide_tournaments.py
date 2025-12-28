@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 # --- CONFIGURATION ---
 START_DATE = ""  # "2000-01-01" or "" for no START_DATE filter
 END_DATE = ""  # "2099-12-31" or "" for no END_DATE filter
-COUNTRIES = ["AFG"]  # ["USA", "FRA"] or [] for all countries
+COUNTRIES = []  # ["USA", "FRA"] or [] for all countries
 OUTPUT_FILE = "abcde.jsonl"
 CONCURRENT_REQUESTS = 10
 

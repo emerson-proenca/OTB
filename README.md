@@ -22,3 +22,6 @@ Comando para executar todos os testes:
 ```
 2025-12-23 21:26:09,141 - INFO - [ScraperChessresultsTorneios] - Lote 1327201-1327300: Nenhum torneio encontrado.
 ---
+
+
+Todos os scrapers devem ser ASYNC! Ou majoritariamente ASYNC
