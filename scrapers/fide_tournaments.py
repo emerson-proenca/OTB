@@ -4,7 +4,8 @@ import time
 from base import BaseScraper
 from bs4 import BeautifulSoup
 
-# URLs e Configurações específicas
+# URLs
+DB_NAME = "tournaments.db"
 BASE_URL = "https://ratings.fide.com/rated_tournaments.phtml"
 PANEL_ENDPOINT = "https://ratings.fide.com/a_tournaments_panel.php"
 DATA_ENDPOINT = "https://ratings.fide.com/a_tournaments.php"
@@ -12,7 +13,7 @@ DATA_ENDPOINT = "https://ratings.fide.com/a_tournaments.php"
 
 class FideScraper(BaseScraper):
     def __init__(self, start_date="", end_date="", countries=None):
-        super().__init__(db_name="tournaments.db", concurrent=10)
+        super().__init__(db_name=DB_NAME, concurrent=10)
         self.start_date = start_date
         self.end_date = end_date
         self.countries = countries or []
@@ -31,7 +32,7 @@ class FideScraper(BaseScraper):
                 soup = BeautifulSoup(await resp.text(), "html.parser")
                 select = soup.find("select", {"id": "select_country"})
                 if not select:
-                    self.log.warning(" Element 'select_country' not found")
+                    self.log.warning("Element 'select_country' not found")
                     return []
                 return [
                     opt["value"]
@@ -39,7 +40,7 @@ class FideScraper(BaseScraper):
                     if opt.get("value") and opt["value"] != "all"
                 ]
         except Exception as e:
-            self.log.error(f"Error fetching countries: {e}")
+            self.log.error(f"Fetching countries: {e}")
             return []
 
     async def get_periods(self, session, country_code):
@@ -49,7 +50,9 @@ class FideScraper(BaseScraper):
                 async with session.get(PANEL_ENDPOINT, params=params) as resp:
                     data = await resp.json(content_type=None)
                     periods = [item["frl_publish"] for item in data]
-                    self.log.info(f"{country_code} | {len(periods)} periods ")
+                    self.log.info(
+                        f"Scraping | {country_code} | {len(periods)} periods "
+                    )
                     return [item["frl_publish"] for item in data]
             except Exception as e:
                 self.log.error(f"Fetching periods for {country_code}: {e}")
@@ -90,18 +93,21 @@ class FideScraper(BaseScraper):
                     self.save_to_db("tournaments", tournaments, pk="fide_id")
                     return len(tournaments)
             except Exception as e:
-                self.log.error(f"Error in {country_code}/{period}: {e}")
+                self.log.error(f"In {country_code} | {period}: {e}")
                 return 0
 
     async def scrape(self, session):
         target_countries = self.countries or await self.get_country_codes(session)
-        self.log.info(f"Processing {len(target_countries)} countries")
+        self.log.info(
+            f"Date     | From: {self.start_date or 'Any'} To: {self.end_date or 'Any'}"
+        )
+        self.log.info(f"Search   | {len(target_countries)} countries")
 
-        # Busca períodos
+        # PERIODS
         period_tasks = [self.get_periods(session, code) for code in target_countries]
         periods_results = await asyncio.gather(*period_tasks)
 
-        # Busca torneios
+        # TOURNAMENTS
         tournament_tasks = []
         for i, code in enumerate(target_countries):
             for period in periods_results[i]:

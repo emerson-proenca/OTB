@@ -8,7 +8,7 @@ import sqlite_utils
 
 class BaseScraper:
     def __init__(self, db_name="data.db", concurrent=10):
-        # Configuration & Logging
+        # CONFIGS
         self.db = sqlite_utils.Database(db_name)
         self.semaphore = asyncio.Semaphore(concurrent)
         self.headers = {
@@ -18,7 +18,7 @@ class BaseScraper:
         logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
         self.log = logging.getLogger(__name__)
 
-    # Utils: Date handling
+    # UTILS
     def parse_date(self, date_str):
         try:
             return datetime.strptime(date_str, "%Y-%m-%d")
@@ -41,13 +41,26 @@ class BaseScraper:
             return False
         return True
 
-    # Saving
+    # SAVING
     def save_to_db(self, table_name, data, pk="id"):
-        if data:
-            self.db[table_name].upsert_all(data, pk=pk)  # type: ignore
-            self.log.info(f"Saved {len(data)} items to {table_name}")
+        if not data:
+            return
 
-    # Async Core
+        table = self.db[table_name]
+        before_count = table.count if table.exists() else 0
+
+        table.upsert_all(data, pk=pk)  # type: ignore
+
+        after_count = table.count
+        inserted = after_count - before_count
+        updated = len(data) - inserted
+
+        if inserted > 0:
+            self.log.info(f"Inserted | {inserted} items in {table_name}")
+        if updated > 0:
+            self.log.info(f"Updated  | {updated} items in {table_name}")
+
+    # ASYNC
     async def run_scraper(self):
         async with aiohttp.ClientSession(headers=self.headers) as session:
             await self.scrape(session)
